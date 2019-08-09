@@ -27,13 +27,14 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
 #include "StdAfx.h"
+#include "..//Common.h"
 
 
 //===========================================================================
 BOOL RegLoadString (LPCTSTR section, LPCTSTR key, BOOL peruser, LPTSTR buffer, DWORD chars)
 {
 	TCHAR fullkeyname[256];
-	StringCbPrintf(fullkeyname, 256, TEXT("Software\\AppleWin\\CurrentVersion\\%s"), section);
+	StringCbPrintf(fullkeyname, TSIZEOF(fullkeyname), TEXT("Software\\AppleWin\\CurrentVersion\\%s"), section);
 
 	BOOL success = FALSE;
 	HKEY keyhandle;
@@ -89,7 +90,7 @@ BOOL RegLoadValue (LPCTSTR section, LPCTSTR key, BOOL peruser, DWORD* value, DWO
 //===========================================================================
 void RegSaveString (LPCTSTR section, LPCTSTR key, BOOL peruser, LPCTSTR buffer) {
 	TCHAR fullkeyname[256];
-	StringCbPrintf(fullkeyname, 256, TEXT("Software\\AppleWin\\CurrentVersion\\%s"), section);
+	StringCbPrintf(fullkeyname, TSIZEOF(fullkeyname), TEXT("Software\\AppleWin\\CurrentVersion\\%s"), section);
 
 	HKEY  keyhandle;
 	DWORD disposition;
@@ -119,6 +120,6 @@ void RegSaveString (LPCTSTR section, LPCTSTR key, BOOL peruser, LPCTSTR buffer) 
 //===========================================================================
 void RegSaveValue (LPCTSTR section, LPCTSTR key, BOOL peruser, DWORD value) {
 	TCHAR buffer[32] = TEXT("");
-	StringCbPrintf(buffer, 32, "%d", value);
+	StringCbPrintf(buffer, TSIZEOF(buffer), "%d", value);
 	RegSaveString(section, key, peruser, buffer);
 }

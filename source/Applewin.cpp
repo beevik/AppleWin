@@ -545,8 +545,8 @@ void LoadConfiguration(void)
 
 		if (dwLoadedComputerType != dwComputerType)
 		{
-			char sText[ 100 ];
-			_snprintf( sText, sizeof(sText)-1, "Unsupported Apple2Type(%d). Changing to %d", dwLoadedComputerType, dwComputerType);
+			TCHAR sText[ 100 ];
+			StringCbPrintf(sText, TSIZEOF(sText), TEXT("Unsupported Apple2Type(%d). Changing to %d"), dwLoadedComputerType, dwComputerType);
 
 			LogFileOutput("%s\n", sText);
 
@@ -745,21 +745,18 @@ void LoadConfiguration(void)
 
 //===========================================================================
 
-bool SetCurrentImageDir(const char* pszImageDir)
+bool SetCurrentImageDir(const TCHAR* pszImageDir)
 {
-	strcpy(g_sCurrentDir, pszImageDir);
+	StringCbCopy(g_sCurrentDir, TSIZEOF(g_sCurrentDir), pszImageDir);
 
-	int nLen = strlen( g_sCurrentDir );
-	if ((nLen > 0) && (g_sCurrentDir[ nLen - 1 ] != '\\'))
+	int nLen = strlen(g_sCurrentDir);
+	if ((nLen > 0) && (nLen + 1 < TSIZEOF(g_sCurrentDir)) && (g_sCurrentDir[ nLen - 1 ] != '\\'))
 	{
-		g_sCurrentDir[ nLen + 0 ] = '\\';
-		g_sCurrentDir[ nLen + 1 ] = 0;
+		g_sCurrentDir[nLen + 0] = '\\';
+		g_sCurrentDir[nLen + 1] = '\0';
 	}
 
-	if( SetCurrentDirectory(g_sCurrentDir) )
-		return true;
-
-	return false;
+	return SetCurrentDirectory(g_sCurrentDir);
 }
 
 //===========================================================================
@@ -771,46 +768,37 @@ static bool g_bRegisterFileTypes = true;
 void RegisterExtensions(void)
 {
 	TCHAR szCommandTmp[MAX_PATH];
-	GetModuleFileName((HMODULE)0,szCommandTmp,MAX_PATH);
+	GetModuleFileName((HMODULE)0, szCommandTmp, TSIZEOF(szCommandTmp));
 
 	TCHAR command[MAX_PATH];
-	wsprintf(command, "\"%s\"",	szCommandTmp);	// Wrap	path & filename	in quotes &	null terminate
+	StringCbPrintf(command, TSIZEOF(command), TEXT("\"%s\""), szCommandTmp);
+	StringCbCat(command, TSIZEOF(command), TEXT(" \"%1\""));
 
 	TCHAR icon[MAX_PATH];
-	wsprintf(icon,TEXT("%s,1"),(LPCTSTR)command);
+	StringCbPrintf(icon, TSIZEOF(icon), TEXT("%s,1"), command);
 
-	_tcscat(command,TEXT(" \"%1\""));			// Append "%1"
-//	_tcscat(command,TEXT("-d1 %1\""));			// Append "%1"
-//	sprintf(command, "\"%s\" \"-d1 %%1\"", szCommandTmp);	// Wrap	path & filename	in quotes &	null terminate
-
-	// NB. Registry access to HKLM typically results in ErrorCode 5(ACCESS DENIED), as UAC requires elevated permissions (Run as administrator).
-	// . HKEY_CLASSES_ROOT\CLSID is a merged view of HKLM\SOFTWARE\Classes and HKCU\SOFTWARE\Classes
-
-	// NB. Reflect extensions in DELREG.INF
-//	RegSetValue(HKEY_CLASSES_ROOT,".bin",REG_SZ,"DiskImage",0);	// Removed as .bin is too generic
-
-	const char* pValueName = ".bin";
+	const TCHAR* pValueName = TEXT(".bin");
 	LSTATUS res = RegDeleteValue(HKEY_CLASSES_ROOT, pValueName);
 	if (res != NOERROR && res != ERROR_FILE_NOT_FOUND) LogFileOutput("RegDeleteValue(%s) failed (0x%08X)\n", pValueName, res);
 
 	pValueName = ".do";
-	res = RegSetValue(HKEY_CLASSES_ROOT, pValueName ,REG_SZ,"DiskImage",0);
+	res = RegSetValue(HKEY_CLASSES_ROOT, pValueName, REG_SZ, "DiskImage", 0);
 	if (res != NOERROR) LogFileOutput("RegSetValue(%s) failed (0x%08X)\n", pValueName, res);
 
 	pValueName = ".dsk";
-	res = RegSetValue(HKEY_CLASSES_ROOT, pValueName, REG_SZ,"DiskImage",0);
+	res = RegSetValue(HKEY_CLASSES_ROOT, pValueName, REG_SZ, "DiskImage", 0);
 	if (res != NOERROR) LogFileOutput("RegSetValue(%s) failed (0x%08X)\n", pValueName, res);
 
 	pValueName = ".nib";
-	res = RegSetValue(HKEY_CLASSES_ROOT, pValueName, REG_SZ,"DiskImage",0);
+	res = RegSetValue(HKEY_CLASSES_ROOT, pValueName, REG_SZ, "DiskImage", 0);
 	if (res != NOERROR) LogFileOutput("RegSetValue(%s) failed (0x%08X)\n", pValueName, res);
 
 	pValueName = ".po";
-	res = RegSetValue(HKEY_CLASSES_ROOT, pValueName, REG_SZ,"DiskImage",0);
+	res = RegSetValue(HKEY_CLASSES_ROOT, pValueName, REG_SZ, "DiskImage", 0);
 	if (res != NOERROR) LogFileOutput("RegSetValue(%s) failed (0x%08X)\n", pValueName, res);
 
 	pValueName = ".woz";
-	res = RegSetValue(HKEY_CLASSES_ROOT, pValueName, REG_SZ,"DiskImage",0);
+	res = RegSetValue(HKEY_CLASSES_ROOT, pValueName, REG_SZ, "DiskImage", 0);
 	if (res != NOERROR) LogFileOutput("RegSetValue(%s) failed (0x%08X)\n", pValueName, res);
 
 //	RegSetValue(HKEY_CLASSES_ROOT,".2mg",REG_SZ,"DiskImage",0);	// Don't grab this, as not all .2mg images are supported (so defer to CiderPress)
@@ -864,26 +852,26 @@ void RegisterExtensions(void)
 // NB. On a restart, it's OK to call RegisterHotKey() again since the old g_hFrameWindow has been destroyed
 static void RegisterHotKeys(void)
 {
-	BOOL bStatus[3] = {0,0,0};
+	BOOL bStatus[3] = { FALSE, FALSE, FALSE };
 
 	bStatus[0] = RegisterHotKey( 
-		g_hFrameWindow , // HWND hWnd
+		g_hFrameWindow,  // HWND hWnd
 		VK_SNAPSHOT_560, // int id (user/custom id)
-		0              , // UINT fsModifiers
+		0,               // UINT fsModifiers
 		VK_SNAPSHOT      // UINT vk = PrintScreen
 	);
 
 	bStatus[1] = RegisterHotKey( 
-		g_hFrameWindow , // HWND hWnd
+		g_hFrameWindow,  // HWND hWnd
 		VK_SNAPSHOT_280, // int id (user/custom id)
-		MOD_SHIFT      , // UINT fsModifiers
+		MOD_SHIFT,       // UINT fsModifiers
 		VK_SNAPSHOT      // UINT vk = PrintScreen
 	);
 
 	bStatus[2] = RegisterHotKey( 
-		g_hFrameWindow  , // HWND hWnd
+		g_hFrameWindow,   // HWND hWnd
 		VK_SNAPSHOT_TEXT, // int id (user/custom id)
-		MOD_CONTROL     , // UINT fsModifiers
+		MOD_CONTROL,      // UINT fsModifiers
 		VK_SNAPSHOT       // UINT vk = PrintScreen
 	);
 
@@ -1017,33 +1005,33 @@ static void UninitHookThread()
 
 //===========================================================================
 
-LPSTR GetCurrArg(LPSTR lpCmdLine)
+TCHAR* GetCurrArg (TCHAR* lpCmdLine)
 {
-	if(*lpCmdLine == '\"')
+	if (*lpCmdLine == '\"')
 		lpCmdLine++;
 
 	return lpCmdLine;
 }
 
-LPSTR GetNextArg(LPSTR lpCmdLine)
+TCHAR* GetNextArg (TCHAR* lpCmdLine)
 {
 	int bInQuotes = 0;
 
-	while(*lpCmdLine)
+	while (*lpCmdLine)
 	{
-		if(*lpCmdLine == '\"')
+		if (*lpCmdLine == '\"')
 		{
 			bInQuotes ^= 1;
-			if(!bInQuotes)
+			if (!bInQuotes)
 			{
-				*lpCmdLine++ = 0x00;	// Assume end-quote is end of this arg
+				*lpCmdLine++ = '\0';
 				continue;
 			}
 		}
 
-		if((*lpCmdLine == ' ') && !bInQuotes)
+		if ((*lpCmdLine == ' ') && !bInQuotes)
 		{
-			*lpCmdLine++ = 0x00;
+			*lpCmdLine++ = '\0';
 			break;
 		}
 
@@ -1067,8 +1055,8 @@ static std::string GetFullPath(LPCSTR szFileName)
 	else
 	{
 		// Rel pathname
-		char szCWD[_MAX_PATH] = {0};
-		if (!GetCurrentDirectory(sizeof(szCWD), szCWD))
+		TCHAR szCWD[_MAX_PATH];
+		if (!GetCurrentDirectory(TSIZEOF(szCWD), szCWD))
 			return "";
 
 		strPathName = szCWD;
@@ -1167,13 +1155,13 @@ static bool CheckOldAppleWinVersion(void)
 	const bool bShowAboutDlg = strcmp(szOldAppleWinVersion, VERSIONSTRING) != 0;
 
 	// version: xx.yy.zz.ww
-	char* p0 = szOldAppleWinVersion;
+	TCHAR* p0 = szOldAppleWinVersion;
 	int len = strlen(szOldAppleWinVersion);
 	szOldAppleWinVersion[len] = '.';	// append a null terminator
 	szOldAppleWinVersion[len + 1] = '\0';
 	for (UINT i=0; i<4; i++)
 	{
-		char* p1 = strstr(p0, ".");
+		TCHAR* p1 = strstr(p0, ".");
 		if (!p1)
 			break;
 		*p1 = 0;
@@ -1186,7 +1174,7 @@ static bool CheckOldAppleWinVersion(void)
 
 //---------------------------------------------------------------------------
 
-int APIENTRY WinMain(HINSTANCE passinstance, HINSTANCE, LPSTR lpCmdLine, int)
+int APIENTRY WinMain(HINSTANCE passinstance, HINSTANCE, TCHAR* lpCmdLine, int)
 {
 	bool bShutdown = false;
 	bool bSetFullScreen = false;
@@ -1195,9 +1183,9 @@ int APIENTRY WinMain(HINSTANCE passinstance, HINSTANCE, LPSTR lpCmdLine, int)
 	bool bSlot0LanguageCard = false;
 	bool bSlot7Empty = false;
 	UINT bestWidth = 0, bestHeight = 0;
-	LPSTR szImageName_drive[NUM_DRIVES] = {NULL,NULL};
-	LPSTR szImageName_harddisk[NUM_HARDDISKS] = {NULL,NULL};
-	LPSTR szSnapshotName = NULL;
+	TCHAR* szImageNameDrive[NUM_DRIVES] = { NULL, NULL };
+	TCHAR* szImageNameHardDisk[NUM_HARDDISKS] = { NULL, NULL };
+	TCHAR* szSnapshotName = NULL;
 	const std::string strCmdLine(lpCmdLine);		// Keep a copy for log ouput
 	UINT uRamWorksExPages = 0;
 	UINT uSaturnBanks = 0;
@@ -1209,7 +1197,7 @@ int APIENTRY WinMain(HINSTANCE passinstance, HINSTANCE, LPSTR lpCmdLine, int)
 
 	while (*lpCmdLine)
 	{
-		LPSTR lpNextArg = GetNextArg(lpCmdLine);
+		TCHAR* lpNextArg = GetNextArg(lpCmdLine);
 
 		if (((strcmp(lpCmdLine, "-l") == 0) || (strcmp(lpCmdLine, "-log") == 0)) && (g_fh == NULL))
 		{
@@ -1223,25 +1211,25 @@ int APIENTRY WinMain(HINSTANCE passinstance, HINSTANCE, LPSTR lpCmdLine, int)
 		{
 			lpCmdLine = GetCurrArg(lpNextArg);
 			lpNextArg = GetNextArg(lpNextArg);
-			szImageName_drive[DRIVE_1] = lpCmdLine;
+			szImageNameDrive[DRIVE_1] = lpCmdLine;
 		}
 		else if (strcmp(lpCmdLine, "-d2") == 0)
 		{
 			lpCmdLine = GetCurrArg(lpNextArg);
 			lpNextArg = GetNextArg(lpNextArg);
-			szImageName_drive[DRIVE_2] = lpCmdLine;
+			szImageNameDrive[DRIVE_2] = lpCmdLine;
 		}
 		else if (strcmp(lpCmdLine, "-h1") == 0)
 		{
 			lpCmdLine = GetCurrArg(lpNextArg);
 			lpNextArg = GetNextArg(lpNextArg);
-			szImageName_harddisk[HARDDISK_1] = lpCmdLine;
+			szImageNameHardDisk[HARDDISK_1] = lpCmdLine;
 		}
 		else if (strcmp(lpCmdLine, "-h2") == 0)
 		{
 			lpCmdLine = GetCurrArg(lpNextArg);
 			lpNextArg = GetNextArg(lpNextArg);
-			szImageName_harddisk[HARDDISK_2] = lpCmdLine;
+			szImageNameHardDisk[HARDDISK_2] = lpCmdLine;
 		}
 		else if (strcmp(lpCmdLine, "-s7") == 0)
 		{
@@ -1469,50 +1457,39 @@ int APIENTRY WinMain(HINSTANCE passinstance, HINSTANCE, LPSTR lpCmdLine, int)
 
 	LogFileOutput("CmdLine: %s\n",  strCmdLine.c_str());
 
-#if 0
-#ifdef RIFF_SPKR
-	RiffInitWriteFile("Spkr.wav", SPKR_SAMPLE_RATE, 1);
-#endif
-#ifdef RIFF_MB
-	RiffInitWriteFile("Mockingboard.wav", 44100, 2);
-#endif
-#endif
-
 	//-----
 
-    char szPath[_MAX_PATH];
+    TCHAR szPath[MAX_PATH];
 
-    if (0 == GetModuleFileName(NULL, szPath, sizeof(szPath)))
+    if (!GetModuleFileName(NULL, szPath, TSIZEOF(szPath)))
     {
-        strcpy(szPath, __argv[0]);
+		StringCbCopy(szPath, TSIZEOF(szPath), __argv[0]);
     }
 
     // Extract application version and store in a global variable
-    DWORD dwHandle, dwVerInfoSize;
-
-    dwVerInfoSize = GetFileVersionInfoSize(szPath, &dwHandle);
+    DWORD dwHandle;
+    DWORD dwVerInfoSize = GetFileVersionInfoSize(szPath, &dwHandle);
 
     if (dwVerInfoSize > 0)
     {
-        char* pVerInfoBlock = new char[dwVerInfoSize];
-
+        void* pVerInfoBlock = malloc(dwVerInfoSize);
         if (GetFileVersionInfo(szPath, NULL, dwVerInfoSize, pVerInfoBlock))
         {
-            VS_FIXEDFILEINFO* pFixedFileInfo;
+            LPVOID pFixedFileInfo;
             UINT pFixedFileInfoLen;
-
-            VerQueryValue(pVerInfoBlock, TEXT("\\"), (LPVOID*) &pFixedFileInfo, (PUINT) &pFixedFileInfoLen);
+            VerQueryValue(pVerInfoBlock, TEXT("\\"), &pFixedFileInfo, &pFixedFileInfoLen);
 
             // Construct version string from fixed file info block
 
-            unsigned long major     = g_AppleWinVersion[0] = pFixedFileInfo->dwFileVersionMS >> 16;
-            unsigned long minor     = g_AppleWinVersion[1] = pFixedFileInfo->dwFileVersionMS & 0xffff;
-            unsigned long fix       = g_AppleWinVersion[2] = pFixedFileInfo->dwFileVersionLS >> 16;
-			unsigned long fix_minor = g_AppleWinVersion[3] = pFixedFileInfo->dwFileVersionLS & 0xffff;
-			StringCbPrintf(VERSIONSTRING, VERSIONSTRING_SIZE, "%d.%d.%d.%d", major, minor, fix, fix_minor);
+			VS_FIXEDFILEINFO* info = (VS_FIXEDFILEINFO*)pFixedFileInfo;
+            unsigned long major     = g_AppleWinVersion[0] = info->dwFileVersionMS >> 16;
+            unsigned long minor     = g_AppleWinVersion[1] = info->dwFileVersionMS & 0xffff;
+            unsigned long fix       = g_AppleWinVersion[2] = info->dwFileVersionLS >> 16;
+			unsigned long fix_minor = g_AppleWinVersion[3] = info->dwFileVersionLS & 0xffff;
+			StringCbPrintf(VERSIONSTRING, TSIZEOF(VERSIONSTRING), "%d.%d.%d.%d", major, minor, fix, fix_minor);
 		}
 
-		delete [] pVerInfoBlock;
+		free(pVerInfoBlock);
     }
 
 	LogFileOutput("AppleWin version: %s\n",  VERSIONSTRING);
@@ -1620,11 +1597,11 @@ int APIENTRY WinMain(HINSTANCE passinstance, HINSTANCE, LPSTR lpCmdLine, int)
 		// Pre: may need g_hFrameWindow for MessageBox errors
 		// Post: may enable HDD, required for MemInitialize()->MemInitializeIO()
 		{
-			InsertFloppyDisks(szImageName_drive, bBoot);
-			szImageName_drive[DRIVE_1] = szImageName_drive[DRIVE_2] = NULL;	// Don't insert on a restart
+			InsertFloppyDisks(szImageNameDrive, bBoot);
+			szImageNameDrive[DRIVE_1] = szImageNameDrive[DRIVE_2] = NULL;	// Don't insert on a restart
 
-			InsertHardDisks(szImageName_harddisk, bBoot);
-			szImageName_harddisk[HARDDISK_1] = szImageName_harddisk[HARDDISK_2] = NULL;	// Don't insert on a restart
+			InsertHardDisks(szImageNameHardDisk, bBoot);
+			szImageNameHardDisk[HARDDISK_1] = szImageNameHardDisk[HARDDISK_2] = NULL;	// Don't insert on a restart
 
 			if (bSlot7Empty)
 				HD_SetEnabled(false);

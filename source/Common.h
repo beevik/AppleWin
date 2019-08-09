@@ -11,6 +11,8 @@ const double CLK_6502_PAL  = (_14M_PAL  * 65.0) / (65.0*14.0+2.0);
 #define  MAX(a,b)          (((a) > (b)) ? (a) : (b))
 #define  MIN(a,b)          (((a) < (b)) ? (a) : (b))
 
+#define  TSIZEOF(a)		(sizeof(a) / sizeof(TCHAR))
+
 #define  RAMWORKS			// 8MB RamWorks III support
 
 // Use a base freq so that DirectX (or sound h/w) doesn't have to up/down-sample

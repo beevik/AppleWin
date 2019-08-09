@@ -650,8 +650,8 @@ public:
 	virtual UINT GetImageSizeForCreate(void) { return TRACK_DENIBBLIZED_SIZE * TRACKS_STANDARD; }
 
 	virtual eImageType GetType(void) { return eImageDO; }
-	virtual const char* GetCreateExtensions(void) { return ".do;.dsk"; }
-	virtual const char* GetRejectExtensions(void) { return ".nib;.iie;.po;.prg"; }
+	virtual const TCHAR* GetCreateExtensions(void) { return TEXT(".do;.dsk"); }
+	virtual const TCHAR* GetRejectExtensions(void) { return TEXT(".nib;.iie;.po;.prg"); }
 };
 
 //-------------------------------------
@@ -715,8 +715,8 @@ public:
 	}
 
 	virtual eImageType GetType(void) { return eImagePO; }
-	virtual const char* GetCreateExtensions(void) { return ".po"; }
-	virtual const char* GetRejectExtensions(void) { return ".do;.iie;.nib;.prg;.woz"; }
+	virtual const TCHAR* GetCreateExtensions(void) { return TEXT(".po"); }
+	virtual const TCHAR* GetRejectExtensions(void) { return TEXT(".do;.iie;.nib;.prg;.woz"); }
 };
 
 //-------------------------------------
@@ -757,8 +757,8 @@ public:
 	virtual UINT GetImageSizeForCreate(void) { return NIB1_TRACK_SIZE * TRACKS_STANDARD; }
 
 	virtual eImageType GetType(void) { return eImageNIB1; }
-	virtual const char* GetCreateExtensions(void) { return ".nib"; }
-	virtual const char* GetRejectExtensions(void) { return ".do;.iie;.po;.prg;.woz"; }
+	virtual const TCHAR* GetCreateExtensions(void) { return TEXT(".nib"); }
+	virtual const TCHAR* GetRejectExtensions(void) { return TEXT(".do;.iie;.po;.prg;.woz"); }
 };
 
 //-------------------------------------
@@ -796,8 +796,8 @@ public:
 	}
 
 	virtual eImageType GetType(void) { return eImageNIB2; }
-	virtual const char* GetCreateExtensions(void) { return ".nb2"; }
-	virtual const char* GetRejectExtensions(void) { return ".do;.iie;.po;.prg;.woz;.2mg;.2img"; }
+	virtual const TCHAR* GetCreateExtensions(void) { return TEXT(".nb2"); }
+	virtual const TCHAR* GetRejectExtensions(void) { return TEXT(".do;.iie;.po;.prg;.woz;.2mg;.2img"); }
 };
 
 //-------------------------------------
@@ -837,8 +837,8 @@ public:
 	}
 
 	virtual eImageType GetType(void) { return eImageHDV; }
-	virtual const char* GetCreateExtensions(void) { return ".hdv"; }
-	virtual const char* GetRejectExtensions(void) { return ".do;.iie;.prg"; }
+	virtual const TCHAR* GetCreateExtensions(void) { return TEXT(".hdv"); }
+	virtual const TCHAR* GetRejectExtensions(void) { return TEXT(".do;.iie;.prg"); }
 };
 
 //-------------------------------------
@@ -848,11 +848,11 @@ class CIIeImage : public CImageBase
 {
 public:
 	CIIeImage(void) : m_pHeader(NULL) {}
-	virtual ~CIIeImage(void) { delete [] m_pHeader; }
+	virtual ~CIIeImage(void) { free(m_pHeader); }
 
 	virtual eDetectResult Detect(const LPBYTE pImage, const DWORD dwImageSize, const TCHAR* pszExt)
 	{
-		if (strncmp((const char *)pImage, "SIMSYSTEM_IIE", 13) || (*(pImage+13) > 3))
+		if (strncmp((const TCHAR *)pImage, TEXT("SIMSYSTEM_IIE"), 13) || (pImage[13] > 3))
 			return eMismatch;
 
 		m_uNumTracksInImage = TRACKS_STANDARD;	// Assume default # tracks
@@ -866,7 +866,7 @@ public:
 		// IF WE HAVEN'T ALREADY DONE SO, READ THE IMAGE FILE HEADER
 		if (!m_pHeader)
 		{
-			m_pHeader = (LPBYTE) VirtualAlloc(NULL, 88, MEM_COMMIT, PAGE_READWRITE);
+			m_pHeader = (LPBYTE)malloc(88);
 			if (!m_pHeader)
 			{
 				*pNibbles = 0;
@@ -879,7 +879,7 @@ public:
 		}
 
 		// IF THIS IMAGE CONTAINS USER DATA, READ THE TRACK AND NIBBLIZE IT
-		if (*(m_pHeader+13) <= 2)
+		if (m_pHeader[13] <= 2)
 		{
 			ConvertSectorOrder(m_pHeader+14);
 			SetFilePointer(pImageInfo->hFile, track*TRACK_DENIBBLIZED_SIZE+30, NULL, FILE_BEGIN);
@@ -908,8 +908,8 @@ public:
 	}
 
 	virtual eImageType GetType(void) { return eImageIIE; }
-	virtual const char* GetCreateExtensions(void) { return ".iie"; }
-	virtual const char* GetRejectExtensions(void) { return ".do.;.nib;.po;.prg;.woz;.2mg;.2img"; }
+	virtual const TCHAR* GetCreateExtensions(void) { return TEXT(".iie"); }
+	virtual const TCHAR* GetRejectExtensions(void) { return TEXT(".do.;.nib;.po;.prg;.woz;.2mg;.2img"); }
 
 private:
 	void ConvertSectorOrder(LPBYTE sourceorder)
@@ -982,8 +982,8 @@ public:
 	virtual bool AllowRW(void) { return false; }
 
 	virtual eImageType GetType(void) { return eImageAPL; }
-	virtual const char* GetCreateExtensions(void) { return ".apl"; }
-	virtual const char* GetRejectExtensions(void) { return ".do;.dsk;.iie;.nib;.po;.woz;.2mg;.2img"; }
+	virtual const TCHAR* GetCreateExtensions(void) { return TEXT(".apl"); }
+	virtual const TCHAR* GetRejectExtensions(void) { return TEXT(".do;.dsk;.iie;.nib;.po;.woz;.2mg;.2img"); }
 };
 
 //-------------------------------------
@@ -1033,8 +1033,8 @@ public:
 	virtual bool AllowRW(void) { return false; }
 
 	virtual eImageType GetType(void) { return eImagePRG; }
-	virtual const char* GetCreateExtensions(void) { return ".prg"; }
-	virtual const char* GetRejectExtensions(void) { return ".do;.dsk;.iie;.nib;.po;.woz;.2mg;.2img"; }
+	virtual const TCHAR* GetCreateExtensions(void) { return TEXT(".prg"); }
+	virtual const TCHAR* GetRejectExtensions(void) { return TEXT(".do;.dsk;.iie;.nib;.po;.woz;.2mg;.2img"); }
 };
 
 //-------------------------------------
@@ -1121,8 +1121,8 @@ public:
 //	virtual UINT GetImageSizeForCreate(void) { return 0; }//TODO
 
 	virtual eImageType GetType(void) { return eImageWOZ1; }
-	virtual const char* GetCreateExtensions(void) { return ".woz"; }
-	virtual const char* GetRejectExtensions(void) { return ".do;.dsk;.nib;.iie;.po;.prg"; }
+	virtual const TCHAR* GetCreateExtensions(void) { return TEXT(".woz"); }
+	virtual const TCHAR* GetRejectExtensions(void) { return TEXT(".do;.dsk;.nib;.iie;.po;.prg"); }
 };
 
 //-------------------------------------
@@ -1180,8 +1180,8 @@ public:
 	//	virtual UINT GetImageSizeForCreate(void) { return 0; }//TODO
 
 	virtual eImageType GetType(void) { return eImageWOZ2; }
-	virtual const char* GetCreateExtensions(void) { return ".woz"; }
-	virtual const char* GetRejectExtensions(void) { return ".do;.dsk;.nib;.iie;.po;.prg"; }
+	virtual const TCHAR* GetCreateExtensions(void) { return TEXT(".woz"); }
+	virtual const TCHAR* GetRejectExtensions(void) { return TEXT(".do;.dsk;.nib;.iie;.po;.prg"); }
 };
 
 //-----------------------------------------------------------------------------
@@ -1417,8 +1417,8 @@ ImageError_e CImageHelperBase::CheckZipFile(LPCTSTR pszImageFilename, ImageInfo*
 
 	unz_global_info global_info;
 	unz_file_info file_info;
-	char szFilename[MAX_PATH];
-	memset(szFilename, 0, sizeof(szFilename));
+	TCHAR szFilename[MAX_PATH];
+	memset(szFilename, 0, TSIZEOF(szFilename));
 	int nRes = 0, nLen = 0;
 
 	try
@@ -1469,7 +1469,7 @@ ImageError_e CImageHelperBase::CheckZipFile(LPCTSTR pszImageFilename, ImageInfo*
 	if (nRes != UNZ_OK)
 		return eIMAGE_ERROR_ZIP;
 
-	strncpy(pImageInfo->szFilenameInZip, szFilename, MAX_PATH);
+	strncpy(pImageInfo->szFilenameInZip, szFilename, TSIZEOF(szFilename));
 	pImageInfo->szFilenameInZip[MAX_PATH-1] = 0;
 	memcpy(&pImageInfo->zipFileInfo.tmz_date, &file_info.tmu_date, sizeof(file_info.tmu_date));
 	pImageInfo->zipFileInfo.dosDate     = file_info.dosDate;
@@ -1482,7 +1482,7 @@ ImageError_e CImageHelperBase::CheckZipFile(LPCTSTR pszImageFilename, ImageInfo*
 
 	// Determine the file's extension and convert it to lowercase
 	TCHAR szExt[_MAX_EXT] = "";
-	GetCharLowerExt(szExt, szFilename, _MAX_EXT);
+	GetCharLowerExt(szExt, szFilename, TSIZEOF(szExt));
 
 	DWORD dwSize = nLen;
 	DWORD dwOffset = 0;
@@ -1652,10 +1652,11 @@ void CImageHelperBase::SetImageInfo(ImageInfo* pImageInfo, FileType_e eFileGZip,
 
 //-------------------------------------
 
-ImageError_e CImageHelperBase::Open(	LPCTSTR pszImageFilename,
-										ImageInfo* pImageInfo,
-										const bool bCreateIfNecessary,
-										std::string& strFilenameInZip)
+ImageError_e CImageHelperBase::Open(
+	LPCTSTR pszImageFilename,
+	ImageInfo* pImageInfo,
+	const bool bCreateIfNecessary,
+	std::string& strFilenameInZip)
 {
 	pImageInfo->hFile = INVALID_HANDLE_VALUE;
 

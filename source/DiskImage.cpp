@@ -239,10 +239,9 @@ bool ImageIsMultiFileZip(ImageInfo* const pImageInfo)
 	return pImageInfo ? (pImageInfo->uNumEntriesInZip > 1) : false;
 }
 
-const char* ImageGetPathname(ImageInfo* const pImageInfo)
+const TCHAR* ImageGetPathname(ImageInfo* const pImageInfo)
 {
-	static const char* szEmpty = "";
-	return pImageInfo ? pImageInfo->szFilename : szEmpty;
+	return pImageInfo ? pImageInfo->szFilename : "";
 }
 
 UINT ImageGetImageSize(ImageInfo* const pImageInfo)

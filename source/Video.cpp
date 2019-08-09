@@ -439,8 +439,8 @@ void VideoDisplayLogo ()
 	SetTextAlign(hFrameDC,TA_RIGHT | TA_TOP);
 	SetBkMode(hFrameDC,TRANSPARENT);
 
-	TCHAR szVersion[ 64 ];
-	StringCbPrintf(szVersion, 64, "Version %s", VERSIONSTRING);
+	TCHAR szVersion[64];
+	StringCbPrintf(szVersion, TSIZEOF(szVersion), "Version %s", VERSIONSTRING);
 	int xoff = GetFullScreenOffsetX(), yoff = GetFullScreenOffsetY();
 
 #define  DRAWVERSION(x,y,c)                 \
@@ -461,7 +461,7 @@ void VideoDisplayLogo ()
 	}
 
 #if _DEBUG
-	StringCbPrintf(szVersion, 64, "DEBUG");
+	StringCbPrintf(szVersion, TSIZEOF(szVersion), "DEBUG");
 	DRAWVERSION( 2, -358*scale,RGB(0x00,0x00,0x00));
 	DRAWVERSION( 1, -357*scale,RGB(0x00,0x00,0x00));
 	DRAWVERSION( 0, -356*scale,RGB(0xFF,0x00,0xFF));
@@ -931,7 +931,7 @@ void Video_TakeScreenShot( const VideoScreenShot_e ScreenShotType )
 		if (g_nLastScreenShot > nMaxScreenShot) // Holy Crap! User has maxed the number of screenshots!?
 		{
 			TCHAR msg[512];
-			StringCbPrintf( msg, 512, "You have more then %d screenshot filenames!  They will no longer be saved.\n\nEither move some of your screenshots or increase the maximum in video.cpp\n", nMaxScreenShot );
+			StringCbPrintf( msg, TSIZEOF(msg), "You have more then %d screenshot filenames!  They will no longer be saved.\n\nEither move some of your screenshots or increase the maximum in video.cpp\n", nMaxScreenShot );
 			MessageBox( g_hFrameWindow, msg, "Warning", MB_OK );
 			g_nLastScreenShot = 0;
 			return;
