@@ -71,9 +71,7 @@ solution("AppleWin")
 
     configurations {
         "Debug",
-        "DebugNoDX",
         "Release",
-        "ReleaseNoDX",
     }
 
     platforms {
@@ -122,19 +120,9 @@ function set_output_dirs(name)
         targetdir(path.join(targetDir, "Debug"))
         objdir(path.join(targetDir, "Debug/obj", name))
 
-    configuration { "DebugNoDX" }
-        defines { "NO_DIRECT_X" }
-        targetdir(path.join(targetDir, "DebugNoDX"))
-        objdir(path.join(targetDir, "DebugNoDX/obj", name))
-
     configuration { "Release" }
         targetdir(path.join(targetDir, "Release"))
         objdir(path.join(targetDir, "Release/obj", name))
-
-    configuration { "ReleaseNoDX" }
-        defines { "NO_DIRECT_X" }
-        targetdir(path.join(targetDir, "ReleaseNoDX"))
-        objdir(path.join(targetDir, "ReleaseNoDX/obj", name))
 
     configuration {} -- reset
 end
@@ -225,12 +213,8 @@ project("AppleWin")
     prebuildcommands { "echo Performing unit-test: TestCPU6502" }
     configuration { "Debug" }
         prebuildcommands { path.join(targetDir, "Debug", "TestCPU6502") }
-    configuration { "DebugNoDX" }
-        prebuildcommands { path.join(targetDir, "DebugNoDX", "TestCPU6502") }
     configuration { "Release" }
         prebuildcommands { path.join(targetDir, "Release", "TestCPU6502") }
-    configuration { "ReleaseNoDX" }
-        prebuildcommands { path.join(targetDir, "ReleaseNoDX", "TestCPU6502") }
     configuration {} -- reset
 
 
@@ -275,7 +259,6 @@ project("AppleWin")
             path.join(srcDir, "Mockingboard*"),
             path.join(srcDir, "NoSlotClock*"),
             path.join(srcDir, "ParallelPrinter*"),
-            path.join(srcDir, "Phonemes*"),
             path.join(srcDir, "Registry*"),
             path.join(srcDir, "Riff*"),
             path.join(srcDir, "SAM*"),
@@ -283,13 +266,9 @@ project("AppleWin")
             path.join(srcDir, "SerialComms*"),
             path.join(srcDir, "SoundCore*"),
             path.join(srcDir, "Speaker*"),
-            path.join(srcDir, "Speech*"),
             path.join(srcDir, "Tape*"),
             path.join(srcDir, "YamlHelper*"),
             path.join(srcDir, "z80emu*"),
-        },
-        ["Source Files/Model"] = {
-            path.join(srcDir, "Pravets*"),
         },
         ["Source Files/Video"] = {
             path.join(srcDir, "Frame*"),
