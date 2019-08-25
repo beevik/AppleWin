@@ -29,15 +29,15 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 // Commands _______________________________________________________________________________________
 
-    #define DEBUGGER__COMMANDS_VERIFY_TXT__ "\xDE\xAD\xC0\xDE"
+#define DEBUGGER__COMMANDS_VERIFY_TXT__ "\xDE\xAD\xC0\xDE"
 
-    // Setting function to NULL, allows g_aCommands arguments to be safely listed here
-    // Commands should be listed alphabetically per category.
-    // For the list sorted by category, check Commands_e
-    // NOTE: Keep in sync Commands_e and g_aCommands[] ! Aliases are listed at the end.
-    Command_t g_aCommands[] =
-    {
-    // Assembler
+// Setting function to NULL, allows g_aCommands arguments to be safely listed here
+// Commands should be listed alphabetically per category.
+// For the list sorted by category, check Commands_e
+// NOTE: Keep in sync Commands_e and g_aCommands[] ! Aliases are listed at the end.
+Command_t g_aCommands[] =
+{
+// Assembler
 //      {TEXT("!")           , CmdAssemberMini      , CMD_ASSEMBLER_MINI       , "Mini assembler"             },
         {TEXT("A")           , CmdAssemble          , CMD_ASSEMBLE             , "Assemble instructions"      },
     // CPU (Main)
@@ -59,7 +59,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
         {TEXT("PUSH")        , CmdStackPop          , CMD_STACK_PUSH           },
 //      {TEXT("RTS")         , CmdStackReturn       , CMD_STACK_RETURN         },
         {TEXT("P")           , CmdStepOver          , CMD_STEP_OVER            , "Step current instruction"   },
-        {TEXT("RTS")         , CmdStepOut           , CMD_STEP_OUT             , "Step out of subroutine"     }, 
+        {TEXT("RTS")         , CmdStepOut           , CMD_STEP_OUT             , "Step out of subroutine"     },
     // CPU - Meta Info
         {TEXT("T")           , CmdTrace             , CMD_TRACE                , "Trace current instruction"  },
         {TEXT("TF")          , CmdTraceFile         , CMD_TRACE_FILE           , "Save trace to filename [with video scanner info]" },
@@ -106,17 +106,17 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
         {TEXT("PWD")         , CmdConfigGetDebugDir , CMD_CONFIG_GET_DEBUG_DIR , "Displays the current debugger directory. Used for scripts & mem load/save." },
         {TEXT("CD")          , CmdConfigSetDebugDir , CMD_CONFIG_SET_DEBUG_DIR , "Updates the current debugger directory." },
     // Cursor
-        {TEXT("RET")         , CmdCursorJumpRetAddr , CMD_CURSOR_JUMP_RET_ADDR , "Sets the cursor to the sub-routine caller" }, 
-        {TEXT(      "^")     , NULL                 , CMD_CURSOR_LINE_UP       }, // \x2191 = Up Arrow (Unicode)
+        {TEXT("RET")         , CmdCursorJumpRetAddr , CMD_CURSOR_JUMP_RET_ADDR , "Sets the cursor to the sub-routine caller" },
+        {TEXT("^")     , NULL                 , CMD_CURSOR_LINE_UP       }, // \x2191 = Up Arrow (Unicode)
         {TEXT("Shift ^")     , NULL                 , CMD_CURSOR_LINE_UP_1     },
-        {TEXT(      "v")     , NULL                 , CMD_CURSOR_LINE_DOWN     }, // \x2193 = Dn Arrow (Unicode)
+        {TEXT("v")     , NULL                 , CMD_CURSOR_LINE_DOWN     }, // \x2193 = Dn Arrow (Unicode)
         {TEXT("Shift v")     , NULL                 , CMD_CURSOR_LINE_DOWN_1   },
-        {TEXT("PAGEUP"   )   , CmdCursorPageUp      , CMD_CURSOR_PAGE_UP       , "Scroll up one screen"   },
+        {TEXT("PAGEUP")   , CmdCursorPageUp      , CMD_CURSOR_PAGE_UP       , "Scroll up one screen"   },
         {TEXT("PAGEUP256")   , CmdCursorPageUp256   , CMD_CURSOR_PAGE_UP_256   , "Scroll up 256 bytes"    }, // Shift
-        {TEXT("PAGEUP4K" )   , CmdCursorPageUp4K    , CMD_CURSOR_PAGE_UP_4K    , "Scroll up 4096 bytes"   }, // Ctrl
-        {TEXT("PAGEDN"     ) , CmdCursorPageDown    , CMD_CURSOR_PAGE_DOWN     , "Scroll down one scren"  }, 
+        {TEXT("PAGEUP4K")   , CmdCursorPageUp4K    , CMD_CURSOR_PAGE_UP_4K    , "Scroll up 4096 bytes"   }, // Ctrl
+        {TEXT("PAGEDN") , CmdCursorPageDown    , CMD_CURSOR_PAGE_DOWN     , "Scroll down one scren"  },
         {TEXT("PAGEDOWN256") , CmdCursorPageDown256 , CMD_CURSOR_PAGE_DOWN_256 , "Scroll down 256 bytes"  }, // Shift
-        {TEXT("PAGEDOWN4K" ) , CmdCursorPageDown4K  , CMD_CURSOR_PAGE_DOWN_4K  , "Scroll down 4096 bytes" }, // Ctrl
+        {TEXT("PAGEDOWN4K") , CmdCursorPageDown4K  , CMD_CURSOR_PAGE_DOWN_4K  , "Scroll down 4096 bytes" }, // Ctrl
     // Disassembler Data 
         {TEXT("Z")           , CmdDisasmDataDefByte1       , CMD_DISASM_DATA      , "Treat byte [range] as data"                },
         {TEXT("X")           , CmdDisasmDataDefCode        , CMD_DISASM_CODE      , "Treat byte [range] as code"                },
@@ -309,7 +309,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
     // Aliasies - Can be in any order
         {TEXT("->")          , NULL                 , CMD_CURSOR_JUMP_PC       },
-        {TEXT("Ctrl ->" )    , NULL                 , CMD_CURSOR_SET_PC        },
+        {TEXT("Ctrl ->")    , NULL                 , CMD_CURSOR_SET_PC        },
         {TEXT("Shift ->")    , NULL                 , CMD_CURSOR_JUMP_PC       }, // at top
         {TEXT("INPUT")       , CmdIn                , CMD_IN                   },
         // Data
@@ -378,22 +378,22 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 //      {TEXT("MEMORY")      , CmdMemoryMiniDumpHex , CMD_MEM_MINI_DUMP_HEX_1  }, // MemoryDumpByte  // Did anyone actually use this??
 };
 
-    const int NUM_COMMANDS_WITH_ALIASES = sizeof(g_aCommands) / sizeof (Command_t); // Determined at compile-time ;-)
+const int NUM_COMMANDS_WITH_ALIASES = sizeof(g_aCommands) / sizeof(Command_t); // Determined at compile-time ;-)
 
 // Parameters _____________________________________________________________________________________
 
-    #define DEBUGGER__PARAMS_VERIFY_TXT__   "\xDE\xAD\xDA\x1A"
+#define DEBUGGER__PARAMS_VERIFY_TXT__   "\xDE\xAD\xDA\x1A"
 
-    // NOTE: Order MUST match Parameters_e[] !!!
-    Command_t g_aParameters[] =
-    {
+// NOTE: Order MUST match Parameters_e[] !!!
+Command_t g_aParameters[] =
+{
 // Breakpoint
         {TEXT("<=")         , NULL, PARAM_BP_LESS_EQUAL     },
-        {TEXT("<" )         , NULL, PARAM_BP_LESS_THAN      },
-        {TEXT("=" )         , NULL, PARAM_BP_EQUAL          },
+        {TEXT("<")         , NULL, PARAM_BP_LESS_THAN      },
+        {TEXT("=")         , NULL, PARAM_BP_EQUAL          },
         {TEXT("!=")         , NULL, PARAM_BP_NOT_EQUAL      },
-        {TEXT("!" )         , NULL, PARAM_BP_NOT_EQUAL_1    },
-        {TEXT(">" )         , NULL, PARAM_BP_GREATER_THAN   },
+        {TEXT("!")         , NULL, PARAM_BP_NOT_EQUAL_1    },
+        {TEXT(">")         , NULL, PARAM_BP_GREATER_THAN   },
         {TEXT(">=")         , NULL, PARAM_BP_GREATER_EQUAL  },
         {TEXT("R")          , NULL, PARAM_BP_READ           },
         {TEXT("?")          , NULL, PARAM_BP_READ           },
@@ -470,10 +470,10 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 // Source level debugging
         {TEXT("MEM")        , NULL, PARAM_SRC_MEMORY      },
         {TEXT("MEMORY")     , NULL, PARAM_SRC_MEMORY      },
-        {TEXT("SYM")        , NULL, PARAM_SRC_SYMBOLS     },    
-        {TEXT("SYMBOLS")    , NULL, PARAM_SRC_SYMBOLS     },    
-        {TEXT("MERLIN")     , NULL, PARAM_SRC_MERLIN      },    
-        {TEXT("ORCA")       , NULL, PARAM_SRC_ORCA        },    
+        {TEXT("SYM")        , NULL, PARAM_SRC_SYMBOLS     },
+        {TEXT("SYMBOLS")    , NULL, PARAM_SRC_SYMBOLS     },
+        {TEXT("MERLIN")     , NULL, PARAM_SRC_MERLIN      },
+        {TEXT("ORCA")       , NULL, PARAM_SRC_ORCA        },
 // View
 //      {TEXT("VIEW")       , NULL, PARAM_SRC_??? },
 // Window                                                       Win   Cmd   WinEffects      CmdEffects
@@ -496,36 +496,31 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
         {TEXT("SYMBOL2")    , NULL, PARAM_SYMBOL_2       }, //   -     x    code/data win   
 // Internal Consistency Check
         { DEBUGGER__PARAMS_VERIFY_TXT__, NULL, NUM_PARAMS     },
-    };
+};
 
 //===========================================================================
 
-void VerifyDebuggerCommandTable()
-{
-    char sText[ CONSOLE_WIDTH * 2 ];
+void VerifyDebuggerCommandTable() {
+    char sText[CONSOLE_WIDTH * 2];
 
-    for (int iCmd = 0; iCmd < NUM_COMMANDS; iCmd++ )
-    {
-        if ( g_aCommands[ iCmd ].iCommand != iCmd)
-        {
-            sprintf( sText, "*** ERROR *** Enumerated Commands mis-matched at #%d!", iCmd );
-            MessageBoxA( g_hFrameWindow, sText, TEXT("ERROR"), MB_OK );
-            PostQuitMessage( 1 );
+    for (int iCmd = 0; iCmd < NUM_COMMANDS; iCmd++) {
+        if (g_aCommands[iCmd].iCommand != iCmd) {
+            sprintf(sText, "*** ERROR *** Enumerated Commands mis-matched at #%d!", iCmd);
+            MessageBoxA(g_hFrameWindow, sText, TEXT("ERROR"), MB_OK);
+            PostQuitMessage(1);
         }
     }
 
     // _tcscmp
-    if (strcmp( g_aCommands[ NUM_COMMANDS ].m_sName, DEBUGGER__COMMANDS_VERIFY_TXT__))
-    {
-        sprintf( sText, "*** ERROR *** Total Commands mis-matched!" );
-        MessageBoxA( g_hFrameWindow, sText, TEXT("ERROR"), MB_OK );
-        PostQuitMessage( 1 );
+    if (strcmp(g_aCommands[NUM_COMMANDS].m_sName, DEBUGGER__COMMANDS_VERIFY_TXT__)) {
+        sprintf(sText, "*** ERROR *** Total Commands mis-matched!");
+        MessageBoxA(g_hFrameWindow, sText, TEXT("ERROR"), MB_OK);
+        PostQuitMessage(1);
     }
 
-    if (strcmp( g_aParameters[ NUM_PARAMS ].m_sName, DEBUGGER__PARAMS_VERIFY_TXT__))
-    {
-        sprintf( sText, "*** ERROR *** Total Parameters mis-matched!" );
-        MessageBoxA( g_hFrameWindow, sText, TEXT("ERROR"), MB_OK );
-        PostQuitMessage( 2 );
+    if (strcmp(g_aParameters[NUM_PARAMS].m_sName, DEBUGGER__PARAMS_VERIFY_TXT__)) {
+        sprintf(sText, "*** ERROR *** Total Parameters mis-matched!");
+        MessageBoxA(g_hFrameWindow, sText, TEXT("ERROR"), MB_OK);
+        PostQuitMessage(2);
     }
 }

@@ -13,15 +13,15 @@
 
 // __VA_ARGS__ not supported on MSVC++ .NET 7.x
 #if (LOG_DISK_ENABLED)
-    #if !defined(_VC71)
-        #define LOG_DISK(format, ...) LOG(format, __VA_ARGS__)
-    #else
-        #define LOG_DISK     LogOutput
-    #endif
+#if !defined(_VC71)
+#define LOG_DISK(format, ...) LOG(format, __VA_ARGS__)
 #else
-    #if !defined(_VC71)
-        #define LOG_DISK(...)
-    #else
-        #define LOG_DISK(x)
-    #endif
+#define LOG_DISK     LogOutput
+#endif
+#else
+#if !defined(_VC71)
+#define LOG_DISK(...)
+#else
+#define LOG_DISK(x)
+#endif
 #endif

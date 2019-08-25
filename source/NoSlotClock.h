@@ -28,10 +28,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #pragma once
 
-class CNoSlotClock
-{
-    class RingRegister64
-    {
+class CNoSlotClock {
+    class RingRegister64 {
     public:
         RingRegister64();
         RingRegister64(UINT64 data);
@@ -40,7 +38,7 @@ class CNoSlotClock
         void WriteNibble(int data);
         void WriteBits(int data, int count);
         void WriteBit(int data);
-        void ReadBit(int& data);
+        void ReadBit(int & data);
         bool CompareBit(int data);
         bool NextBit();
 
@@ -52,9 +50,9 @@ public:
     CNoSlotClock();
 
     void Reset();
-    bool Read(int address, int& data);
+    bool Read(int address, int & data);
     void Write(int address);
-    bool ClockRead(int& data);
+    bool ClockRead(int & data);
     void ClockWrite(int address);
 
     bool m_bClockRegisterEnabled;

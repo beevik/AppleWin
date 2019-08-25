@@ -21,7 +21,7 @@ along with AppleWin; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-/* Description: This module is created for emulation of the 8bit character mode (mode 1) switch, 
+/* Description: This module is created for emulation of the 8bit character mode (mode 1) switch,
  * which is located in $c060, and so far does not intend to emulate a tape device.
  *
  * Author: Various
@@ -37,10 +37,9 @@ static bool g_CapsLockAllowed = false;
 
 //---------------------------------------------------------------------------
 
-BYTE __stdcall TapeRead(WORD, WORD address, BYTE, BYTE, ULONG nExecutedCycles)
-{
+BYTE __stdcall TapeRead(WORD, WORD address, BYTE, BYTE, ULONG nExecutedCycles) {
     /*
-    If retrieving KeybGetKeycode(); causes problems uCurrentKeystroke shall be added 
+    If retrieving KeybGetKeycode(); causes problems uCurrentKeystroke shall be added
     in the submission variables and it shall be added by the TapeRead caller
     i.e. BYTE __stdcall TapeRead (WORD, WORD address, BYTE, BYTE, ULONG nExecutedCycles) shall become
          BYTE __stdcall TapeRead (WORD, WORD address, BYTE, BYTE, ULONG nExecutedCycles, BYTE uCurrentKeystroke)
@@ -53,12 +52,10 @@ BYTE __stdcall TapeRead(WORD, WORD address, BYTE, BYTE, ULONG nExecutedCycles)
 In case s.o. decides to develop tape device emulation, this function may be renamed,
 because tape is not written in $C060
 */
-BYTE __stdcall TapeWrite(WORD programcounter, WORD address, BYTE write, BYTE value, ULONG nExecutedCycles)
-{
+BYTE __stdcall TapeWrite(WORD programcounter, WORD address, BYTE write, BYTE value, ULONG nExecutedCycles) {
     return MemReadFloatingBus(nExecutedCycles);
 }
 
-bool GetCapsLockAllowed(void)
-{
+bool GetCapsLockAllowed(void) {
     return g_CapsLockAllowed;
 }

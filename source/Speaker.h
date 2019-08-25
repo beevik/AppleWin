@@ -16,12 +16,15 @@ extern double     g_fClksPerSpkrSample;
 extern bool       g_bQuieterSpeaker;
 extern short      g_nSpeakerData;
 
-void    SpkrDestroy ();
-void    SpkrInitialize ();
-void    SpkrReinitialize ();
+class YamlSaveHelper;
+class YamlLoadHelper;
+
+void    SpkrDestroy();
+void    SpkrInitialize();
+void    SpkrReinitialize();
 void    SpkrReset();
-BOOL    SpkrSetEmulationType (HWND window, ESoundType newSoundType);
-void    SpkrUpdate (DWORD);
+BOOL    SpkrSetEmulationType(HWND window, ESoundType newSoundType);
+void    SpkrUpdate(DWORD);
 void    SpkrUpdate_Timer();
 DWORD   SpkrGetVolume();
 void    SpkrSetVolume(DWORD dwVolume, DWORD dwVolumeMax);
@@ -30,7 +33,7 @@ void    Spkr_Demute();
 bool    Spkr_IsActive();
 bool    Spkr_DSInit();
 void    Spkr_DSUninit();
-void    SpkrSaveSnapshot(class YamlSaveHelper& yamlSaveHelper);
-void    SpkrLoadSnapshot(class YamlLoadHelper& yamlLoadHelper);
+void    SpkrSaveSnapshot(YamlSaveHelper & yamlSaveHelper);
+void    SpkrLoadSnapshot(YamlLoadHelper & yamlLoadHelper);
 
-BYTE __stdcall SpkrToggle (WORD pc, WORD addr, BYTE bWrite, BYTE d, ULONG nExecutedCycles);
+BYTE __stdcall SpkrToggle(WORD pc, WORD addr, BYTE bWrite, BYTE d, ULONG nExecutedCycles);

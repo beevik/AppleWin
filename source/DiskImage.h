@@ -31,17 +31,15 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #define TRACKS_EXTRA    5       // Allow up to a 40-track .dsk image (160KB)
 #define TRACKS_MAX      (TRACKS_STANDARD+TRACKS_EXTRA)
 
-enum Disk_Status_e
-{
-    DISK_STATUS_OFF  ,
-    DISK_STATUS_READ ,
+enum Disk_Status_e {
+    DISK_STATUS_OFF,
+    DISK_STATUS_READ,
     DISK_STATUS_WRITE,
-    DISK_STATUS_PROT ,
+    DISK_STATUS_PROT,
     NUM_DISK_STATUS
 };
 
-enum ImageError_e
-{
+enum ImageError_e {
     eIMAGE_ERROR_NONE,
     eIMAGE_ERROR_BAD_POINTER,
     eIMAGE_ERROR_BAD_SIZE,
@@ -61,28 +59,28 @@ enum ImageError_e
 };
 
 const int MAX_DISK_IMAGE_NAME = 15;
-const int MAX_DISK_FULL_NAME  = 127;
+const int MAX_DISK_FULL_NAME = 127;
 
 struct ImageInfo;
 
-ImageError_e ImageOpen(LPCTSTR pszImageFilename, ImageInfo** ppImageInfo, bool* pWriteProtected, const bool bCreateIfNecessary, std::string& strFilenameInZip, const bool bExpectFloppy=true);
-void ImageClose(ImageInfo* const pImageInfo, const bool bOpenError=false);
-BOOL ImageBoot(ImageInfo* const pImageInfo);
+ImageError_e ImageOpen(LPCTSTR pszImageFilename, ImageInfo ** ppImageInfo, bool * pWriteProtected, const bool bCreateIfNecessary, std::string & strFilenameInZip, const bool bExpectFloppy = true);
+void ImageClose(ImageInfo * const pImageInfo, const bool bOpenError = false);
+BOOL ImageBoot(ImageInfo * const pImageInfo);
 void ImageDestroy(void);
 void ImageInitialize(void);
 
-void ImageReadTrack(ImageInfo* const pImageInfo, float phase, LPBYTE pTrackImageBuffer, int* pNibbles, UINT* pBitCount, bool enhanceDisk);
-void ImageWriteTrack(ImageInfo* const pImageInfo, float phase, LPBYTE pTrackImageBuffer, int nNibbles);
-bool ImageReadBlock(ImageInfo* const pImageInfo, UINT nBlock, LPBYTE pBlockBuffer);
-bool ImageWriteBlock(ImageInfo* const pImageInfo, UINT nBlock, LPBYTE pBlockBuffer);
+void ImageReadTrack(ImageInfo * const pImageInfo, float phase, LPBYTE pTrackImageBuffer, int * pNibbles, UINT * pBitCount, bool enhanceDisk);
+void ImageWriteTrack(ImageInfo * const pImageInfo, float phase, LPBYTE pTrackImageBuffer, int nNibbles);
+bool ImageReadBlock(ImageInfo * const pImageInfo, UINT nBlock, LPBYTE pBlockBuffer);
+bool ImageWriteBlock(ImageInfo * const pImageInfo, UINT nBlock, LPBYTE pBlockBuffer);
 
-UINT ImageGetNumTracks(ImageInfo* const pImageInfo);
-bool ImageIsWriteProtected(ImageInfo* const pImageInfo);
-bool ImageIsMultiFileZip(ImageInfo* const pImageInfo);
-const char* ImageGetPathname(ImageInfo* const pImageInfo);
-UINT ImageGetImageSize(ImageInfo* const pImageInfo);
-bool ImageIsWOZ(ImageInfo* const pImageInfo);
-BYTE ImageGetOptimalBitTiming(ImageInfo* const pImageInfo);
-UINT ImagePhaseToTrack(ImageInfo* const pImageInfo, const float phase, const bool limit=true);
+UINT ImageGetNumTracks(ImageInfo * const pImageInfo);
+bool ImageIsWriteProtected(ImageInfo * const pImageInfo);
+bool ImageIsMultiFileZip(ImageInfo * const pImageInfo);
+const char * ImageGetPathname(ImageInfo * const pImageInfo);
+UINT ImageGetImageSize(ImageInfo * const pImageInfo);
+bool ImageIsWOZ(ImageInfo * const pImageInfo);
+BYTE ImageGetOptimalBitTiming(ImageInfo * const pImageInfo);
+UINT ImagePhaseToTrack(ImageInfo * const pImageInfo, const float phase, const bool limit = true);
 
-void GetImageTitle(LPCTSTR pPathname, TCHAR* pImageName, TCHAR* pFullName);
+void GetImageTitle(LPCTSTR pPathname, TCHAR * pImageName, TCHAR * pFullName);

@@ -26,24 +26,24 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 class FormatTrack   // Monitor for formatting of track
 {
 public:
-    FormatTrack(void)
-    {
+    FormatTrack(void) {
         Reset();
     };
 
-    ~FormatTrack(void) {};
+    ~FormatTrack(void) {
+    };
 
     void Reset(void);
     void DriveNotWritingTrack(void);
-    void DriveSwitchedToReadMode(class FloppyDisk* const pFloppy);
+    void DriveSwitchedToReadMode(class FloppyDisk * const pFloppy);
     void DriveSwitchedToWriteMode(UINT uTrackIndex);
     void DecodeLatchNibbleRead(BYTE floppylatch);
-    void DecodeLatchNibbleWrite(BYTE floppylatch, UINT uSpinNibbleCount, const class FloppyDisk* const pFloppy, bool bIsSyncFF);
-    void SaveSnapshot(class YamlSaveHelper& yamlSaveHelper);
-    void LoadSnapshot(class YamlLoadHelper& yamlLoadHelper);
+    void DecodeLatchNibbleWrite(BYTE floppylatch, UINT uSpinNibbleCount, const class FloppyDisk * const pFloppy, bool bIsSyncFF);
+    void SaveSnapshot(class YamlSaveHelper & yamlSaveHelper);
+    void LoadSnapshot(class YamlLoadHelper & yamlLoadHelper);
 
 private:
-    void UpdateOnWriteLatch(UINT uSpinNibbleCount, const class FloppyDisk* const pFloppy);
+    void UpdateOnWriteLatch(UINT uSpinNibbleCount, const class FloppyDisk * const pFloppy);
     void DecodeLatchNibble(BYTE floppylatch, bool bIsWrite, bool bIsSyncFF);
 
     BYTE m_VolTrkSecChk[4];
@@ -54,7 +54,9 @@ private:
     BYTE m_WriteDataFieldPrologueCount;
     bool m_bAddressPrologueIsDOS3_2;
 
-    enum TRACKSTATE_e {TS_GAP1, TS_ADDRFIELD, TS_GAP2_START, TS_GAP2, TS_DATAFIELD, TS_GAP3};   // Take care: value written to save-state
+    enum TRACKSTATE_e {
+        TS_GAP1, TS_ADDRFIELD, TS_GAP2_START, TS_GAP2, TS_DATAFIELD, TS_GAP3
+    };   // Take care: value written to save-state
     TRACKSTATE_e m_trackState;
     UINT32 m_uLast3Bytes;
     BYTE m_VolTrkSecChk4and4[8];

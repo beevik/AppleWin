@@ -79,84 +79,75 @@ Design:
     - Prompt to either do benchmark (and lose new config) or cancel benchmark (and drop back to Configuration dialog).
 */
 
-void CPropertySheetHelper::FillComboBox(HWND window, int controlid, LPCTSTR choices, int currentchoice)
-{
+void PropertySheetHelper::FillComboBox(HWND window, int controlid, LPCTSTR choices, int currentchoice) {
     _ASSERT(choices);
     HWND combowindow = GetDlgItem(window, controlid);
     SendMessage(combowindow, CB_RESETCONTENT, 0, 0);
-    while (choices && *choices)
-    {
+    while (choices && *choices) {
         SendMessage(combowindow, CB_ADDSTRING, 0, (LPARAM)(LPCTSTR)choices);
-        choices += _tcslen(choices)+1;
+        choices += _tcslen(choices) + 1;
     }
 
-    if (SendMessage(combowindow, CB_SETCURSEL, currentchoice, 0) == CB_ERR && currentchoice != -1)
-    {
+    if (SendMessage(combowindow, CB_SETCURSEL, currentchoice, 0) == CB_ERR && currentchoice != -1) {
         _ASSERT(0);
         SendMessage(combowindow, CB_SETCURSEL, 0, 0);   // GH#434: Failed to set currentchoice, so select item-0
     }
 }
 
-void CPropertySheetHelper::SaveComputerType(eApple2Type NewApple2Type)
-{
+void PropertySheetHelper::SaveComputerType(eApple2Type NewApple2Type) {
     ConfigSaveApple2Type(NewApple2Type);
 }
 
-void CPropertySheetHelper::ConfigSaveApple2Type(eApple2Type apple2Type)
-{
+void PropertySheetHelper::ConfigSaveApple2Type(eApple2Type apple2Type) {
     REGSAVE(TEXT(REGVALUE_APPLE2_TYPE), apple2Type);
     LogFileOutput("Config: Apple2 Type changed to %d\n", apple2Type);
 }
 
-void CPropertySheetHelper::SaveCpuType(eCpuType NewCpuType)
-{
+void PropertySheetHelper::SaveCpuType(eCpuType NewCpuType) {
     REGSAVE(TEXT(REGVALUE_CPU_TYPE), NewCpuType);
 }
 
-void CPropertySheetHelper::SetSlot4(SS_CARDTYPE NewCardType)
-{
+void PropertySheetHelper::SetSlot4(SS_CARDTYPE NewCardType) {
     g_Slot4 = NewCardType;
-    REGSAVE(TEXT(REGVALUE_SLOT4),(DWORD)g_Slot4);
+    REGSAVE(TEXT(REGVALUE_SLOT4), (DWORD)g_Slot4);
 }
 
-void CPropertySheetHelper::SetSlot5(SS_CARDTYPE NewCardType)
-{
+void PropertySheetHelper::SetSlot5(SS_CARDTYPE NewCardType) {
     g_Slot5 = NewCardType;
-    REGSAVE(TEXT(REGVALUE_SLOT5),(DWORD)g_Slot5);
+    REGSAVE(TEXT(REGVALUE_SLOT5), (DWORD)g_Slot5);
 }
 
 // Looks like a (bad) C&P from SaveStateSelectImage()
 // - eg. see "RAPCS" tags below...
 // Used by:
 // . CPageAdvanced: IDC_PRINTER_DUMP_FILENAME_BROWSE
-std::string CPropertySheetHelper::BrowseToFile(HWND hWindow, TCHAR* pszTitle, TCHAR* REGVALUE, TCHAR* FILEMASKS)
-{
-    static char PathToFile[MAX_PATH] = {0};
+std::string PropertySheetHelper::BrowseToFile(HWND hWindow, TCHAR * pszTitle, TCHAR * REGVALUE, TCHAR * FILEMASKS) {
+    static char PathToFile[MAX_PATH] = { 0 };
     strcpy(PathToFile, Snapshot_GetFilename()); //RAPCS, line 2.
     TCHAR szDirectory[MAX_PATH] = TEXT("");
     TCHAR szFilename[MAX_PATH];
     strcpy(szFilename, "");
-    RegLoadString(TEXT("Configuration"), REGVALUE, 1, szFilename ,MAX_PATH);
+    RegLoadString(TEXT("Configuration"), REGVALUE, 1, szFilename, MAX_PATH);
     std::string PathName = szFilename;
 
     OPENFILENAME ofn;
-    ZeroMemory(&ofn,sizeof(OPENFILENAME));
-    
-    ofn.lStructSize     = sizeof(OPENFILENAME);
-    ofn.hwndOwner       = hWindow;
-    ofn.hInstance       = g_hInstance;
-    ofn.lpstrFilter     = FILEMASKS;
+    ZeroMemory(&ofn, sizeof(OPENFILENAME));
+
+    ofn.lStructSize = sizeof(OPENFILENAME);
+    ofn.hwndOwner = hWindow;
+    ofn.hInstance = g_hInstance;
+    ofn.lpstrFilter = FILEMASKS;
     /*ofn.lpstrFilter     = TEXT("Applications (*.exe)\0*.exe\0")
                             TEXT("Text files (*.txt)\0*.txt\0")
                             TEXT("All Files\0*.*\0");*/
-    ofn.lpstrFile       = szFilename;
-    ofn.nMaxFile        = MAX_PATH;
+    ofn.lpstrFile = szFilename;
+    ofn.nMaxFile = MAX_PATH;
     ofn.lpstrInitialDir = szDirectory;
-    ofn.Flags           = OFN_PATHMUSTEXIST | OFN_HIDEREADONLY;
-    ofn.lpstrTitle      = pszTitle;
-        
+    ofn.Flags = OFN_PATHMUSTEXIST | OFN_HIDEREADONLY;
+    ofn.lpstrTitle = pszTitle;
+
     int nRes = GetOpenFileName(&ofn);
-    if(nRes)    // Okay is pressed
+    if (nRes)    // Okay is pressed
     {
         strcpy(m_szNewFilename, &szFilename[ofn.nFileOffset]);  // TODO:TC: m_szNewFilename not used! (Was g_szNewFilename)
 
@@ -165,11 +156,11 @@ std::string CPropertySheetHelper::BrowseToFile(HWND hWindow, TCHAR* pszTitle, TC
             strcpy(m_szSSNewDirectory, szFilename);             // TODO:TC: m_szSSNewDirectory looks dodgy! (Was g_szSSNewDirectory)
 
         PathName = szFilename;
-        PathName.append (m_szNewFilename);  
+        PathName.append(m_szNewFilename);
     }
     else        // Cancel is pressed
     {
-        RegLoadString(TEXT("Configuration"), REGVALUE, 1, szFilename,MAX_PATH);
+        RegLoadString(TEXT("Configuration"), REGVALUE, 1, szFilename, MAX_PATH);
         PathName = szFilename;
     }
 
@@ -177,42 +168,35 @@ std::string CPropertySheetHelper::BrowseToFile(HWND hWindow, TCHAR* pszTitle, TC
     return PathName;
 }
 
-void CPropertySheetHelper::SaveStateUpdate()
-{
-    if (m_bSSNewFilename)
-    {
+void PropertySheetHelper::SaveStateUpdate() {
+    if (m_bSSNewFilename) {
         Snapshot_SetFilename(m_szSSNewPathname);
 
         RegSaveString(TEXT(REG_CONFIG), REGVALUE_SAVESTATE_FILENAME, 1, m_szSSNewPathname);
 
-        if(m_szSSNewDirectory[0])
+        if (m_szSSNewDirectory[0])
             RegSaveString(TEXT(REG_PREFS), REGVALUE_PREF_START_DIR, 1, m_szSSNewDirectory);
     }
 }
 
-void CPropertySheetHelper::GetDiskBaseNameWithAWS(TCHAR* pszFilename)
-{
+void PropertySheetHelper::GetDiskBaseNameWithAWS(TCHAR * pszFilename) {
     LPCTSTR pDiskName = sg_Disk2Card.GetBaseName(DRIVE_1);
-    if (pDiskName && pDiskName[0])
-    {
+    if (pDiskName && pDiskName[0]) {
         strcpy(pszFilename, pDiskName);
         strcpy(&pszFilename[strlen(pDiskName)], ".aws.yaml");
     }
 }
 
 // NB. OK'ing this property sheet will call Snapshot_SetFilename() with this new filename
-int CPropertySheetHelper::SaveStateSelectImage(HWND hWindow, TCHAR* pszTitle, bool bSave)
-{
+int PropertySheetHelper::SaveStateSelectImage(HWND hWindow, TCHAR * pszTitle, bool bSave) {
     TCHAR szDirectory[MAX_PATH] = TEXT("");
-    TCHAR szFilename[MAX_PATH] = {0};
+    TCHAR szFilename[MAX_PATH] = { 0 };
 
-    if (bSave)
-    {
+    if (bSave) {
         // Attempt to use drive1's image name as the name for the .aws file
         // Else Attempt to use the Prop Sheet's filename
         GetDiskBaseNameWithAWS(szFilename);
-        if (szFilename[0] == 0)
-        {
+        if (szFilename[0] == 0) {
             strcpy(szFilename, Snapshot_GetFilename());
         }
     }
@@ -221,74 +205,67 @@ int CPropertySheetHelper::SaveStateSelectImage(HWND hWindow, TCHAR* pszTitle, bo
         // Attempt to use the Prop Sheet's filename first
         // Else attempt to use drive1's image name as the name for the .aws file
         strcpy(szFilename, Snapshot_GetFilename());
-        if (szFilename[0] == 0)
-        {
+        if (szFilename[0] == 0) {
             GetDiskBaseNameWithAWS(szFilename);
         }
 
         strcpy(szDirectory, Snapshot_GetPath());
     }
-    
+
     if (szDirectory[0] == 0)
         strcpy(szDirectory, g_sCurrentDir);
 
     //
-    
+
     OPENFILENAME ofn;
-    ZeroMemory(&ofn,sizeof(OPENFILENAME));
-    
-    ofn.lStructSize     = sizeof(OPENFILENAME);
-    ofn.hwndOwner       = hWindow;
-    ofn.hInstance       = g_hInstance;
-    if (bSave)
-    {
+    ZeroMemory(&ofn, sizeof(OPENFILENAME));
+
+    ofn.lStructSize = sizeof(OPENFILENAME);
+    ofn.hwndOwner = hWindow;
+    ofn.hInstance = g_hInstance;
+    if (bSave) {
         ofn.lpstrFilter = TEXT("Save State files (*.aws.yaml)\0*.aws.yaml\0");
-                          TEXT("All Files\0*.*\0");
+        TEXT("All Files\0*.*\0");
     }
-    else
-    {
+    else {
         ofn.lpstrFilter = TEXT("Save State files (*.aws,*.aws.yaml)\0*.aws;*.aws.yaml\0");
-                          TEXT("All Files\0*.*\0");
+        TEXT("All Files\0*.*\0");
     }
-    ofn.lpstrFile       = szFilename;   // Dialog strips the last .EXT from this string (eg. file.aws.yaml is displayed as: file.aws
-    ofn.nMaxFile        = MAX_PATH;
+    ofn.lpstrFile = szFilename;   // Dialog strips the last .EXT from this string (eg. file.aws.yaml is displayed as: file.aws
+    ofn.nMaxFile = MAX_PATH;
     ofn.lpstrInitialDir = szDirectory;
-    ofn.Flags           = OFN_PATHMUSTEXIST | OFN_HIDEREADONLY;
-    ofn.lpstrTitle      = pszTitle;
+    ofn.Flags = OFN_PATHMUSTEXIST | OFN_HIDEREADONLY;
+    ofn.lpstrTitle = pszTitle;
 
     int nRes = bSave ? GetSaveFileName(&ofn) : GetOpenFileName(&ofn);
 
-    if(nRes)
-    {
+    if (nRes) {
         if (bSave)  // Only for saving (allow loading of any file for backwards compatibility)
         {
             // Append .aws.yaml if it's not there
             const char szAWS_EXT1[] = ".aws";
             const char szAWS_EXT2[] = ".yaml";
             const char szAWS_EXT3[] = ".aws.yaml";
-            const UINT uStrLenFile  = (UINT)strlen(&szFilename[ofn.nFileOffset]);
-            const UINT uStrLenExt1  = (UINT)strlen(szAWS_EXT1);
-            const UINT uStrLenExt2  = (UINT)strlen(szAWS_EXT2);
-            const UINT uStrLenExt3  = (UINT)strlen(szAWS_EXT3);
-            if (uStrLenFile <= uStrLenExt1)
-            {
-                strcpy(&szFilename[ofn.nFileOffset+uStrLenFile], szAWS_EXT3);                   // "file" += ".aws.yaml"
+            const UINT uStrLenFile = (UINT)strlen(&szFilename[ofn.nFileOffset]);
+            const UINT uStrLenExt1 = (UINT)strlen(szAWS_EXT1);
+            const UINT uStrLenExt2 = (UINT)strlen(szAWS_EXT2);
+            const UINT uStrLenExt3 = (UINT)strlen(szAWS_EXT3);
+            if (uStrLenFile <= uStrLenExt1) {
+                strcpy(&szFilename[ofn.nFileOffset + uStrLenFile], szAWS_EXT3);                   // "file" += ".aws.yaml"
             }
-            else if (uStrLenFile <= uStrLenExt2)
-            {
-                if (strcmp(&szFilename[ofn.nFileOffset+uStrLenFile-uStrLenExt1], szAWS_EXT1) == 0)
-                    strcpy(&szFilename[ofn.nFileOffset+uStrLenFile-uStrLenExt1], szAWS_EXT3);   // "file.aws" -> "file" + ".aws.yaml"
+            else if (uStrLenFile <= uStrLenExt2) {
+                if (strcmp(&szFilename[ofn.nFileOffset + uStrLenFile - uStrLenExt1], szAWS_EXT1) == 0)
+                    strcpy(&szFilename[ofn.nFileOffset + uStrLenFile - uStrLenExt1], szAWS_EXT3);   // "file.aws" -> "file" + ".aws.yaml"
                 else
-                    strcpy(&szFilename[ofn.nFileOffset+uStrLenFile], szAWS_EXT3);               // "file" += ".aws.yaml"
+                    strcpy(&szFilename[ofn.nFileOffset + uStrLenFile], szAWS_EXT3);               // "file" += ".aws.yaml"
             }
-            else if ((uStrLenFile <= uStrLenExt3) || (strcmp(&szFilename[ofn.nFileOffset+uStrLenFile-uStrLenExt3], szAWS_EXT3) != 0))
-            {
-                if (strcmp(&szFilename[ofn.nFileOffset+uStrLenFile-uStrLenExt1], szAWS_EXT1) == 0)
-                    strcpy(&szFilename[ofn.nFileOffset+uStrLenFile-uStrLenExt1], szAWS_EXT3);   // "file.aws" -> "file" + ".aws.yaml"
-                else if (strcmp(&szFilename[ofn.nFileOffset+uStrLenFile-uStrLenExt2], szAWS_EXT2) == 0)
-                    strcpy(&szFilename[ofn.nFileOffset+uStrLenFile-uStrLenExt2], szAWS_EXT3);   // "file.yaml" -> "file" + ".aws.yaml"
+            else if ((uStrLenFile <= uStrLenExt3) || (strcmp(&szFilename[ofn.nFileOffset + uStrLenFile - uStrLenExt3], szAWS_EXT3) != 0)) {
+                if (strcmp(&szFilename[ofn.nFileOffset + uStrLenFile - uStrLenExt1], szAWS_EXT1) == 0)
+                    strcpy(&szFilename[ofn.nFileOffset + uStrLenFile - uStrLenExt1], szAWS_EXT3);   // "file.aws" -> "file" + ".aws.yaml"
+                else if (strcmp(&szFilename[ofn.nFileOffset + uStrLenFile - uStrLenExt2], szAWS_EXT2) == 0)
+                    strcpy(&szFilename[ofn.nFileOffset + uStrLenFile - uStrLenExt2], szAWS_EXT3);   // "file.yaml" -> "file" + ".aws.yaml"
                 else
-                    strcpy(&szFilename[ofn.nFileOffset+uStrLenFile], szAWS_EXT3);               // "file" += ".aws.yaml"
+                    strcpy(&szFilename[ofn.nFileOffset + uStrLenFile], szAWS_EXT3);               // "file" += ".aws.yaml"
             }
         }
 
@@ -305,23 +282,20 @@ int CPropertySheetHelper::SaveStateSelectImage(HWND hWindow, TCHAR* pszTitle, bo
 }
 
 // On OK: Optionally post a single "uAfterClose" msg after last page closes
-void CPropertySheetHelper::PostMsgAfterClose(HWND hWnd, PAGETYPE page)
-{
-    m_bmPages &= ~(1<<(UINT32)page);
+void PropertySheetHelper::PostMsgAfterClose(HWND hWnd, PAGETYPE page) {
+    m_bmPages &= ~(1 << (UINT32)page);
     if (m_bmPages)
         return;     // Still pages to close
 
     //
 
-    if (m_ConfigNew.m_uSaveLoadStateMsg && IsOkToSaveLoadState(hWnd, IsConfigChanged()))
-    {
+    if (m_ConfigNew.m_uSaveLoadStateMsg && IsOkToSaveLoadState(hWnd, IsConfigChanged())) {
         // Drop any config change, and do load/save state
         PostMessage(g_hFrameWindow, m_ConfigNew.m_uSaveLoadStateMsg, 0, 0);
         return;
     }
-    
-    if (m_bDoBenchmark)
-    {
+
+    if (m_bDoBenchmark) {
         // Drop any config change, and do benchmark
         PostMessage(g_hFrameWindow, WM_USER_BENCHMARK, 0, 0);   // NB. doesn't do WM_USER_RESTART
         return;
@@ -329,22 +303,18 @@ void CPropertySheetHelper::PostMsgAfterClose(HWND hWnd, PAGETYPE page)
 
     UINT uAfterClose = 0;
 
-    if (m_ConfigNew.m_Apple2Type == A2TYPE_CLONE)
-    {
+    if (m_ConfigNew.m_Apple2Type == A2TYPE_CLONE) {
         MessageBox(hWnd, "Error - Unable to change configuration\n\nReason: A specific clone wasn't selected from the Advanced tab", g_pAppTitle, MB_ICONSTOP | MB_SETFOREGROUND);
         return;
     }
 
     _ASSERT(m_ConfigNew.m_CpuType != CPU_UNKNOWN);
-    if (m_ConfigNew.m_CpuType == CPU_UNKNOWN)
-    {
+    if (m_ConfigNew.m_CpuType == CPU_UNKNOWN) {
         m_ConfigNew.m_CpuType = ProbeMainCpuDefault(m_ConfigNew.m_Apple2Type);
     }
 
-    if (IsConfigChanged())
-    {
-        if (!CheckChangesForRestart(hWnd))
-        {
+    if (IsConfigChanged()) {
+        if (!CheckChangesForRestart(hWnd)) {
             // Cancelled
             RestoreCurrentConfig();
             return;
@@ -359,8 +329,7 @@ void CPropertySheetHelper::PostMsgAfterClose(HWND hWnd, PAGETYPE page)
         PostMessage(g_hFrameWindow, uAfterClose, 0, 0);
 }
 
-bool CPropertySheetHelper::CheckChangesForRestart(HWND hWnd)
-{
+bool PropertySheetHelper::CheckChangesForRestart(HWND hWnd) {
     if (!HardwareConfigChanged(hWnd))
         return false;   // Cancelled
 
@@ -374,15 +343,12 @@ bool CPropertySheetHelper::CheckChangesForRestart(HWND hWnd)
     (ConfigOld.var != ConfigNew.var)
 
 // Apply changes to Registry
-void CPropertySheetHelper::ApplyNewConfig(const CConfigNeedingRestart& ConfigNew, const CConfigNeedingRestart& ConfigOld)
-{
-    if (CONFIG_CHANGED_LOCAL(m_Apple2Type))
-    {
+void PropertySheetHelper::ApplyNewConfig(const ConfigNeedingRestart & ConfigNew, const ConfigNeedingRestart & ConfigOld) {
+    if (CONFIG_CHANGED_LOCAL(m_Apple2Type)) {
         SaveComputerType(ConfigNew.m_Apple2Type);
     }
 
-    if (CONFIG_CHANGED_LOCAL(m_CpuType))
-    {
+    if (CONFIG_CHANGED_LOCAL(m_CpuType)) {
         SaveCpuType(ConfigNew.m_CpuType);
     }
 
@@ -392,29 +358,24 @@ void CPropertySheetHelper::ApplyNewConfig(const CConfigNeedingRestart& ConfigNew
     if (CONFIG_CHANGED_LOCAL(m_Slot[5]))
         SetSlot5(ConfigNew.m_Slot[5]);
 
-    if (CONFIG_CHANGED_LOCAL(m_bEnableHDD))
-    {
+    if (CONFIG_CHANGED_LOCAL(m_bEnableHDD)) {
         REGSAVE(TEXT(REGVALUE_HDD_ENABLED), ConfigNew.m_bEnableHDD ? 1 : 0);
     }
 
-    if (CONFIG_CHANGED_LOCAL(m_bEnableTheFreezesF8Rom))
-    {
+    if (CONFIG_CHANGED_LOCAL(m_bEnableTheFreezesF8Rom)) {
         REGSAVE(TEXT(REGVALUE_THE_FREEZES_F8_ROM), ConfigNew.m_bEnableTheFreezesF8Rom);
     }
 
-    if (CONFIG_CHANGED_LOCAL(m_videoRefreshRate))
-    {
+    if (CONFIG_CHANGED_LOCAL(m_videoRefreshRate)) {
         REGSAVE(TEXT(REGVALUE_VIDEO_REFRESH_RATE), ConfigNew.m_videoRefreshRate);
     }
 }
 
-void CPropertySheetHelper::ApplyNewConfig(void)
-{
+void PropertySheetHelper::ApplyNewConfig(void) {
     ApplyNewConfig(m_ConfigNew, m_ConfigOld);
 }
 
-void CPropertySheetHelper::SaveCurrentConfig(void)
-{
+void PropertySheetHelper::SaveCurrentConfig(void) {
     // NB. clone-type is encoded in g_Apple2Type
     m_ConfigOld.m_Apple2Type = GetApple2Type();
     m_ConfigOld.m_CpuType = GetMainCpu();
@@ -432,8 +393,7 @@ void CPropertySheetHelper::SaveCurrentConfig(void)
     m_ConfigNew = m_ConfigOld;
 }
 
-void CPropertySheetHelper::RestoreCurrentConfig(void)
-{
+void PropertySheetHelper::RestoreCurrentConfig(void) {
     // NB. clone-type is encoded in g_Apple2Type
     SetApple2Type(m_ConfigOld.m_Apple2Type);
     SetMainCpu(m_ConfigOld.m_CpuType);
@@ -444,33 +404,30 @@ void CPropertySheetHelper::RestoreCurrentConfig(void)
     SetVideoRefreshRate(m_ConfigOld.m_videoRefreshRate);
 }
 
-bool CPropertySheetHelper::IsOkToSaveLoadState(HWND hWnd, const bool bConfigChanged)
-{
-    if (bConfigChanged)
-    {
+bool PropertySheetHelper::IsOkToSaveLoadState(HWND hWnd, const bool bConfigChanged) {
+    if (bConfigChanged) {
         if (MessageBox(hWnd,
-                TEXT("The hardware configuration has changed. Save/Load state will lose these changes.\n\n")
-                TEXT("Are you sure you want to do this?"),
-                TEXT(REG_CONFIG),
-                MB_ICONQUESTION | MB_OKCANCEL | MB_SETFOREGROUND) == IDCANCEL)
+            TEXT("The hardware configuration has changed. Save/Load state will lose these changes.\n\n")
+            TEXT("Are you sure you want to do this?"),
+            TEXT(REG_CONFIG),
+            MB_ICONQUESTION | MB_OKCANCEL | MB_SETFOREGROUND) == IDCANCEL)
             return false;
     }
 
     return true;
 }
 
-bool CPropertySheetHelper::IsOkToRestart(HWND hWnd)
-{
+bool PropertySheetHelper::IsOkToRestart(HWND hWnd) {
     if (g_nAppMode == MODE_LOGO)
         return true;
 
     if (MessageBox(hWnd,
-            TEXT("Restarting the emulator will reset the state ")
-            TEXT("of the emulated machine, causing you to lose any ")
-            TEXT("unsaved work.\n\n")
-            TEXT("Are you sure you want to do this?"),
-            TEXT(REG_CONFIG),
-            MB_ICONQUESTION | MB_OKCANCEL | MB_SETFOREGROUND) == IDCANCEL)
+        TEXT("Restarting the emulator will reset the state ")
+        TEXT("of the emulated machine, causing you to lose any ")
+        TEXT("unsaved work.\n\n")
+        TEXT("Are you sure you want to do this?"),
+        TEXT(REG_CONFIG),
+        MB_ICONQUESTION | MB_OKCANCEL | MB_SETFOREGROUND) == IDCANCEL)
         return false;
 
     return true;
@@ -479,8 +436,7 @@ bool CPropertySheetHelper::IsOkToRestart(HWND hWnd)
 #define CONFIG_CHANGED(var) \
     (m_ConfigOld.var != m_ConfigNew.var)
 
-bool CPropertySheetHelper::HardwareConfigChanged(HWND hWnd)
-{
+bool PropertySheetHelper::HardwareConfigChanged(HWND hWnd) {
     std::string strMsg("The emulator needs to restart as the hardware configuration has changed:\n");
     strMsg += "\n";
 
@@ -516,16 +472,15 @@ bool CPropertySheetHelper::HardwareConfigChanged(HWND hWnd)
     strMsg += strMsgPost;
 
     if (MessageBox(hWnd,
-            strMsg.c_str(),
-            TEXT(REG_CONFIG),
-            MB_ICONQUESTION | MB_OKCANCEL | MB_SETFOREGROUND) == IDCANCEL)
+        strMsg.c_str(),
+        TEXT(REG_CONFIG),
+        MB_ICONQUESTION | MB_OKCANCEL | MB_SETFOREGROUND) == IDCANCEL)
         return false;
 
     return true;
 }
 
-std::string CPropertySheetHelper::GetSlot(const UINT uSlot)
-{
+std::string PropertySheetHelper::GetSlot(const UINT uSlot) {
     // strMsg = ". Slot n: ";
     std::string strMsg(". Slot ");
     strMsg += '0' + uSlot;
@@ -534,34 +489,28 @@ std::string CPropertySheetHelper::GetSlot(const UINT uSlot)
     const SS_CARDTYPE OldCardType = m_ConfigOld.m_Slot[uSlot];
     const SS_CARDTYPE NewCardType = m_ConfigNew.m_Slot[uSlot];
 
-    if ((OldCardType == CT_Empty) || (NewCardType == CT_Empty))
-    {
-        if (NewCardType == CT_Empty)
-        {
+    if ((OldCardType == CT_Empty) || (NewCardType == CT_Empty)) {
+        if (NewCardType == CT_Empty) {
             strMsg += GetCardName(OldCardType);
             strMsg += " card removed\n";
         }
-        else
-        {
+        else {
             strMsg += GetCardName(NewCardType);
             strMsg += " card added\n";
         }
     }
-    else
-    {
-            strMsg += GetCardName(OldCardType);
-            strMsg += " card removed & ";
-            strMsg += GetCardName(NewCardType);
-            strMsg += " card added\n";
+    else {
+        strMsg += GetCardName(OldCardType);
+        strMsg += " card removed & ";
+        strMsg += GetCardName(NewCardType);
+        strMsg += " card added\n";
     }
 
     return strMsg;
 }
 
-std::string CPropertySheetHelper::GetCardName(const SS_CARDTYPE CardType)
-{
-    switch (CardType)
-    {
+std::string PropertySheetHelper::GetCardName(const SS_CARDTYPE CardType) {
+    switch (CardType) {
     case CT_Empty:
         return "Empty";
     case CT_Disk2:          // Apple Disk][

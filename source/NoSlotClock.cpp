@@ -26,52 +26,47 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  * Author: Nick Westgate
  */
 
-/* Posted to csa2, "No Slot Clock and Day Of Week apps?" by Nick on 21/06/2011:
+ /* Posted to csa2, "No Slot Clock and Day Of Week apps?" by Nick on 21/06/2011:
 
-DOW interpretation is only a convention, but unfortunately it seems Dallas chose a different
-convention from the original NSC vendors. And perhaps the NSC vendors then adopted the new convention.
+ DOW interpretation is only a convention, but unfortunately it seems Dallas chose a different
+ convention from the original NSC vendors. And perhaps the NSC vendors then adopted the new convention.
 
-This conclusion is drawn from the 3 available data points:
-- Original (1986/1987) NSC manual:     1=MON
-- SmartWatch Utility (1987) v1.1:      1=SUN
-- No Slot Clock Utilities (1991) v.14: 1=SUN
+ This conclusion is drawn from the 3 available data points:
+ - Original (1986/1987) NSC manual:     1=MON
+ - SmartWatch Utility (1987) v1.1:      1=SUN
+ - No Slot Clock Utilities (1991) v.14: 1=SUN
 
-All the other drivers and utilities available to me don't define the DOW mapping.
-*/
+ All the other drivers and utilities available to me don't define the DOW mapping.
+ */
 
 #include "StdAfx.h"
 #include "NoSlotClock.h"
 
 CNoSlotClock::CNoSlotClock()
-:
+    :
     m_ClockRegister(),
-    m_ComparisonRegister(kClockInitSequence)
-{
+    m_ComparisonRegister(kClockInitSequence) {
     Reset();
 }
 
-void CNoSlotClock::Reset()
-{
+void CNoSlotClock::Reset() {
     // SmartWatch reset - whether tied to system reset is component specific
     m_ComparisonRegister.Reset();
     m_bClockRegisterEnabled = false;
     m_bWriteEnabled = true;
 }
 
-bool CNoSlotClock::Read(int address, int& data)
-{
+bool CNoSlotClock::Read(int address, int & data) {
     // this may read or write the clock (returns true if data is changed)
     if (address & 0x04)
         return ClockRead(data);
-    else
-    {
+    else {
         ClockWrite(address);
         return false;
     }
 }
 
-void CNoSlotClock::Write(int address)
-{
+void CNoSlotClock::Write(int address) {
     // this may read or write the clock
     int dummy = 0;
     if (address & 0x04)
@@ -80,17 +75,14 @@ void CNoSlotClock::Write(int address)
         ClockWrite(address);
 }
 
-bool CNoSlotClock::ClockRead(int& data)
-{
+bool CNoSlotClock::ClockRead(int & data) {
     // for a ROM, A2 high = read, and data out (if any) is on D0
-    if (!m_bClockRegisterEnabled)
-    {
+    if (!m_bClockRegisterEnabled) {
         m_ComparisonRegister.Reset();
         m_bWriteEnabled = true;
         return false;
     }
-    else
-    {
+    else {
         m_ClockRegister.ReadBit(data);
         if (m_ClockRegister.NextBit())
             m_bClockRegisterEnabled = false;
@@ -98,37 +90,30 @@ bool CNoSlotClock::ClockRead(int& data)
     }
 }
 
-void CNoSlotClock::ClockWrite(int address)
-{
+void CNoSlotClock::ClockWrite(int address) {
     // for a ROM, A2 low = write, and data in is on A0
     if (!m_bWriteEnabled)
         return;
 
-    if (!m_bClockRegisterEnabled)
-    {
-        if ((m_ComparisonRegister.CompareBit(address & 0x1)))
-        {
-            if (m_ComparisonRegister.NextBit())
-            {
+    if (!m_bClockRegisterEnabled) {
+        if ((m_ComparisonRegister.CompareBit(address & 0x1))) {
+            if (m_ComparisonRegister.NextBit()) {
                 m_bClockRegisterEnabled = true;
                 PopulateClockRegister();
             }
         }
-        else
-        {
+        else {
             // mismatch ignores further writes
             m_bWriteEnabled = false;
         }
     }
-    else if (m_ClockRegister.NextBit())
-    {
+    else if (m_ClockRegister.NextBit()) {
         // simulate writes, but our clock register is read-only
         m_bClockRegisterEnabled = false;
     }
 }
 
-void CNoSlotClock::PopulateClockRegister()
-{
+void CNoSlotClock::PopulateClockRegister() {
     // all values are in packed BCD format (4 bits per decimal digit)
     SYSTEMTIME now;
     GetLocalTime(&now);
@@ -166,57 +151,46 @@ void CNoSlotClock::PopulateClockRegister()
     m_ClockRegister.WriteNibble(year / 10);
 }
 
-CNoSlotClock::RingRegister64::RingRegister64()
-{
+CNoSlotClock::RingRegister64::RingRegister64() {
     Reset();
     m_Register = 0;
 }
 
-CNoSlotClock::RingRegister64::RingRegister64(UINT64 data)
-{
+CNoSlotClock::RingRegister64::RingRegister64(UINT64 data) {
     Reset();
     m_Register = data;
 }
 
-void CNoSlotClock::RingRegister64::Reset()
-{
+void CNoSlotClock::RingRegister64::Reset() {
     m_Mask = 1;
 }
 
-void CNoSlotClock::RingRegister64::WriteNibble(int data)
-{
+void CNoSlotClock::RingRegister64::WriteNibble(int data) {
     WriteBits(data, 4);
 }
 
-void CNoSlotClock::RingRegister64::WriteBits(int data, int count)
-{
-    for (int i = 1; i <= count; i++)
-    {
+void CNoSlotClock::RingRegister64::WriteBits(int data, int count) {
+    for (int i = 1; i <= count; i++) {
         WriteBit(data);
         NextBit();
         data >>= 1;
     }
 }
 
-void CNoSlotClock::RingRegister64::WriteBit(int data)
-{
+void CNoSlotClock::RingRegister64::WriteBit(int data) {
     m_Register = (data & 0x1) ? (m_Register | m_Mask) : (m_Register & ~m_Mask);
 }
 
-void CNoSlotClock::RingRegister64::ReadBit(int& data)
-{
+void CNoSlotClock::RingRegister64::ReadBit(int & data) {
     data = (m_Register & m_Mask) ? data | 1 : data & ~1;
 }
 
-bool CNoSlotClock::RingRegister64::CompareBit(int data)
-{
+bool CNoSlotClock::RingRegister64::CompareBit(int data) {
     return ((m_Register & m_Mask) != 0) == ((data & 1) != 0);
 }
 
-bool CNoSlotClock::RingRegister64::NextBit()
-{
-    if ((m_Mask <<= 1) == 0)
-    {
+bool CNoSlotClock::RingRegister64::NextBit() {
+    if ((m_Mask <<= 1) == 0) {
         m_Mask = 1;
         return true; // wrap
     }

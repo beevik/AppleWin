@@ -29,8 +29,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 extern class Disk2InterfaceCard sg_Disk2Card;
 
-enum Drive_e
-{
+enum Drive_e {
     DRIVE_1 = 0,
     DRIVE_2,
     NUM_DRIVES
@@ -41,18 +40,16 @@ const bool IMAGE_FORCE_WRITE_PROTECTED = true;
 const bool IMAGE_DONT_CREATE = false;
 const bool IMAGE_CREATE = true;
 
-class FloppyDisk
-{
+class FloppyDisk {
 public:
-    FloppyDisk()
-    {
+    FloppyDisk() {
         clear();
     }
 
-    ~FloppyDisk(){}
+    ~FloppyDisk() {
+    }
 
-    void clear()
-    {
+    void clear() {
         ZeroMemory(m_imagename, sizeof(m_imagename));
         ZeroMemory(m_fullname, sizeof(m_fullname));
         m_strFilenameInZip.clear();
@@ -71,10 +68,10 @@ public:
     }
 
 public:
-    TCHAR m_imagename[ MAX_DISK_IMAGE_NAME + 1 ];   // <FILENAME> (ie. no extension)
-    TCHAR m_fullname [ MAX_DISK_FULL_NAME  + 1 ];   // <FILENAME.EXT> or <FILENAME.zip>  : This is persisted to the snapshot file
+    TCHAR m_imagename[MAX_DISK_IMAGE_NAME + 1];   // <FILENAME> (ie. no extension)
+    TCHAR m_fullname[MAX_DISK_FULL_NAME + 1];   // <FILENAME.EXT> or <FILENAME.zip>  : This is persisted to the snapshot file
     std::string m_strFilenameInZip;                 // ""             or <FILENAME.EXT>
-    ImageInfo* m_imagehandle;                       // Init'd by InsertDisk() -> ImageOpen()
+    ImageInfo * m_imagehandle;                       // Init'd by InsertDisk() -> ImageOpen()
     bool m_bWriteProtected;
     int m_byte;                 // byte offset
     int m_nibbles;              // # nibbles in track / Init'd by ReadTrack() -> ImageReadTrack()
@@ -87,18 +84,16 @@ public:
     bool m_trackimagedirty;
 };
 
-class FloppyDrive
-{
+class FloppyDrive {
 public:
-    FloppyDrive()
-    {
+    FloppyDrive() {
         clear();
     }
 
-    ~FloppyDrive(){}
+    ~FloppyDrive() {
+    }
 
-    void clear()
-    {
+    void clear() {
         m_phasePrecise = 0;
         m_phase = 0;
         m_lastStepperCycle = 0;
@@ -118,11 +113,11 @@ public:
     FloppyDisk m_disk;
 };
 
-class Disk2InterfaceCard
-{
+class Disk2InterfaceCard {
 public:
     Disk2InterfaceCard(void);
-    virtual ~Disk2InterfaceCard(void){}
+    virtual ~Disk2InterfaceCard(void) {
+    }
 
     void Initialize(LPBYTE pCxRomPeripheral, UINT uSlot);
     void Destroy(void);     // no, doesn't "destroy" the disk image.  DiskIIManagerShutdown()
@@ -133,14 +128,14 @@ public:
     LPCTSTR GetFullDiskFilename(const int drive);
     LPCTSTR GetFullName(const int drive);
     LPCTSTR GetBaseName(const int drive);
-    void GetLightStatus (Disk_Status_e* pDisk1Status, Disk_Status_e* pDisk2Status);
+    void GetLightStatus(Disk_Status_e * pDisk1Status, Disk_Status_e * pDisk2Status);
 
     ImageError_e InsertDisk(const int drive, LPCTSTR pszImageFilename, const bool bForceWriteProtected, const bool bCreateIfNecessary);
     void EjectDisk(const int drive);
 
     bool IsConditionForFullSpeed(void);
     void NotifyInvalidImage(const int drive, LPCTSTR pszImageFilename, const ImageError_e Error);
-    void Reset(const bool bIsPowerCycle=false);
+    void Reset(const bool bIsPowerCycle = false);
     bool GetProtect(const int drive);
     void SetProtect(const int drive, const bool bWriteProtect);
     int GetCurrentDrive(void);
@@ -153,13 +148,13 @@ public:
     std::string GetCurrentTrackString(void);
     std::string GetCurrentPhaseString(void);
     LPCTSTR GetCurrentState(void);
-    bool UserSelectNewDiskImage(const int drive, LPCSTR pszFilename="");
+    bool UserSelectNewDiskImage(const int drive, LPCSTR pszFilename = "");
     void UpdateDriveState(DWORD cycles);
     bool DriveSwap(void);
 
     std::string GetSnapshotCardName(void);
-    void SaveSnapshot(class YamlSaveHelper& yamlSaveHelper);
-    bool LoadSnapshot(class YamlLoadHelper& yamlLoadHelper, UINT slot, UINT version);
+    void SaveSnapshot(class YamlSaveHelper & yamlSaveHelper);
+    bool LoadSnapshot(class YamlLoadHelper & yamlLoadHelper, UINT slot, UINT version);
 
     void LoadLastDiskImage(const int drive);
     void SaveLastDiskImage(const int drive);
@@ -186,19 +181,19 @@ private:
     void ResetLogicStateSequencer(void);
     void UpdateBitStreamPositionAndDiskCycle(const ULONG uExecutedCycles);
     UINT GetBitCellDelta(const BYTE optimalBitTiming);
-    void UpdateBitStreamPosition(FloppyDisk& floppy, const ULONG bitCellDelta);
-    void UpdateBitStreamOffsets(FloppyDisk& floppy);
+    void UpdateBitStreamPosition(FloppyDisk & floppy, const ULONG bitCellDelta);
+    void UpdateBitStreamOffsets(FloppyDisk & floppy);
     void DataLatchReadWOZ(WORD pc, WORD addr, UINT bitCellRemainder);
     void DataLatchWriteWOZ(WORD pc, WORD addr, BYTE d, UINT bitCellRemainder);
     void DumpSectorWOZ(FloppyDisk floppy);
     void DumpTrackWOZ(FloppyDisk floppy);
 
-    void SaveSnapshotFloppy(YamlSaveHelper& yamlSaveHelper, UINT unit);
-    void SaveSnapshotDriveUnit(YamlSaveHelper& yamlSaveHelper, UINT unit);
-    bool LoadSnapshotFloppy(YamlLoadHelper& yamlLoadHelper, UINT unit, UINT version, std::vector<BYTE>& track);
-    bool LoadSnapshotDriveUnitv3(YamlLoadHelper& yamlLoadHelper, UINT unit, UINT version, std::vector<BYTE>& track);
-    bool LoadSnapshotDriveUnitv4(YamlLoadHelper& yamlLoadHelper, UINT unit, UINT version, std::vector<BYTE>& track);
-    void LoadSnapshotDriveUnit(YamlLoadHelper& yamlLoadHelper, UINT unit, UINT version);
+    void SaveSnapshotFloppy(YamlSaveHelper & yamlSaveHelper, UINT unit);
+    void SaveSnapshotDriveUnit(YamlSaveHelper & yamlSaveHelper, UINT unit);
+    bool LoadSnapshotFloppy(YamlLoadHelper & yamlLoadHelper, UINT unit, UINT version, std::vector<BYTE> & track);
+    bool LoadSnapshotDriveUnitv3(YamlLoadHelper & yamlLoadHelper, UINT unit, UINT version, std::vector<BYTE> & track);
+    bool LoadSnapshotDriveUnitv4(YamlLoadHelper & yamlLoadHelper, UINT unit, UINT version, std::vector<BYTE> & track);
+    void LoadSnapshotDriveUnit(YamlLoadHelper & yamlLoadHelper, UINT unit, UINT version);
 
     void __stdcall ControlStepper(WORD, WORD address, BYTE, BYTE, ULONG uExecutedCycles);
     void __stdcall ControlMotor(WORD, WORD address, BYTE, BYTE, ULONG uExecutedCycles);
@@ -210,7 +205,7 @@ private:
     void __stdcall SetWriteMode(WORD, WORD, BYTE, BYTE, ULONG uExecutedCycles);
 
 #if LOG_DISK_NIBBLES_WRITE
-    bool LogWriteCheckSyncFF(ULONG& uCycleDelta);
+    bool LogWriteCheckSyncFF(ULONG & uCycleDelta);
 #endif
 
     //
@@ -233,8 +228,8 @@ private:
     FormatTrack m_formatTrack;
     bool m_enhanceDisk;
 
-    static const UINT SPINNING_CYCLES = 1000*1000;      // 1M cycles = ~1.000s
-    static const UINT WRITELIGHT_CYCLES = 1000*1000;    // 1M cycles = ~1.000s
+    static const UINT SPINNING_CYCLES = 1000 * 1000;      // 1M cycles = ~1.000s
+    static const UINT WRITELIGHT_CYCLES = 1000 * 1000;    // 1M cycles = ~1.000s
 
     // Logic State Sequencer (for WOZ):
     BYTE m_shiftReg;

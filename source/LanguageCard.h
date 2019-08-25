@@ -4,21 +4,33 @@
 // Language Card (base unit) for Apple //e and above
 //
 
-class LanguageCardUnit
-{
+class LanguageCardUnit {
 public:
     LanguageCardUnit(void);
     virtual ~LanguageCardUnit(void);
 
     virtual void InitializeIO(void);
-    virtual void SetMemorySize(UINT banks) {}       // No-op for //e and slot-0 16K LC
-    virtual UINT GetActiveBank(void) { return 0; }  // Always 0 as only 1x 16K bank
-    virtual void SaveSnapshot(class YamlSaveHelper& yamlSaveHelper) { _ASSERT(0); } // Not used for //e
-    virtual bool LoadSnapshot(class YamlLoadHelper& yamlLoadHelper, UINT slot, UINT version) { _ASSERT(0); return false; } // Not used for //e
+    virtual void SetMemorySize(UINT banks) {
+    }       // No-op for //e and slot-0 16K LC
+    virtual UINT GetActiveBank(void) {
+        return 0;
+    }  // Always 0 as only 1x 16K bank
+    virtual void SaveSnapshot(class YamlSaveHelper & yamlSaveHelper) {
+        _ASSERT(0);
+    } // Not used for //e
+    virtual bool LoadSnapshot(class YamlLoadHelper & yamlLoadHelper, UINT slot, UINT version) {
+        _ASSERT(0); return false;
+    } // Not used for //e
 
-    BOOL GetLastRamWrite(void) { return m_uLastRamWrite; }
-    void SetLastRamWrite(BOOL count) { m_uLastRamWrite = count; }
-    SS_CARDTYPE GetMemoryType(void) { return m_type; }
+    BOOL GetLastRamWrite(void) {
+        return m_uLastRamWrite;
+    }
+    void SetLastRamWrite(BOOL count) {
+        m_uLastRamWrite = count;
+    }
+    SS_CARDTYPE GetMemoryType(void) {
+        return m_type;
+    }
 
     static BYTE __stdcall IO(WORD PC, WORD uAddr, BYTE bWrite, BYTE uValue, ULONG nExecutedCycles);
 
@@ -36,21 +48,20 @@ private:
 // Language Card (slot-0) for Apple II or II+
 //
 
-class LanguageCardSlot0 : public LanguageCardUnit
-{
+class LanguageCardSlot0 : public LanguageCardUnit {
 public:
     LanguageCardSlot0(void);
     virtual ~LanguageCardSlot0(void);
 
-    virtual void SaveSnapshot(class YamlSaveHelper& yamlSaveHelper);
-    virtual bool LoadSnapshot(class YamlLoadHelper& yamlLoadHelper, UINT slot, UINT version);
+    virtual void SaveSnapshot(class YamlSaveHelper & yamlSaveHelper);
+    virtual bool LoadSnapshot(class YamlLoadHelper & yamlLoadHelper, UINT slot, UINT version);
 
-    static const UINT kMemBankSize = 16*1024;
+    static const UINT kMemBankSize = 16 * 1024;
     static std::string GetSnapshotCardName(void);
 
 protected:
-    void SaveLCState(class YamlSaveHelper& yamlSaveHelper);
-    void LoadLCState(class YamlLoadHelper& yamlLoadHelper);
+    void SaveLCState(class YamlSaveHelper & yamlSaveHelper);
+    void LoadLCState(class YamlLoadHelper & yamlLoadHelper);
 
     LPBYTE m_pMemory;
 
@@ -62,8 +73,7 @@ private:
 // Saturn 128K
 //
 
-class Saturn128K : public LanguageCardSlot0
-{
+class Saturn128K : public LanguageCardSlot0 {
 public:
     Saturn128K(UINT banks);
     virtual ~Saturn128K(void);
@@ -71,8 +81,8 @@ public:
     virtual void InitializeIO(void);
     virtual void SetMemorySize(UINT banks);
     virtual UINT GetActiveBank(void);
-    virtual void SaveSnapshot(class YamlSaveHelper& yamlSaveHelper);
-    virtual bool LoadSnapshot(class YamlLoadHelper& yamlLoadHelper, UINT slot, UINT version);
+    virtual void SaveSnapshot(class YamlSaveHelper & yamlSaveHelper);
+    virtual bool LoadSnapshot(class YamlLoadHelper & yamlLoadHelper, UINT slot, UINT version);
 
     static BYTE __stdcall IO(WORD PC, WORD uAddr, BYTE bWrite, BYTE uValue, ULONG nExecutedCycles);
 

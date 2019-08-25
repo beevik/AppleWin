@@ -2,18 +2,17 @@
 
 #include "IPropertySheetPage.h"
 #include "PropertySheetDefs.h"
-class CPropertySheetHelper;
+class PropertySheetHelper;
 
-class CPageDisk : private IPropertySheetPage
-{
+class PageDisk : private IPropertySheetPage {
 public:
-    CPageDisk(CPropertySheetHelper& PropertySheetHelper) :
+    PageDisk(PropertySheetHelper & PropertySheetHelper) :
         m_Page(PG_DISK),
-        m_PropertySheetHelper(PropertySheetHelper)
-    {
-        CPageDisk::ms_this = this;
+        m_PropertySheetHelper(PropertySheetHelper) {
+        PageDisk::ms_this = this;
     }
-    virtual ~CPageDisk(){}
+    virtual ~PageDisk() {
+    }
 
     static BOOL CALLBACK DlgProc(HWND hWnd, UINT message, WPARAM wparam, LPARAM lparam);
 
@@ -21,7 +20,8 @@ protected:
     // IPropertySheetPage
     virtual BOOL DlgProcInternal(HWND hWnd, UINT message, WPARAM wparam, LPARAM lparam);
     virtual void DlgOK(HWND hWnd);
-    virtual void DlgCANCEL(HWND hWnd){}
+    virtual void DlgCANCEL(HWND hWnd) {
+    }
 
 private:
     void InitOptions(HWND hWnd);
@@ -33,11 +33,11 @@ private:
     void HandleHDDSwap(HWND hWnd);
     UINT RemovalConfirmation(UINT uCommand);
 
-    static CPageDisk* ms_this;
+    static PageDisk * ms_this;
     static const TCHAR m_discchoices[];
     static const TCHAR m_defaultDiskOptions[];
     static const TCHAR m_defaultHDDOptions[];
 
     const PAGETYPE m_Page;
-    CPropertySheetHelper& m_PropertySheetHelper;
+    PropertySheetHelper & m_PropertySheetHelper;
 };

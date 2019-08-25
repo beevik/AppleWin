@@ -29,22 +29,18 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "PageAdvanced.h"
 #include "PropertySheetHelper.h"
 
-CPageAdvanced* CPageAdvanced::ms_this = 0;  // reinit'd in ctor
+PageAdvanced * PageAdvanced::ms_this = 0;  // reinit'd in ctor
 
-BOOL CALLBACK CPageAdvanced::DlgProc(HWND hWnd, UINT message, WPARAM wparam, LPARAM lparam)
-{
+BOOL CALLBACK PageAdvanced::DlgProc(HWND hWnd, UINT message, WPARAM wparam, LPARAM lparam) {
     // Switch from static func to our instance
-    return CPageAdvanced::ms_this->DlgProcInternal(hWnd, message, wparam, lparam);
+    return PageAdvanced::ms_this->DlgProcInternal(hWnd, message, wparam, lparam);
 }
 
-BOOL CPageAdvanced::DlgProcInternal(HWND hWnd, UINT message, WPARAM wparam, LPARAM lparam)
-{
-    switch (message)
-    {
+BOOL PageAdvanced::DlgProcInternal(HWND hWnd, UINT message, WPARAM wparam, LPARAM lparam) {
+    switch (message) {
     case WM_NOTIFY:
         // Property Sheet notifications
-        switch (((LPPSHNOTIFY)lparam)->hdr.code)
-        {
+        switch (((LPPSHNOTIFY)lparam)->hdr.code) {
         case PSN_SETACTIVE:
             // About to become the active page
             m_PropertySheetHelper.SetLastPage(m_Page);
@@ -67,20 +63,19 @@ BOOL CPageAdvanced::DlgProcInternal(HWND hWnd, UINT message, WPARAM wparam, LPAR
         break;
 
     case WM_COMMAND:
-        switch (LOWORD(wparam))
-        {
+        switch (LOWORD(wparam)) {
         case IDC_SAVESTATE_FILENAME:
             break;
         case IDC_SAVESTATE_BROWSE:
-            if(m_PropertySheetHelper.SaveStateSelectImage(hWnd, TEXT("Select Save State file"), true))
+            if (m_PropertySheetHelper.SaveStateSelectImage(hWnd, TEXT("Select Save State file"), true))
                 SendDlgItemMessage(hWnd, IDC_SAVESTATE_FILENAME, WM_SETTEXT, 0, (LPARAM)m_PropertySheetHelper.GetSSNewFilename());
             break;
         case IDC_PRINTER_DUMP_FILENAME_BROWSE:
-            {               
-                std::string strPrinterDumpLoc = m_PropertySheetHelper.BrowseToFile(hWnd, TEXT("Select printer dump file"), REGVALUE_PRINTER_FILENAME, TEXT("Text files (*.txt)\0*.txt\0") TEXT("All Files\0*.*\0"));
-                SendDlgItemMessage(hWnd, IDC_PRINTER_DUMP_FILENAME, WM_SETTEXT, 0, (LPARAM)strPrinterDumpLoc.c_str());
-            }
-            break;
+        {
+            std::string strPrinterDumpLoc = m_PropertySheetHelper.BrowseToFile(hWnd, TEXT("Select printer dump file"), REGVALUE_PRINTER_FILENAME, TEXT("Text files (*.txt)\0*.txt\0") TEXT("All Files\0*.*\0"));
+            SendDlgItemMessage(hWnd, IDC_PRINTER_DUMP_FILENAME, WM_SETTEXT, 0, (LPARAM)strPrinterDumpLoc.c_str());
+        }
+        break;
         case IDC_SAVESTATE_ON_EXIT:
             break;
         case IDC_SAVESTATE:
@@ -93,54 +88,53 @@ BOOL CPageAdvanced::DlgProcInternal(HWND hWnd, UINT message, WPARAM wparam, LPAR
         //
 
         case IDC_THE_FREEZES_F8_ROM_FW:
-            {
-                const UINT uNewState = IsDlgButtonChecked(hWnd, IDC_THE_FREEZES_F8_ROM_FW) ? 1 : 0;
-                m_PropertySheetHelper.GetConfigNew().m_bEnableTheFreezesF8Rom = uNewState;
-            }
-            break;
+        {
+            const UINT uNewState = IsDlgButtonChecked(hWnd, IDC_THE_FREEZES_F8_ROM_FW) ? 1 : 0;
+            m_PropertySheetHelper.GetConfigNew().m_bEnableTheFreezesF8Rom = uNewState;
+        }
+        break;
         }
         break;
 
     case WM_INITDIALOG:
-        {
-            SendDlgItemMessage(hWnd,IDC_SAVESTATE_FILENAME,WM_SETTEXT,0,(LPARAM)Snapshot_GetFilename());
+    {
+        SendDlgItemMessage(hWnd, IDC_SAVESTATE_FILENAME, WM_SETTEXT, 0, (LPARAM)Snapshot_GetFilename());
 
-            CheckDlgButton(hWnd, IDC_SAVESTATE_ON_EXIT, g_bSaveStateOnExit ? BST_CHECKED : BST_UNCHECKED);
-            CheckDlgButton(hWnd, IDC_DUMPTOPRINTER, g_bDumpToPrinter ? BST_CHECKED : BST_UNCHECKED);
-            CheckDlgButton(hWnd, IDC_PRINTER_CONVERT_ENCODING, g_bConvertEncoding ? BST_CHECKED : BST_UNCHECKED);
-            CheckDlgButton(hWnd, IDC_PRINTER_FILTER_UNPRINTABLE, g_bFilterUnprintable ? BST_CHECKED : BST_UNCHECKED);
-            CheckDlgButton(hWnd, IDC_PRINTER_APPEND, g_bPrinterAppend ? BST_CHECKED : BST_UNCHECKED);
-            SendDlgItemMessage(hWnd, IDC_SPIN_PRINTER_IDLE, UDM_SETRANGE, 0, MAKELONG(999,0));
-            SendDlgItemMessage(hWnd, IDC_SPIN_PRINTER_IDLE, UDM_SETPOS, 0, MAKELONG(Printer_GetIdleLimit (),0));
-            SendDlgItemMessage(hWnd, IDC_PRINTER_DUMP_FILENAME, WM_SETTEXT, 0, (LPARAM)Printer_GetFilename());
+        CheckDlgButton(hWnd, IDC_SAVESTATE_ON_EXIT, g_bSaveStateOnExit ? BST_CHECKED : BST_UNCHECKED);
+        CheckDlgButton(hWnd, IDC_DUMPTOPRINTER, g_bDumpToPrinter ? BST_CHECKED : BST_UNCHECKED);
+        CheckDlgButton(hWnd, IDC_PRINTER_CONVERT_ENCODING, g_bConvertEncoding ? BST_CHECKED : BST_UNCHECKED);
+        CheckDlgButton(hWnd, IDC_PRINTER_FILTER_UNPRINTABLE, g_bFilterUnprintable ? BST_CHECKED : BST_UNCHECKED);
+        CheckDlgButton(hWnd, IDC_PRINTER_APPEND, g_bPrinterAppend ? BST_CHECKED : BST_UNCHECKED);
+        SendDlgItemMessage(hWnd, IDC_SPIN_PRINTER_IDLE, UDM_SETRANGE, 0, MAKELONG(999, 0));
+        SendDlgItemMessage(hWnd, IDC_SPIN_PRINTER_IDLE, UDM_SETPOS, 0, MAKELONG(Printer_GetIdleLimit(), 0));
+        SendDlgItemMessage(hWnd, IDC_PRINTER_DUMP_FILENAME, WM_SETTEXT, 0, (LPARAM)Printer_GetFilename());
 
-            InitOptions(hWnd);
+        InitOptions(hWnd);
 
-            m_PropertySheetHelper.ClearSSNewDirectory();
+        m_PropertySheetHelper.ClearSSNewDirectory();
 
-            // Need to specify cmd-line switch: -printer-real to enable this control
-            EnableWindow(GetDlgItem(hWnd, IDC_DUMPTOPRINTER), g_bEnableDumpToRealPrinter ? TRUE : FALSE);
+        // Need to specify cmd-line switch: -printer-real to enable this control
+        EnableWindow(GetDlgItem(hWnd, IDC_DUMPTOPRINTER), g_bEnableDumpToRealPrinter ? TRUE : FALSE);
 
-            break;
-        }
+        break;
+    }
     }
 
     return FALSE;
 }
 
-void CPageAdvanced::DlgOK(HWND hWnd)
-{
+void PageAdvanced::DlgOK(HWND hWnd) {
     // Update save-state filename
     {
         char szFilename[MAX_PATH];
         memset(szFilename, 0, sizeof(szFilename));
-        * (USHORT*) szFilename = sizeof(szFilename);
+        *(USHORT *)szFilename = sizeof(szFilename);
 
         UINT nLineLength = (UINT)SendDlgItemMessage(hWnd, IDC_SAVESTATE_FILENAME, EM_LINELENGTH, 0, 0);
 
         SendDlgItemMessage(hWnd, IDC_SAVESTATE_FILENAME, EM_GETLINE, 0, (LPARAM)szFilename);
 
-        nLineLength = nLineLength > sizeof(szFilename)-1 ? sizeof(szFilename)-1 : nLineLength;
+        nLineLength = nLineLength > sizeof(szFilename) - 1 ? sizeof(szFilename) - 1 : nLineLength;
         szFilename[nLineLength] = 0x00;
 
         m_PropertySheetHelper.SaveStateUpdate();
@@ -150,13 +144,13 @@ void CPageAdvanced::DlgOK(HWND hWnd)
     {
         char szFilename[MAX_PATH];
         memset(szFilename, 0, sizeof(szFilename));
-        * (USHORT*) szFilename = sizeof(szFilename);
+        *(USHORT *)szFilename = sizeof(szFilename);
 
         UINT nLineLength = (UINT)SendDlgItemMessage(hWnd, IDC_PRINTER_DUMP_FILENAME, EM_LINELENGTH, 0, 0);
 
         SendDlgItemMessage(hWnd, IDC_PRINTER_DUMP_FILENAME, EM_GETLINE, 0, (LPARAM)szFilename);
 
-        nLineLength = nLineLength > sizeof(szFilename)-1 ? sizeof(szFilename)-1 : nLineLength;
+        nLineLength = nLineLength > sizeof(szFilename) - 1 ? sizeof(szFilename) - 1 : nLineLength;
         szFilename[nLineLength] = 0x00;
 
         Printer_SetFilename(szFilename);
@@ -166,13 +160,13 @@ void CPageAdvanced::DlgOK(HWND hWnd)
     g_bSaveStateOnExit = IsDlgButtonChecked(hWnd, IDC_SAVESTATE_ON_EXIT) ? true : false;
     REGSAVE(TEXT(REGVALUE_SAVE_STATE_ON_EXIT), g_bSaveStateOnExit ? 1 : 0);
 
-    g_bDumpToPrinter = IsDlgButtonChecked(hWnd, IDC_DUMPTOPRINTER ) ? true : false;
+    g_bDumpToPrinter = IsDlgButtonChecked(hWnd, IDC_DUMPTOPRINTER) ? true : false;
     REGSAVE(TEXT(REGVALUE_DUMP_TO_PRINTER), g_bDumpToPrinter ? 1 : 0);
 
-    g_bConvertEncoding = IsDlgButtonChecked(hWnd, IDC_PRINTER_CONVERT_ENCODING ) ? true : false;
+    g_bConvertEncoding = IsDlgButtonChecked(hWnd, IDC_PRINTER_CONVERT_ENCODING) ? true : false;
     REGSAVE(TEXT(REGVALUE_CONVERT_ENCODING), g_bConvertEncoding ? 1 : 0);
 
-    g_bFilterUnprintable = IsDlgButtonChecked(hWnd, IDC_PRINTER_FILTER_UNPRINTABLE ) ? true : false;
+    g_bFilterUnprintable = IsDlgButtonChecked(hWnd, IDC_PRINTER_FILTER_UNPRINTABLE) ? true : false;
     REGSAVE(TEXT(REGVALUE_FILTER_UNPRINTABLE), g_bFilterUnprintable ? 1 : 0);
 
     g_bPrinterAppend = IsDlgButtonChecked(hWnd, IDC_PRINTER_APPEND) ? true : false;
@@ -180,20 +174,18 @@ void CPageAdvanced::DlgOK(HWND hWnd)
 
     //
 
-    Printer_SetIdleLimit((short)SendDlgItemMessage(hWnd, IDC_SPIN_PRINTER_IDLE , UDM_GETPOS, 0, 0));
-    REGSAVE(TEXT(REGVALUE_PRINTER_IDLE_LIMIT),Printer_GetIdleLimit());
+    Printer_SetIdleLimit((short)SendDlgItemMessage(hWnd, IDC_SPIN_PRINTER_IDLE, UDM_GETPOS, 0, 0));
+    REGSAVE(TEXT(REGVALUE_PRINTER_IDLE_LIMIT), Printer_GetIdleLimit());
 
     m_PropertySheetHelper.PostMsgAfterClose(hWnd, m_Page);
 }
 
-void CPageAdvanced::InitOptions(HWND hWnd)
-{
+void PageAdvanced::InitOptions(HWND hWnd) {
     InitFreezeDlgButton(hWnd);
 }
 
-void CPageAdvanced::InitFreezeDlgButton(HWND hWnd)
-{
-    const bool bIsApple2Plus = IsApple2Plus( m_PropertySheetHelper.GetConfigNew().m_Apple2Type );
+void PageAdvanced::InitFreezeDlgButton(HWND hWnd) {
+    const bool bIsApple2Plus = IsApple2Plus(m_PropertySheetHelper.GetConfigNew().m_Apple2Type);
     EnableWindow(GetDlgItem(hWnd, IDC_THE_FREEZES_F8_ROM_FW), bIsApple2Plus ? TRUE : FALSE);
 
     const UINT CheckTheFreezesRom = m_PropertySheetHelper.GetConfigNew().m_bEnableTheFreezesF8Rom ? BST_CHECKED : BST_UNCHECKED;

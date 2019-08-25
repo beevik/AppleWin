@@ -6,15 +6,13 @@
 #include "Harddisk.h"    // HD_CardIsEnabled()
 #include "Video.h"       // VideoRefreshRate_e, GetVideoRefreshRate()
 
-class CConfigNeedingRestart
-{
+class ConfigNeedingRestart {
 public:
-    CConfigNeedingRestart(UINT bEnableTheFreezesF8Rom = false) :
-        m_Apple2Type( GetApple2Type() ),
-        m_CpuType( GetMainCpu() ),
+    ConfigNeedingRestart(UINT bEnableTheFreezesF8Rom = false) :
+        m_Apple2Type(GetApple2Type()),
+        m_CpuType(GetMainCpu()),
         m_uSaveLoadStateMsg(0),
-        m_videoRefreshRate( GetVideoRefreshRate() )
-    {
+        m_videoRefreshRate(GetVideoRefreshRate()) {
         m_bEnableHDD = HD_CardIsEnabled();
         m_bEnableTheFreezesF8Rom = bEnableTheFreezesF8Rom;
         memset(&m_Slot, 0, sizeof(m_Slot));
@@ -23,8 +21,7 @@ public:
         m_Slot[5] = g_Slot5;
     }
 
-    const CConfigNeedingRestart& operator= (const CConfigNeedingRestart& other)
-    {
+    const ConfigNeedingRestart & operator= (const ConfigNeedingRestart & other) {
         m_Apple2Type = other.m_Apple2Type;
         m_CpuType = other.m_CpuType;
         memcpy(m_Slot, other.m_Slot, sizeof(m_Slot));
@@ -35,8 +32,7 @@ public:
         return *this;
     }
 
-    bool operator== (const CConfigNeedingRestart& other) const
-    {
+    bool operator== (const ConfigNeedingRestart & other) const {
         return  m_Apple2Type == other.m_Apple2Type &&
             m_CpuType == other.m_CpuType &&
             memcmp(m_Slot, other.m_Slot, sizeof(m_Slot)) == 0 &&
@@ -46,8 +42,7 @@ public:
             m_videoRefreshRate == other.m_videoRefreshRate;
     }
 
-    bool operator!= (const CConfigNeedingRestart& other) const
-    {
+    bool operator!= (const ConfigNeedingRestart & other) const {
         return !operator==(other);
     }
 

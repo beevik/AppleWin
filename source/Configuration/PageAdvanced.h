@@ -2,38 +2,42 @@
 
 #include "IPropertySheetPage.h"
 #include "PropertySheetDefs.h"
-class CPropertySheetHelper;
+class PropertySheetHelper;
 
-class CPageAdvanced : private IPropertySheetPage
-{
+class PageAdvanced : private IPropertySheetPage {
 public:
-    CPageAdvanced(CPropertySheetHelper& PropertySheetHelper) :
+    PageAdvanced(PropertySheetHelper & PropertySheetHelper) :
         m_Page(PG_ADVANCED),
         m_PropertySheetHelper(PropertySheetHelper),
-        m_uTheFreezesF8Rom(0)
-    {
-        CPageAdvanced::ms_this = this;
+        m_uTheFreezesF8Rom(0) {
+        PageAdvanced::ms_this = this;
     }
-    virtual ~CPageAdvanced(){}
+    virtual ~PageAdvanced() {
+    }
 
     static BOOL CALLBACK DlgProc(HWND hWnd, UINT message, WPARAM wparam, LPARAM lparam);
 
-    UINT GetTheFreezesF8Rom(void){ return m_uTheFreezesF8Rom; }
-    void SetTheFreezesF8Rom(UINT uValue){ m_uTheFreezesF8Rom = uValue; }
+    UINT GetTheFreezesF8Rom(void) {
+        return m_uTheFreezesF8Rom;
+    }
+    void SetTheFreezesF8Rom(UINT uValue) {
+        m_uTheFreezesF8Rom = uValue;
+    }
 
 protected:
     // IPropertySheetPage
     virtual BOOL DlgProcInternal(HWND hWnd, UINT message, WPARAM wparam, LPARAM lparam);
     virtual void DlgOK(HWND hWnd);
-    virtual void DlgCANCEL(HWND hWnd){}
+    virtual void DlgCANCEL(HWND hWnd) {
+    }
 
 private:
     void InitOptions(HWND hWnd);
     void InitFreezeDlgButton(HWND hWnd);
 
-    static CPageAdvanced* ms_this;
+    static PageAdvanced * ms_this;
 
     const PAGETYPE m_Page;
-    CPropertySheetHelper& m_PropertySheetHelper;
+    PropertySheetHelper & m_PropertySheetHelper;
     UINT m_uTheFreezesF8Rom;
 };

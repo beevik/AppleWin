@@ -17,21 +17,19 @@
 #define  MF_LANGCARD_MASK   (MF_WRITERAM|MF_HIGHRAM|MF_BANK2)
 
 
-enum
-{
+enum {
     // Note: All are in bytes!
-    APPLE_SLOT_SIZE          = 0x0100, // 1 page  = $Cx00 .. $CxFF (slot 1 .. 7)
-    APPLE_SLOT_BEGIN         = 0xC100, // each slot has 1 page reserved for it
-    APPLE_SLOT_END           = 0xC7FF, //
+    APPLE_SLOT_SIZE = 0x0100, // 1 page  = $Cx00 .. $CxFF (slot 1 .. 7)
+    APPLE_SLOT_BEGIN = 0xC100, // each slot has 1 page reserved for it
+    APPLE_SLOT_END = 0xC7FF, //
 
-    FIRMWARE_EXPANSION_SIZE  = 0x0800, // 8 pages = $C800 .. $CFFF
+    FIRMWARE_EXPANSION_SIZE = 0x0800, // 8 pages = $C800 .. $CFFF
     FIRMWARE_EXPANSION_BEGIN = 0xC800, // [C800,CFFF)
-    FIRMWARE_EXPANSION_END   = 0xCFFF //
+    FIRMWARE_EXPANSION_END = 0xCFFF //
 };
 
-enum MemoryInitPattern_e
-{
-      MIP_ZERO
+enum MemoryInitPattern_e {
+    MIP_ZERO
     , MIP_RANDOM
     , MIP_FF_FF_00_00
     , MIP_FF_00_FULL_PAGE
@@ -42,7 +40,7 @@ enum MemoryInitPattern_e
     , NUM_MIP
 };
 
-typedef BYTE (__stdcall *iofunction)(WORD nPC, WORD nAddr, BYTE nWriteFlag, BYTE nWriteValue, ULONG nExecutedCycles);
+typedef BYTE(__stdcall * iofunction)(WORD nPC, WORD nAddr, BYTE nWriteFlag, BYTE nWriteValue, ULONG nExecutedCycles);
 
 extern iofunction IORead[256];
 extern iofunction IOWrite[256];
@@ -56,9 +54,9 @@ extern UINT       g_uMaxExPages;    // user requested ram pages (from cmd line)
 extern UINT       g_uActiveBank;
 #endif
 
-void    RegisterIoHandler(UINT uSlot, iofunction IOReadC0, iofunction IOWriteC0, iofunction IOReadCx, iofunction IOWriteCx, LPVOID lpSlotParameter, BYTE* pExpansionRom);
+void    RegisterIoHandler(UINT uSlot, iofunction IOReadC0, iofunction IOWriteC0, iofunction IOReadCx, iofunction IOWriteCx, LPVOID lpSlotParameter, BYTE * pExpansionRom);
 
-void    MemDestroy ();
+void    MemDestroy();
 bool    MemCheckSLOTC3ROM();
 bool    MemCheckINTCXROM();
 LPBYTE  MemGetAuxPtr(const WORD);
@@ -69,23 +67,23 @@ DWORD   GetMemMode(void);
 void    SetMemMode(DWORD memmode);
 bool    MemOptimizeForModeChanging(WORD programcounter, WORD address);
 bool    MemIsAddrCodeMemory(const USHORT addr);
-void    MemInitialize ();
+void    MemInitialize();
 void    MemInitializeROM(void);
 void    MemInitializeCustomF8ROM(void);
 void    MemInitializeIO(void);
 void    MemInitializeCardExpansionRomFromSnapshot(void);
 BYTE    MemReadFloatingBus(const ULONG uExecutedCycles);
 BYTE    MemReadFloatingBus(const BYTE highbit, const ULONG uExecutedCycles);
-void    MemReset ();
-void    MemResetPaging ();
+void    MemReset();
+void    MemResetPaging();
 void    MemUpdatePaging(BOOL initialize);
-LPVOID  MemGetSlotParameters (UINT uSlot);
+LPVOID  MemGetSlotParameters(UINT uSlot);
 bool    MemGetAnnunciator(UINT annunciator);
 std::string MemGetSnapshotUnitAuxSlotName(void);
-void    MemSaveSnapshot(class YamlSaveHelper& yamlSaveHelper);
-bool    MemLoadSnapshot(class YamlLoadHelper& yamlLoadHelper, UINT unitVersion);
-void    MemSaveSnapshotAux(class YamlSaveHelper& yamlSaveHelper);
-bool    MemLoadSnapshotAux(class YamlLoadHelper& yamlLoadHelper, UINT unitVersion);
+void    MemSaveSnapshot(class YamlSaveHelper & yamlSaveHelper);
+bool    MemLoadSnapshot(class YamlLoadHelper & yamlLoadHelper, UINT unitVersion);
+void    MemSaveSnapshotAux(class YamlSaveHelper & yamlSaveHelper);
+bool    MemLoadSnapshotAux(class YamlLoadHelper & yamlLoadHelper, UINT unitVersion);
 
 BYTE __stdcall IO_Null(WORD programcounter, WORD address, BYTE write, BYTE value, ULONG nCycles);
 
@@ -99,5 +97,5 @@ void    CreateLanguageCard(void);
 void    SetRamWorksMemorySize(UINT pages);
 UINT    GetRamWorksActiveBank(void);
 void    SetSaturnMemorySize(UINT banks);
-void    SetMemMainLanguageCard(LPBYTE ptr, bool bMemMain=false);
-class LanguageCardUnit* GetLanguageCard(void);
+void    SetMemMainLanguageCard(LPBYTE ptr, bool bMemMain = false);
+class LanguageCardUnit * GetLanguageCard(void);

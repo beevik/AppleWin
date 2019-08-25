@@ -32,18 +32,15 @@ This program is distributed in the hope that it will be useful, but WITHOUT ANY 
 You should have received a copy of the GNU General Public License along with this program; if not, write to the Free Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.";
 
 
-static INT_PTR CALLBACK DlgProcAbout(HWND hWnd, UINT message, WPARAM wparam, LPARAM lparam)
-{
-    switch (message)
-    {
+static INT_PTR CALLBACK DlgProcAbout(HWND hWnd, UINT message, WPARAM wparam, LPARAM lparam) {
+    switch (message) {
     case WM_NOTIFY:
-        {
-        }
-        break;
+    {
+    }
+    break;
 
     case WM_COMMAND:
-        switch (LOWORD(wparam))
-        {
+        switch (LOWORD(wparam)) {
         case IDOK:
             EndDialog(hWnd, 1);
             return TRUE;
@@ -58,23 +55,22 @@ static INT_PTR CALLBACK DlgProcAbout(HWND hWnd, UINT message, WPARAM wparam, LPA
         return TRUE;
 
     case WM_INITDIALOG:
-        {
-            HICON hIcon = LoadIcon(g_hInstance, TEXT("APPLEWIN_ICON"));
-            SendDlgItemMessage(hWnd, IDC_APPLEWIN_ICON, STM_SETIMAGE, IMAGE_ICON, (LPARAM)hIcon);
+    {
+        HICON hIcon = LoadIcon(g_hInstance, TEXT("APPLEWIN_ICON"));
+        SendDlgItemMessage(hWnd, IDC_APPLEWIN_ICON, STM_SETIMAGE, IMAGE_ICON, (LPARAM)hIcon);
 
-            char szAppleWinVersion[50];
-            sprintf(szAppleWinVersion, "AppleWinX v%s", VERSIONSTRING);
-            SendDlgItemMessage(hWnd, IDC_APPLEWIN_VERSION, WM_SETTEXT, 0, (LPARAM)szAppleWinVersion);
+        char szAppleWinVersion[50];
+        sprintf(szAppleWinVersion, "AppleWinX v%s", VERSIONSTRING);
+        SendDlgItemMessage(hWnd, IDC_APPLEWIN_VERSION, WM_SETTEXT, 0, (LPARAM)szAppleWinVersion);
 
-            SendDlgItemMessage(hWnd, IDC_GPL_TEXT, WM_SETTEXT, 0, (LPARAM)g_szGPL);
-        }
-        break;
+        SendDlgItemMessage(hWnd, IDC_GPL_TEXT, WM_SETTEXT, 0, (LPARAM)g_szGPL);
+    }
+    break;
     }
 
     return FALSE;
 }
 
-bool AboutDlg(void)
-{
+bool AboutDlg(void) {
     return DialogBox(g_hInstance, (LPCTSTR)IDD_ABOUT, g_hFrameWindow, DlgProcAbout) ? true : false;
 }

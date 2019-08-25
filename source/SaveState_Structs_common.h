@@ -10,24 +10,19 @@
 
 #define AW_SS_TAG 'SSWA'    // 'AWSS' = AppleWin SnapShot
 
-struct SS_FILE_HDR
-{
+struct SS_FILE_HDR {
     DWORD dwTag;        // "AWSS"
     DWORD dwVersion;
     DWORD dwChecksum;
 };
 
-struct SS_UNIT_HDR
-{
-    union
-    {
-        struct
-        {
+struct SS_UNIT_HDR {
+    union {
+        struct {
             DWORD dwLength;     // Byte length of this unit struct
             DWORD dwVersion;
         } v1;
-        struct
-        {
+        struct {
             DWORD Length;       // Byte length of this unit struct
             WORD Type;          // SS_UNIT_TYPE
             WORD Version;       // Incrementing value from 1
@@ -35,26 +30,23 @@ struct SS_UNIT_HDR
     } hdr;
 };
 
-enum SS_UNIT_TYPE
-{
+enum SS_UNIT_TYPE {
     UT_Reserved = 0,
     UT_Apple2,
     UT_Card,
     UT_Config,
 };
 
-const UINT nMemMainSize = 64*1024;
-const UINT nMemAuxSize = 64*1024;
+const UINT nMemMainSize = 64 * 1024;
+const UINT nMemAuxSize = 64 * 1024;
 
-struct SS_CARD_HDR
-{
+struct SS_CARD_HDR {
     SS_UNIT_HDR UnitHdr;
     DWORD Type;         // SS_CARDTYPE
     DWORD Slot;         // [1..7], 0=Language card, 8=Aux
 };
 
-enum SS_CARDTYPE
-{
+enum SS_CARDTYPE {
     CT_Empty = 0,
     CT_Disk2,           // Apple Disk][
     CT_SSC,             // Apple Super Serial Card
@@ -76,19 +68,15 @@ enum SS_CARDTYPE
 
 /////////////////////////////////////////////////////////////////////////////////
 
-struct SS_CARD_EMPTY
-{
+struct SS_CARD_EMPTY {
     SS_CARD_HDR Hdr;
 };
 
 /////////////////////////////////////////////////////////////////////////////////
 
-struct IWORD
-{
-    union
-    {
-        struct
-        {
+struct IWORD {
+    union {
+        struct {
             BYTE l;
             BYTE h;
         };
@@ -96,8 +84,7 @@ struct IWORD
     };
 };
 
-struct SY6522
-{
+struct SY6522 {
     BYTE ORB;               // $00 - Port B
     BYTE ORA;               // $01 - Port A (with handshaking)
     BYTE DDRB;              // $02 - Data Direction Register B
@@ -124,8 +111,7 @@ struct SY6522
     BYTE ORA_NO_HS;         // $0F - Port A (without handshaking)
 };
 
-struct SSI263A
-{
+struct SSI263A {
     BYTE DurationPhoneme;
     BYTE Inflection;        // I10..I3
     BYTE RateInflection;

@@ -15,42 +15,38 @@
 struct MapValue;
 typedef std::map<std::string, MapValue> MapYaml;
 
-struct MapValue
-{
+struct MapValue {
     std::string value;
-    MapYaml* subMap;
+    MapYaml * subMap;
 };
 
-class YamlHelper
-{
-friend class YamlLoadHelper;    // YamlLoadHelper can access YamlHelper's private members
+class YamlHelper {
+    friend class YamlLoadHelper;    // YamlLoadHelper can access YamlHelper's private members
 
 public:
     YamlHelper(void) :
-        m_hFile(NULL)
-    {
+        m_hFile(NULL) {
         MakeAsciiToHexTable();
     }
 
-    ~YamlHelper(void)
-    {
+    ~YamlHelper(void) {
         if (m_hFile)
             fclose(m_hFile);
     }
 
-    int InitParser(const char* pPathname);
+    int InitParser(const char * pPathname);
     void FinaliseParser(void);
 
-    int GetScalar(std::string& scalar);
+    int GetScalar(std::string & scalar);
     void GetMapStartEvent(void);
 
 private:
     void GetNextEvent(bool bInMap = false);
-    int ParseMap(MapYaml& mapYaml);
-    std::string GetMapValue(MapYaml& mapYaml, const std::string key, bool& bFound);
-    void LoadMemory(MapYaml& mapYaml, const LPBYTE pMemBase, const size_t kAddrSpaceSize);
-    bool GetSubMap(MapYaml** mapYaml, const std::string key);
-    void GetMapRemainder(std::string& mapName, MapYaml& mapYaml);
+    int ParseMap(MapYaml & mapYaml);
+    std::string GetMapValue(MapYaml & mapYaml, const std::string key, bool & bFound);
+    void LoadMemory(MapYaml & mapYaml, const LPBYTE pMemBase, const size_t kAddrSpaceSize);
+    bool GetSubMap(MapYaml ** mapYaml, const std::string key);
+    void GetMapRemainder(std::string & mapName, MapYaml & mapYaml);
 
     void MakeAsciiToHexTable(void);
 
@@ -59,7 +55,7 @@ private:
 
     std::string m_scalarName;
 
-    FILE* m_hFile;
+    FILE * m_hFile;
     char m_AsciiToHex[256];
 
     MapYaml m_mapYaml;
@@ -67,26 +63,22 @@ private:
 
 // -----
 
-class YamlLoadHelper
-{
+class YamlLoadHelper {
 public:
-    YamlLoadHelper(YamlHelper& yamlHelper)
+    YamlLoadHelper(YamlHelper & yamlHelper)
         : m_yamlHelper(yamlHelper),
-          m_pMapYaml(&yamlHelper.m_mapYaml),
-          m_bIteratingOverMap(false),
-          m_bDoGetMapRemainder(true),
-          m_topLevelMapName(yamlHelper.m_scalarName),
-          m_currentMapName(m_topLevelMapName)
-    {
-        if (!m_yamlHelper.ParseMap(yamlHelper.m_mapYaml))
-        {
+        m_pMapYaml(&yamlHelper.m_mapYaml),
+        m_bIteratingOverMap(false),
+        m_bDoGetMapRemainder(true),
+        m_topLevelMapName(yamlHelper.m_scalarName),
+        m_currentMapName(m_topLevelMapName) {
+        if (!m_yamlHelper.ParseMap(yamlHelper.m_mapYaml)) {
             m_bDoGetMapRemainder = false;
             throw std::string(m_currentMapName + ": Failed to parse map");
         }
     }
 
-    ~YamlLoadHelper(void)
-    {
+    ~YamlLoadHelper(void) {
         if (m_bDoGetMapRemainder)
             m_yamlHelper.GetMapRemainder(m_topLevelMapName, m_yamlHelper.m_mapYaml);
     }
@@ -95,15 +87,14 @@ public:
     UINT LoadUint(const std::string key);
     UINT64 LoadUint64(const std::string key);
     bool LoadBool(const std::string key);
-    std::string LoadString_NoThrow(const std::string& key, bool& bFound);
-    std::string LoadString(const std::string& key);
+    std::string LoadString_NoThrow(const std::string & key, bool & bFound);
+    std::string LoadString(const std::string & key);
     float LoadFloat(const std::string key);
     double LoadDouble(const std::string key);
     void LoadMemory(const LPBYTE pMemBase, const size_t size);
 
-    bool GetSubMap(const std::string key)
-    {
-        YamlStackItem item = {m_pMapYaml, m_currentMapName};
+    bool GetSubMap(const std::string key) {
+        YamlStackItem item = { m_pMapYaml, m_currentMapName };
         m_stackMap.push(item);
         bool res = m_yamlHelper.GetSubMap(&m_pMapYaml, key);
         if (!res)
@@ -113,8 +104,7 @@ public:
         return res;
     }
 
-    void PopMap(void)
-    {
+    void PopMap(void) {
         if (m_stackMap.empty())
             return;
 
@@ -125,16 +115,13 @@ public:
         m_currentMapName = item.mapName;
     }
 
-    std::string GetMapNextSlotNumber(void)
-    {
-        if (!m_bIteratingOverMap)
-        {
+    std::string GetMapNextSlotNumber(void) {
+        if (!m_bIteratingOverMap) {
             m_iter = m_pMapYaml->begin();
             m_bIteratingOverMap = true;
         }
 
-        if (m_iter == m_pMapYaml->end())
-        {
+        if (m_iter == m_pMapYaml->end()) {
             m_bIteratingOverMap = false;
             return "";
         }
@@ -145,13 +132,12 @@ public:
     }
 
 private:
-    YamlHelper& m_yamlHelper;
-    MapYaml* m_pMapYaml;
+    YamlHelper & m_yamlHelper;
+    MapYaml * m_pMapYaml;
     bool m_bDoGetMapRemainder;
 
-    struct YamlStackItem
-    {
-        MapYaml* pMapYaml;
+    struct YamlStackItem {
+        MapYaml * pMapYaml;
         std::string mapName;
     };
     std::stack<YamlStackItem> m_stackMap;
@@ -165,19 +151,17 @@ private:
 
 // -----
 
-class YamlSaveHelper
-{
+class YamlSaveHelper {
 public:
     YamlSaveHelper(std::string pathname) :
         m_hFile(NULL),
-        m_indent(0)
-    {
+        m_indent(0) {
         m_hFile = fopen(pathname.c_str(), "wt");
 
         // todo: handle ERROR_ALREADY_EXISTS - ask if user wants to replace existing file
         // - at this point any old file will have been truncated to zero
 
-        if(m_hFile == NULL)
+        if (m_hFile == NULL)
             throw std::string("Save error");
 
         _tzset();
@@ -194,38 +178,34 @@ public:
         memset(m_szIndent, ' ', kMaxIndent);
     }
 
-    ~YamlSaveHelper()
-    {
-        if (m_hFile)
-        {
+    ~YamlSaveHelper() {
+        if (m_hFile) {
             fprintf(m_hFile, "...\n");
             fclose(m_hFile);
         }
     }
 
-    void Save(const char* format, ...);
+    void Save(const char * format, ...);
 
-    void SaveInt(const char* key, int value);
-    void SaveUint(const char* key, UINT value);
-    void SaveHexUint4(const char* key, UINT value);
-    void SaveHexUint8(const char* key, UINT value);
-    void SaveHexUint12(const char* key, UINT value);
-    void SaveHexUint16(const char* key, UINT value);
-    void SaveHexUint24(const char* key, UINT value);
-    void SaveHexUint32(const char* key, UINT value);
-    void SaveHexUint64(const char* key, UINT64 value);
-    void SaveBool(const char* key, bool value);
-    void SaveString(const char* key, const char* value);
-    void SaveFloat(const char* key, float value);
-    void SaveDouble(const char* key, double value);
+    void SaveInt(const char * key, int value);
+    void SaveUint(const char * key, UINT value);
+    void SaveHexUint4(const char * key, UINT value);
+    void SaveHexUint8(const char * key, UINT value);
+    void SaveHexUint12(const char * key, UINT value);
+    void SaveHexUint16(const char * key, UINT value);
+    void SaveHexUint24(const char * key, UINT value);
+    void SaveHexUint32(const char * key, UINT value);
+    void SaveHexUint64(const char * key, UINT64 value);
+    void SaveBool(const char * key, bool value);
+    void SaveString(const char * key, const char * value);
+    void SaveFloat(const char * key, float value);
+    void SaveDouble(const char * key, double value);
     void SaveMemory(const LPBYTE pMemBase, const UINT uMemSize);
 
-    class Label
-    {
+    class Label {
     public:
-        Label(YamlSaveHelper& rYamlSaveHelper, const char* format, ...) :
-            yamlSaveHelper(rYamlSaveHelper)
-        {
+        Label(YamlSaveHelper & rYamlSaveHelper, const char * format, ...) :
+            yamlSaveHelper(rYamlSaveHelper) {
             fwrite(yamlSaveHelper.m_szIndent, 1, yamlSaveHelper.m_indent, yamlSaveHelper.m_hFile);
 
             va_list vl;
@@ -237,35 +217,33 @@ public:
             _ASSERT(yamlSaveHelper.m_indent < yamlSaveHelper.kMaxIndent);
         }
 
-        ~Label(void)
-        {
+        ~Label(void) {
             yamlSaveHelper.m_indent -= 2;
             _ASSERT(yamlSaveHelper.m_indent >= 0);
         }
 
-        YamlSaveHelper& yamlSaveHelper;
+        YamlSaveHelper & yamlSaveHelper;
     };
 
-    class Slot : public Label
-    {
+    class Slot : public Label {
     public:
-        Slot(YamlSaveHelper& rYamlSaveHelper, std::string type, UINT slot, UINT version) :
-            Label(rYamlSaveHelper, "%d:\n", slot)
-        {
+        Slot(YamlSaveHelper & rYamlSaveHelper, std::string type, UINT slot, UINT version) :
+            Label(rYamlSaveHelper, "%d:\n", slot) {
             rYamlSaveHelper.Save("%s: %s\n", SS_YAML_KEY_CARD, type.c_str());
             rYamlSaveHelper.Save("%s: %d\n", SS_YAML_KEY_VERSION, version);
         }
 
-        ~Slot(void) {}
+        ~Slot(void) {
+        }
     };
 
     void FileHdr(UINT version);
     void UnitHdr(std::string type, UINT version);
 
 private:
-    FILE* m_hFile;
+    FILE * m_hFile;
 
     int m_indent;
-    static const UINT kMaxIndent = 50*2;
+    static const UINT kMaxIndent = 50 * 2;
     char m_szIndent[kMaxIndent];
 };

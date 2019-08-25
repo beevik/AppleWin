@@ -2,39 +2,41 @@
 
 #include "IPropertySheetPage.h"
 #include "PropertySheetDefs.h"
-class CPropertySheetHelper;
+class PropertySheetHelper;
 
-class CPageSound : private IPropertySheetPage
-{
+class PageSound : private IPropertySheetPage {
 public:
-    CPageSound(CPropertySheetHelper& PropertySheetHelper) :
+    PageSound(PropertySheetHelper & PropertySheetHelper) :
         m_Page(PG_SOUND),
         m_PropertySheetHelper(PropertySheetHelper),
         m_NewCardType(CT_Empty),
-        m_nCurrentIDCheckButton(0)
-    {
-        CPageSound::ms_this = this;
+        m_nCurrentIDCheckButton(0) {
+        PageSound::ms_this = this;
     }
-    virtual ~CPageSound(){}
+    virtual ~PageSound() {
+    }
 
     static BOOL CALLBACK DlgProc(HWND hWnd, UINT message, WPARAM wparam, LPARAM lparam);
 
-    DWORD GetVolumeMax(void){ return VOLUME_MAX; }
+    DWORD GetVolumeMax(void) {
+        return VOLUME_MAX;
+    }
 
 protected:
     // IPropertySheetPage
     virtual BOOL DlgProcInternal(HWND hWnd, UINT message, WPARAM wparam, LPARAM lparam);
     virtual void DlgOK(HWND hWnd);
-    virtual void DlgCANCEL(HWND hWnd){}
+    virtual void DlgCANCEL(HWND hWnd) {
+    }
 
 private:
     void InitOptions(HWND hWnd);
     bool NewSoundcardConfigured(HWND hWnd, WPARAM wparam, SS_CARDTYPE NewCardType);
 
-    static CPageSound* ms_this;
+    static PageSound * ms_this;
 
     const PAGETYPE m_Page;
-    CPropertySheetHelper& m_PropertySheetHelper;
+    PropertySheetHelper & m_PropertySheetHelper;
 
     static const UINT VOLUME_MIN = 0;
     static const UINT VOLUME_MAX = 59;

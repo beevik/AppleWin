@@ -35,10 +35,10 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 static DWORD inactivity = 0;
 static unsigned int g_PrinterIdleLimit = 10;
-static FILE* file = NULL;
+static FILE * file = NULL;
 DWORD const PRINTDRVR_SIZE = APPLE_SLOT_SIZE;
 #define DEFAULT_PRINT_FILENAME "Printer.txt"
-static char g_szPrintFilename[MAX_PATH] = {0};
+static char g_szPrintFilename[MAX_PATH] = { 0 };
 bool g_bDumpToPrinter = false;
 bool g_bConvertEncoding = true;
 bool g_bFilterUnprintable = true;
@@ -55,25 +55,24 @@ static BYTE __stdcall PrintTransmit(WORD, WORD, BYTE, BYTE value, ULONG);
 
 
 
-VOID PrintLoadRom(LPBYTE pCxRomPeripheral, const UINT uSlot)
-{
+VOID PrintLoadRom(LPBYTE pCxRomPeripheral, const UINT uSlot) {
     HRSRC hResInfo = FindResource(NULL, MAKEINTRESOURCE(IDR_PRINTDRVR_FW), "FIRMWARE");
-    if(hResInfo == NULL)
+    if (hResInfo == NULL)
         return;
 
     DWORD dwResSize = SizeofResource(NULL, hResInfo);
-    if(dwResSize != PRINTDRVR_SIZE)
+    if (dwResSize != PRINTDRVR_SIZE)
         return;
 
     HGLOBAL hResData = LoadResource(NULL, hResInfo);
-    if(hResData == NULL)
+    if (hResData == NULL)
         return;
 
-    BYTE* pData = (BYTE*) LockResource(hResData);   // NB. Don't need to unlock resource
-    if(pData == NULL)
+    BYTE * pData = (BYTE *)LockResource(hResData);   // NB. Don't need to unlock resource
+    if (pData == NULL)
         return;
 
-    memcpy(pCxRomPeripheral + uSlot*256, pData, PRINTDRVR_SIZE);
+    memcpy(pCxRomPeripheral + uSlot * 256, pData, PRINTDRVR_SIZE);
 
     //
 
@@ -83,16 +82,14 @@ VOID PrintLoadRom(LPBYTE pCxRomPeripheral, const UINT uSlot)
 }
 
 //===========================================================================
-static BOOL CheckPrint()
-{
+static BOOL CheckPrint() {
     inactivity = 0;
-    if (file == NULL)
-    {
+    if (file == NULL) {
         //TCHAR filepath[MAX_PATH * 2];
         //_tcsncpy(filepath, g_sProgramDir, MAX_PATH);
         //_tcsncat(filepath, _T("Printer.txt"), MAX_PATH);
         //file = fopen(filepath, "wb");
-        if (g_bPrinterAppend )
+        if (g_bPrinterAppend)
             file = fopen(Printer_GetFilename(), "ab");
         else
             file = fopen(Printer_GetFilename(), "wb");
@@ -101,90 +98,77 @@ static BOOL CheckPrint()
 }
 
 //===========================================================================
-static void ClosePrint()
-{
-    if (file != NULL)
-    {
+static void ClosePrint() {
+    if (file != NULL) {
         fclose(file);
         file = NULL;
         std::string ExtendedFileName = "copy \"";
-        ExtendedFileName.append (Printer_GetFilename());
-        ExtendedFileName.append ("\" prn");
+        ExtendedFileName.append(Printer_GetFilename());
+        ExtendedFileName.append("\" prn");
         //if (g_bDumpToPrinter) ShellExecute(NULL, "print", Printer_GetFilename(), NULL, NULL, 0); //Print through Notepad
-        if (g_bDumpToPrinter) 
-            system (ExtendedFileName.c_str ()); //Print through console. This is supposed to be the better way, because it shall print images (with older printers only).
-            
+        if (g_bDumpToPrinter)
+            system(ExtendedFileName.c_str()); //Print through console. This is supposed to be the better way, because it shall print images (with older printers only).
+
     }
     inactivity = 0;
 }
 
 //===========================================================================
-void PrintDestroy()
-{
+void PrintDestroy() {
     ClosePrint();
 }
 
 //===========================================================================
-void PrintUpdate(DWORD totalcycles)
-{
-    if (file == NULL)
-    {
+void PrintUpdate(DWORD totalcycles) {
+    if (file == NULL) {
         return;
     }
-//    if ((inactivity += totalcycles) > (Printer_GetIdleLimit () * 1000 * 1000))  //This line seems to give a very big deviation
-    if ((inactivity += totalcycles) > (Printer_GetIdleLimit () * 710000)) 
-    {
+    //    if ((inactivity += totalcycles) > (Printer_GetIdleLimit () * 1000 * 1000))  //This line seems to give a very big deviation
+    if ((inactivity += totalcycles) > (Printer_GetIdleLimit() * 710000)) {
         // inactive, so close the file (next print will overwrite or append to it, according to the settings made)
         ClosePrint();
     }
 }
 
 //===========================================================================
-void PrintReset()
-{
+void PrintReset() {
     ClosePrint();
 }
 
 //===========================================================================
-static BYTE __stdcall PrintStatus(WORD, WORD, BYTE, BYTE, ULONG)
-{
+static BYTE __stdcall PrintStatus(WORD, WORD, BYTE, BYTE, ULONG) {
     CheckPrint();
     return 0xFF; // status - TODO?
 }
 
 //===========================================================================
-static BYTE __stdcall PrintTransmit(WORD, WORD, BYTE, BYTE value, ULONG)
-{
-             char Lat8A[]= "abwgdevzijklmnoprstufhc~{}yx`q|]";
-             char Lat82[]= "abwgdevzijklmnoprstufhc^[]yx@q{}~`"; 
-             char Kir82[]= "ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖ×ØÙÚÜÞß[]^@";
-      char Kir8ACapital[]= "ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖ×ØÙÚÜÞßÝ";
-    char Kir8ALowerCase[]= "àáâãäåæçèéêëìíîïðñòóôõö÷øùúüþÿý";
+static BYTE __stdcall PrintTransmit(WORD, WORD, BYTE, BYTE value, ULONG) {
+    char Lat8A[] = "abwgdevzijklmnoprstufhc~{}yx`q|]";
+    char Lat82[] = "abwgdevzijklmnoprstufhc^[]yx@q{}~`";
+    char Kir82[] = "ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖ×ØÙÚÜÞß[]^@";
+    char Kir8ACapital[] = "ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖ×ØÙÚÜÞßÝ";
+    char Kir8ALowerCase[] = "àáâãäåæçèéêëìíîïðñòóôõö÷øùúüþÿý";
     bool Pres = false;
-    if (!CheckPrint())
-    {
+    if (!CheckPrint()) {
         return 0;
     }
-    
+
     char c = value & 0x7F;
-    if ((g_bFilterUnprintable == false) || (c>31) || (c==13) || (c==10) || (c<0)) //c<0 is needed for cyrillic characters
+    if ((g_bFilterUnprintable == false) || (c > 31) || (c == 13) || (c == 10) || (c < 0)) //c<0 is needed for cyrillic characters
         fwrite(&c, 1, 1, file); //break;
-               
+
     return 0;
 }
 
 //===========================================================================
 
-char* Printer_GetFilename()
-{
+char * Printer_GetFilename() {
     return g_szPrintFilename;
 }
 
-void Printer_SetFilename(char* prtFilename)
-{
-    if (*prtFilename)
-    {
-        strcpy(g_szPrintFilename, (const char *) prtFilename);
+void Printer_SetFilename(char * prtFilename) {
+    if (*prtFilename) {
+        strcpy(g_szPrintFilename, (const char *)prtFilename);
     }
     else  //No registry entry is available
     {
@@ -193,25 +177,22 @@ void Printer_SetFilename(char* prtFilename)
 
         // NB. _tcsncat_s() terminates program if buffer is too small! So continue to use manual buffer check & _tcsncat()
 
-        int nLen = (int)(sizeof(g_szPrintFilename) - strlen(g_szPrintFilename) - (sizeof(DEFAULT_PRINT_FILENAME)-1) - 1);
-        if (nLen < 0)
-        {
+        int nLen = (int)(sizeof(g_szPrintFilename) - strlen(g_szPrintFilename) - (sizeof(DEFAULT_PRINT_FILENAME) - 1) - 1);
+        if (nLen < 0) {
             MessageBox(g_hFrameWindow, "Printer - SetFilename(): folder too deep", "Warning", MB_ICONWARNING | MB_OK);
             return;
         }
 
-        _tcsncat(g_szPrintFilename, DEFAULT_PRINT_FILENAME, sizeof(DEFAULT_PRINT_FILENAME)-1);
+        _tcsncat(g_szPrintFilename, DEFAULT_PRINT_FILENAME, sizeof(DEFAULT_PRINT_FILENAME) - 1);
         RegSaveString(REG_CONFIG, REGVALUE_PRINTER_FILENAME, 1, g_szPrintFilename);
     }
 }
 
-unsigned int Printer_GetIdleLimit()
-{
+unsigned int Printer_GetIdleLimit() {
     return g_PrinterIdleLimit;
 }
 
-void Printer_SetIdleLimit(unsigned int Duration)
-{   
+void Printer_SetIdleLimit(unsigned int Duration) {
     g_PrinterIdleLimit = Duration;
 }
 
@@ -229,14 +210,12 @@ void Printer_SetIdleLimit(unsigned int Duration)
 #define SS_YAML_KEY_APPEND "Printer Append"
 #define SS_YAML_KEY_DUMPTOREALPRINTER "Enable Dump To Real Printer"
 
-std::string Printer_GetSnapshotCardName(void)
-{
+std::string Printer_GetSnapshotCardName(void) {
     static const std::string name(SS_YAML_VALUE_CARD_PRINTER);
     return name;
 }
 
-void Printer_SaveSnapshot(class YamlSaveHelper& yamlSaveHelper)
-{
+void Printer_SaveSnapshot(class YamlSaveHelper & yamlSaveHelper) {
     YamlSaveHelper::Slot slot(yamlSaveHelper, Printer_GetSnapshotCardName(), g_uSlot, 1);
 
     YamlSaveHelper::Label state(yamlSaveHelper, "%s:\n", SS_YAML_KEY_STATE);
@@ -251,36 +230,33 @@ void Printer_SaveSnapshot(class YamlSaveHelper& yamlSaveHelper)
     yamlSaveHelper.SaveBool(SS_YAML_KEY_DUMPTOREALPRINTER, g_bEnableDumpToRealPrinter);
 }
 
-bool Printer_LoadSnapshot(class YamlLoadHelper& yamlLoadHelper, UINT slot, UINT version)
-{
+bool Printer_LoadSnapshot(class YamlLoadHelper & yamlLoadHelper, UINT slot, UINT version) {
     if (slot != 1)  // fixme
         throw std::string("Card: wrong slot");
 
     if (version != 1)
         throw std::string("Card: wrong version");
 
-    inactivity                  = yamlLoadHelper.LoadUint(SS_YAML_KEY_INACTIVITY);
-    g_PrinterIdleLimit          = yamlLoadHelper.LoadUint(SS_YAML_KEY_IDLELIMIT);
+    inactivity = yamlLoadHelper.LoadUint(SS_YAML_KEY_INACTIVITY);
+    g_PrinterIdleLimit = yamlLoadHelper.LoadUint(SS_YAML_KEY_IDLELIMIT);
     strncpy(g_szPrintFilename, yamlLoadHelper.LoadString(SS_YAML_KEY_FILENAME).c_str(), sizeof(g_szPrintFilename));
-    g_szPrintFilename[sizeof(g_szPrintFilename)-1] = 0;
+    g_szPrintFilename[sizeof(g_szPrintFilename) - 1] = 0;
 
-    if (yamlLoadHelper.LoadBool(SS_YAML_KEY_FILEOPEN))
-    {
+    if (yamlLoadHelper.LoadBool(SS_YAML_KEY_FILEOPEN)) {
         yamlLoadHelper.LoadBool(SS_YAML_KEY_APPEND);    // Consume
         g_bPrinterAppend = true;    // Re-open print-file in append mode
         BOOL bRes = CheckPrint();
         if (!bRes)
             throw std::string("Printer Card: Unable to resume printing to file");
     }
-    else
-    {
+    else {
         g_bPrinterAppend = yamlLoadHelper.LoadBool(SS_YAML_KEY_APPEND);
     }
 
-    g_bDumpToPrinter            = yamlLoadHelper.LoadBool(SS_YAML_KEY_DUMPTOPRINTER);
-    g_bConvertEncoding          = yamlLoadHelper.LoadBool(SS_YAML_KEY_CONVERTENCODING);
-    g_bFilterUnprintable        = yamlLoadHelper.LoadBool(SS_YAML_KEY_FILTERUNPRINTABLE);
-    g_bEnableDumpToRealPrinter  = yamlLoadHelper.LoadBool(SS_YAML_KEY_DUMPTOREALPRINTER);
+    g_bDumpToPrinter = yamlLoadHelper.LoadBool(SS_YAML_KEY_DUMPTOPRINTER);
+    g_bConvertEncoding = yamlLoadHelper.LoadBool(SS_YAML_KEY_CONVERTENCODING);
+    g_bFilterUnprintable = yamlLoadHelper.LoadBool(SS_YAML_KEY_FILTERUNPRINTABLE);
+    g_bEnableDumpToRealPrinter = yamlLoadHelper.LoadBool(SS_YAML_KEY_DUMPTOREALPRINTER);
 
     return true;
 }

@@ -23,8 +23,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 //===========================================================================
 
-static DWORD Cpu6502(DWORD uTotalCycles, const bool bVideoUpdate)
-{
+static DWORD Cpu6502(DWORD uTotalCycles, const bool bVideoUpdate) {
     WORD addr;
     BOOL flagc; // must always be 0 or 1, no other values allowed
     BOOL flagn; // must always be 0 or 0x80.
@@ -34,11 +33,10 @@ static DWORD Cpu6502(DWORD uTotalCycles, const bool bVideoUpdate)
     WORD temp2;
     WORD val;
     AF_TO_EF
-    ULONG uExecutedCycles = 0;
+        ULONG uExecutedCycles = 0;
     WORD base;
 
-    do
-    {
+    do {
         UINT uExtraCycles = 0;
         BYTE iOpcode;
 
@@ -50,8 +48,7 @@ static DWORD Cpu6502(DWORD uTotalCycles, const bool bVideoUpdate)
 
 //#define $ INV // INV = Invalid -> Debugger Break
 #define $
-        switch (iOpcode)
-        {
+        switch (iOpcode) {
         case 0x00:              BRK  CYC(7)  break;
         case 0x01:   idx        ORA  CYC(6)  break;
         case 0x02: $            HLT  CYC(2)  break;
@@ -316,18 +313,15 @@ static DWORD Cpu6502(DWORD uTotalCycles, const bool bVideoUpdate)
         IRQ(uExecutedCycles, flagc, flagn, flagv, flagz);
 
 // NTSC_BEGIN
-        if (bVideoUpdate)
-        {
+        if (bVideoUpdate) {
             ULONG uElapsedCycles = uExecutedCycles - uPreviousCycles;
-            NTSC_VideoUpdateCycles( uElapsedCycles );
+            NTSC_VideoUpdateCycles(uElapsedCycles);
         }
 // NTSC_END
 
     } while (uExecutedCycles < uTotalCycles);
 
-    EF_TO_AF
+    EF_TO_AF;
 
     return uExecutedCycles;
 }
-
-//===========================================================================

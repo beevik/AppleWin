@@ -6,7 +6,7 @@
 
 // From Applewin.cpp
 bool g_bFullSpeed = false;
-enum AppMode_e g_nAppMode = MODE_RUNNING;
+enum EAppMode g_nAppMode = MODE_RUNNING;
 
 // From Memory.cpp
 LPBYTE         memwrite[0x100];     // TODO: Init

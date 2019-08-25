@@ -6,12 +6,12 @@
 void LogFileTimeUntilFirstKeyReadReset(void);
 void LogFileTimeUntilFirstKeyRead(void);
 
-bool SetCurrentImageDir(const char* pszImageDir);
+bool SetCurrentImageDir(const char * pszImageDir);
 
-extern const UINT16* GetOldAppleWinVersion(void);
+extern const UINT16 * GetOldAppleWinVersion(void);
 extern char VERSIONSTRING[];    // Constructed in WinMain()
 
-extern const TCHAR     *g_pAppTitle;
+extern const TCHAR * g_pAppTitle;
 
 extern eApple2Type g_Apple2Type;
 eApple2Type GetApple2Type(void);
@@ -29,7 +29,7 @@ extern bool       g_bFullSpeed;
 // Win32
 extern HINSTANCE  g_hInstance;
 
-extern AppMode_e g_nAppMode;
+extern EAppMode g_nAppMode;
 bool GetLoadedSaveStateFlag(void);
 void SetLoadedSaveStateFlag(const bool bFlag);
 
@@ -57,4 +57,4 @@ extern SS_CARDTYPE g_SlotAux;
 
 extern HANDLE   g_hCustomRomF8;     // NULL if no custom rom
 
-extern __interface IPropertySheet& sg_PropertySheet;
+extern __interface IPropertySheet & sg_PropertySheet;

@@ -40,8 +40,7 @@
 //
 
 
-static BYTE __stdcall IOWrite_SAM(WORD pc, WORD addr, BYTE bWrite, BYTE d, ULONG nExecutedCycles)
-{
+static BYTE __stdcall IOWrite_SAM(WORD pc, WORD addr, BYTE bWrite, BYTE d, ULONG nExecutedCycles) {
     // Emulate audio from a SAM / 8 bit DAC card
     // Only supportable if AppleWin is using WAVE output
     //
@@ -85,7 +84,6 @@ static BYTE __stdcall IOWrite_SAM(WORD pc, WORD addr, BYTE bWrite, BYTE d, ULONG
     return res;
 }
 
-void ConfigureSAM(LPBYTE pCxRomPeripheral, UINT uSlot)
-{
+void ConfigureSAM(LPBYTE pCxRomPeripheral, UINT uSlot) {
     RegisterIoHandler(uSlot, IO_Null, IOWrite_SAM, IO_Null, IO_Null, NULL, NULL);
 }

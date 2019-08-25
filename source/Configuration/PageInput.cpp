@@ -29,94 +29,88 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "PageInput.h"
 #include "PropertySheetHelper.h"
 
-CPageInput* CPageInput::ms_this = 0;    // reinit'd in ctor
+PageInput * PageInput::ms_this = 0;    // reinit'd in ctor
 
 // Joystick option choices - NOTE maximum text length is MaxMenuChoiceLen = 40
-const TCHAR CPageInput::m_szJoyChoice0[] = TEXT("Disabled\0");
-const TCHAR CPageInput::m_szJoyChoice1[] = TEXT("PC Joystick #1\0");
-const TCHAR CPageInput::m_szJoyChoice2[] = TEXT("PC Joystick #2\0");
-const TCHAR CPageInput::m_szJoyChoice3[] = TEXT("Keyboard (cursors)\0");
-const TCHAR CPageInput::m_szJoyChoice4[] = TEXT("Keyboard (numpad)\0");
-const TCHAR CPageInput::m_szJoyChoice5[] = TEXT("Mouse\0");
-const TCHAR CPageInput::m_szJoyChoice6[] = TEXT("PC Joystick #1 Thumbstick 2\0");
+const TCHAR PageInput::m_szJoyChoice0[] = TEXT("Disabled\0");
+const TCHAR PageInput::m_szJoyChoice1[] = TEXT("PC Joystick #1\0");
+const TCHAR PageInput::m_szJoyChoice2[] = TEXT("PC Joystick #2\0");
+const TCHAR PageInput::m_szJoyChoice3[] = TEXT("Keyboard (cursors)\0");
+const TCHAR PageInput::m_szJoyChoice4[] = TEXT("Keyboard (numpad)\0");
+const TCHAR PageInput::m_szJoyChoice5[] = TEXT("Mouse\0");
+const TCHAR PageInput::m_szJoyChoice6[] = TEXT("PC Joystick #1 Thumbstick 2\0");
 
-const TCHAR* const CPageInput::m_pszJoy0Choices[J0C_MAX] = {
-                                    CPageInput::m_szJoyChoice0,
-                                    CPageInput::m_szJoyChoice1, // PC Joystick #1
-                                    CPageInput::m_szJoyChoice3,
-                                    CPageInput::m_szJoyChoice4,
-                                    CPageInput::m_szJoyChoice5 };
+const TCHAR * const PageInput::m_pszJoy0Choices[J0C_MAX] = {
+                                    PageInput::m_szJoyChoice0,
+                                    PageInput::m_szJoyChoice1, // PC Joystick #1
+                                    PageInput::m_szJoyChoice3,
+                                    PageInput::m_szJoyChoice4,
+                                    PageInput::m_szJoyChoice5 };
 
-const TCHAR* const CPageInput::m_pszJoy1Choices[J1C_MAX] = {
-                                    CPageInput::m_szJoyChoice0,
-                                    CPageInput::m_szJoyChoice2, // PC Joystick #2
-                                    CPageInput::m_szJoyChoice3,
-                                    CPageInput::m_szJoyChoice4,
-                                    CPageInput::m_szJoyChoice5,
-                                    CPageInput::m_szJoyChoice6 };
+const TCHAR * const PageInput::m_pszJoy1Choices[J1C_MAX] = {
+                                    PageInput::m_szJoyChoice0,
+                                    PageInput::m_szJoyChoice2, // PC Joystick #2
+                                    PageInput::m_szJoyChoice3,
+                                    PageInput::m_szJoyChoice4,
+                                    PageInput::m_szJoyChoice5,
+                                    PageInput::m_szJoyChoice6 };
 
-BOOL CALLBACK CPageInput::DlgProc(HWND hWnd, UINT message, WPARAM wparam, LPARAM lparam)
-{
+BOOL CALLBACK PageInput::DlgProc(HWND hWnd, UINT message, WPARAM wparam, LPARAM lparam) {
     // Switch from static func to our instance
-    return CPageInput::ms_this->DlgProcInternal(hWnd, message, wparam, lparam);
+    return PageInput::ms_this->DlgProcInternal(hWnd, message, wparam, lparam);
 }
 
-BOOL CPageInput::DlgProcInternal(HWND hWnd, UINT message, WPARAM wparam, LPARAM lparam)
-{
-    switch (message)
-    {
+BOOL PageInput::DlgProcInternal(HWND hWnd, UINT message, WPARAM wparam, LPARAM lparam) {
+    switch (message) {
     case WM_NOTIFY:
-        {
-            // Property Sheet notifications
+    {
+        // Property Sheet notifications
 
-            switch (((LPPSHNOTIFY)lparam)->hdr.code)
+        switch (((LPPSHNOTIFY)lparam)->hdr.code) {
+        case PSN_SETACTIVE:
+            // About to become the active page
+            m_PropertySheetHelper.SetLastPage(m_Page);
+            InitOptions(hWnd);
+            break;
+        case PSN_KILLACTIVE:
+            SetWindowLong(hWnd, DWLP_MSGRESULT, FALSE);         // Changes are valid
+            break;
+        case PSN_APPLY:
+            DlgOK(hWnd);
+            SetWindowLong(hWnd, DWLP_MSGRESULT, PSNRET_NOERROR);    // Changes are valid
+            break;
+        case PSN_QUERYCANCEL:
+            // Can use this to ask user to confirm cancel
+            break;
+        case PSN_RESET:
+            DlgCANCEL(hWnd);
+            break;
+
+        /*      // Could use this to display PDL() value
+        case UDN_DELTAPOS:
+            LPNMUPDOWN lpnmud = (LPNMUPDOWN) lparam;
+            if (lpnmud->hdr.idFrom == IDC_SPIN_XTRIM)
             {
-            case PSN_SETACTIVE:
-                // About to become the active page
-                m_PropertySheetHelper.SetLastPage(m_Page);
-                InitOptions(hWnd);
-                break;
-            case PSN_KILLACTIVE:
-                SetWindowLong(hWnd, DWLP_MSGRESULT, FALSE);         // Changes are valid
-                break;
-            case PSN_APPLY:
-                DlgOK(hWnd);
-                SetWindowLong(hWnd, DWLP_MSGRESULT, PSNRET_NOERROR);    // Changes are valid
-                break;
-            case PSN_QUERYCANCEL:
-                // Can use this to ask user to confirm cancel
-                break;
-            case PSN_RESET:
-                DlgCANCEL(hWnd);
-                break;
-
-            /*      // Could use this to display PDL() value
-            case UDN_DELTAPOS:
-                LPNMUPDOWN lpnmud = (LPNMUPDOWN) lparam;
-                if (lpnmud->hdr.idFrom == IDC_SPIN_XTRIM)
-                {
-                    static int x = 0;
-                    x = lpnmud->iPos + lpnmud->iDelta;
-                    x = SendDlgItemMessage(hWnd, IDC_SPIN_XTRIM, UDM_GETPOS, 0, 0);
-                }
-                else if (lpnmud->hdr.idFrom == IDC_SPIN_YTRIM)
-                {
-                    static int y = 0;
-                    y = lpnmud->iPos + lpnmud->iDelta;
-                    y = SendDlgItemMessage(hWnd, IDC_SPIN_YTRIM, UDM_GETPOS, 0, 0);
-                }
-                break;
-            */
+                static int x = 0;
+                x = lpnmud->iPos + lpnmud->iDelta;
+                x = SendDlgItemMessage(hWnd, IDC_SPIN_XTRIM, UDM_GETPOS, 0, 0);
             }
+            else if (lpnmud->hdr.idFrom == IDC_SPIN_YTRIM)
+            {
+                static int y = 0;
+                y = lpnmud->iPos + lpnmud->iDelta;
+                y = SendDlgItemMessage(hWnd, IDC_SPIN_YTRIM, UDM_GETPOS, 0, 0);
+            }
+            break;
+        */
         }
-        break;
+    }
+    break;
 
     case WM_COMMAND:
-        switch (LOWORD(wparam))
-        {
+        switch (LOWORD(wparam)) {
         case IDC_JOYSTICK0:
-            if(HIWORD(wparam) == CBN_SELCHANGE)
-            {
+            if (HIWORD(wparam) == CBN_SELCHANGE) {
                 DWORD dwNewJoyType = (DWORD)SendDlgItemMessage(hWnd, IDC_JOYSTICK0, CB_GETCURSEL, 0, 0);
                 JoySetEmulationType(hWnd, m_nJoy0ChoiceTranlationTbl[dwNewJoyType], JN_JOYSTICK0, false);
                 InitOptions(hWnd);
@@ -124,8 +118,7 @@ BOOL CPageInput::DlgProcInternal(HWND hWnd, UINT message, WPARAM wparam, LPARAM 
             break;
 
         case IDC_JOYSTICK1:
-            if(HIWORD(wparam) == CBN_SELCHANGE)
-            {
+            if (HIWORD(wparam) == CBN_SELCHANGE) {
                 DWORD dwNewJoyType = (DWORD)SendDlgItemMessage(hWnd, IDC_JOYSTICK1, CB_GETCURSEL, 0, 0);
                 JoySetEmulationType(hWnd, m_nJoy1ChoiceTranlationTbl[dwNewJoyType], JN_JOYSTICK1, false);
                 InitOptions(hWnd);
@@ -143,42 +136,39 @@ BOOL CPageInput::DlgProcInternal(HWND hWnd, UINT message, WPARAM wparam, LPARAM 
         break;
 
     case WM_INITDIALOG:
-        {
-            SendDlgItemMessage(hWnd, IDC_SPIN_XTRIM, UDM_SETRANGE, 0, MAKELONG(128,-127));
-            SendDlgItemMessage(hWnd, IDC_SPIN_YTRIM, UDM_SETRANGE, 0, MAKELONG(128,-127));
+    {
+        SendDlgItemMessage(hWnd, IDC_SPIN_XTRIM, UDM_SETRANGE, 0, MAKELONG(128, -127));
+        SendDlgItemMessage(hWnd, IDC_SPIN_YTRIM, UDM_SETRANGE, 0, MAKELONG(128, -127));
 
-            SendDlgItemMessage(hWnd, IDC_SPIN_XTRIM, UDM_SETPOS, 0, MAKELONG(JoyGetTrim(true),0));
-            SendDlgItemMessage(hWnd, IDC_SPIN_YTRIM, UDM_SETPOS, 0, MAKELONG(JoyGetTrim(false),0));
+        SendDlgItemMessage(hWnd, IDC_SPIN_XTRIM, UDM_SETPOS, 0, MAKELONG(JoyGetTrim(true), 0));
+        SendDlgItemMessage(hWnd, IDC_SPIN_YTRIM, UDM_SETPOS, 0, MAKELONG(JoyGetTrim(false), 0));
 
-            CheckDlgButton(hWnd, IDC_CURSORCONTROL, m_uCursorControl ? BST_CHECKED : BST_UNCHECKED);
-            CheckDlgButton(hWnd, IDC_AUTOFIRE, m_bmAutofire ? BST_CHECKED : BST_UNCHECKED);
-            CheckDlgButton(hWnd, IDC_CENTERINGCONTROL, m_uCenteringControl == JOYSTICK_MODE_CENTERING ? BST_CHECKED : BST_UNCHECKED);
-            CheckDlgButton(hWnd, IDC_SCROLLLOCK_TOGGLE, m_uScrollLockToggle ? BST_CHECKED : BST_UNCHECKED);
+        CheckDlgButton(hWnd, IDC_CURSORCONTROL, m_uCursorControl ? BST_CHECKED : BST_UNCHECKED);
+        CheckDlgButton(hWnd, IDC_AUTOFIRE, m_bmAutofire ? BST_CHECKED : BST_UNCHECKED);
+        CheckDlgButton(hWnd, IDC_CENTERINGCONTROL, m_uCenteringControl == JOYSTICK_MODE_CENTERING ? BST_CHECKED : BST_UNCHECKED);
+        CheckDlgButton(hWnd, IDC_SCROLLLOCK_TOGGLE, m_uScrollLockToggle ? BST_CHECKED : BST_UNCHECKED);
 
-            InitOptions(hWnd);
+        InitOptions(hWnd);
 
-            break;
-        }
+        break;
+    }
     }
 
     return FALSE;
 }
 
-void CPageInput::DlgOK(HWND hWnd)
-{
+void PageInput::DlgOK(HWND hWnd) {
     UINT uNewJoyType0 = (UINT)SendDlgItemMessage(hWnd, IDC_JOYSTICK0, CB_GETCURSEL, 0, 0);
     if (uNewJoyType0 >= J0C_MAX) uNewJoyType0 = 0;  // GH#434
 
     UINT uNewJoyType1 = (UINT)SendDlgItemMessage(hWnd, IDC_JOYSTICK1, CB_GETCURSEL, 0, 0);
     if (uNewJoyType1 >= J1C_MAX) uNewJoyType1 = 0;  // GH#434
 
-    if (JoySetEmulationType(hWnd, m_nJoy0ChoiceTranlationTbl[uNewJoyType0], JN_JOYSTICK0, false))
-    {
+    if (JoySetEmulationType(hWnd, m_nJoy0ChoiceTranlationTbl[uNewJoyType0], JN_JOYSTICK0, false)) {
         REGSAVE(TEXT(REGVALUE_JOYSTICK0_EMU_TYPE), JoyGetJoyType(0));
     }
 
-    if (JoySetEmulationType(hWnd, m_nJoy1ChoiceTranlationTbl[uNewJoyType1], JN_JOYSTICK1, false))
-    {
+    if (JoySetEmulationType(hWnd, m_nJoy1ChoiceTranlationTbl[uNewJoyType1], JN_JOYSTICK1, false)) {
         REGSAVE(TEXT(REGVALUE_JOYSTICK1_EMU_TYPE), JoyGetJoyType(1));
     }
 
@@ -203,22 +193,19 @@ void CPageInput::DlgOK(HWND hWnd)
     m_PropertySheetHelper.PostMsgAfterClose(hWnd, m_Page);
 }
 
-void CPageInput::InitOptions(HWND hWnd)
-{
+void PageInput::InitOptions(HWND hWnd) {
     InitSlotOptions(hWnd);
 }
 
-void CPageInput::InitJoystickChoices(HWND hWnd, int nJoyNum, int nIdcValue)
-{
-    TCHAR* pnzJoystickChoices;
-    int *pnJoyTranslationTbl;
+void PageInput::InitJoystickChoices(HWND hWnd, int nJoyNum, int nIdcValue) {
+    TCHAR * pnzJoystickChoices;
+    int * pnJoyTranslationTbl;
     int nJoyTranslationTblSize;
     unsigned short nJC_DISABLED, nJC_JOYSTICK, nJC_KEYBD_CURSORS, nJC_KEYBD_NUMPAD, nJC_MOUSE, nJC_MAX;
-    TCHAR** ppszJoyChoices;
+    TCHAR ** ppszJoyChoices;
     int nOtherJoyNum = nJoyNum == JN_JOYSTICK0 ? JN_JOYSTICK1 : JN_JOYSTICK0;
 
-    if(nJoyNum == JN_JOYSTICK0)
-    {
+    if (nJoyNum == JN_JOYSTICK0) {
         pnzJoystickChoices = m_joystick0choices;
         pnJoyTranslationTbl = m_nJoy0ChoiceTranlationTbl;
         nJoyTranslationTblSize = sizeof(m_nJoy0ChoiceTranlationTbl);
@@ -228,10 +215,9 @@ void CPageInput::InitJoystickChoices(HWND hWnd, int nJoyNum, int nIdcValue)
         nJC_KEYBD_NUMPAD = J0C_KEYBD_NUMPAD;
         nJC_MOUSE = J0C_MOUSE;
         nJC_MAX = J0C_MAX;
-        ppszJoyChoices = (TCHAR**) m_pszJoy0Choices;
+        ppszJoyChoices = (TCHAR * *)m_pszJoy0Choices;
     }
-    else
-    {
+    else {
         pnzJoystickChoices = m_joystick1choices;
         pnJoyTranslationTbl = m_nJoy1ChoiceTranlationTbl;
         nJoyTranslationTblSize = sizeof(m_nJoy1ChoiceTranlationTbl);
@@ -241,41 +227,38 @@ void CPageInput::InitJoystickChoices(HWND hWnd, int nJoyNum, int nIdcValue)
         nJC_KEYBD_NUMPAD = J1C_KEYBD_NUMPAD;
         nJC_MOUSE = J1C_MOUSE;
         nJC_MAX = J1C_MAX;
-        ppszJoyChoices = (TCHAR**) m_pszJoy1Choices;
+        ppszJoyChoices = (TCHAR * *)m_pszJoy1Choices;
     }
 
-    TCHAR* pszMem = pnzJoystickChoices;
+    TCHAR * pszMem = pnzJoystickChoices;
     int nIdx = 0;
     memset(pnJoyTranslationTbl, -1, nJoyTranslationTblSize);
 
     // Build the Joystick choices string list. These first 2 are always selectable.
-    memcpy(pszMem, ppszJoyChoices[nJC_DISABLED], strlen(ppszJoyChoices[nJC_DISABLED])+1);
-    pszMem += strlen(ppszJoyChoices[nJC_DISABLED])+1;
+    memcpy(pszMem, ppszJoyChoices[nJC_DISABLED], strlen(ppszJoyChoices[nJC_DISABLED]) + 1);
+    pszMem += strlen(ppszJoyChoices[nJC_DISABLED]) + 1;
     pnJoyTranslationTbl[nIdx++] = nJC_DISABLED;
 
-    memcpy(pszMem, ppszJoyChoices[nJC_JOYSTICK], strlen(ppszJoyChoices[nJC_JOYSTICK])+1);
-    pszMem += strlen(ppszJoyChoices[nJC_JOYSTICK])+1;
+    memcpy(pszMem, ppszJoyChoices[nJC_JOYSTICK], strlen(ppszJoyChoices[nJC_JOYSTICK]) + 1);
+    pszMem += strlen(ppszJoyChoices[nJC_JOYSTICK]) + 1;
     pnJoyTranslationTbl[nIdx++] = nJC_JOYSTICK;
 
     // Now exclude:
     // . the other Joystick type (if it exists) from this new list
     // . the mouse if the mousecard is plugged in
     int removedItemCompensation = 0;
-    for (UINT i=nJC_KEYBD_CURSORS; i<nJC_MAX; i++)
-    {
-        if ( ( (i == nJC_KEYBD_CURSORS) || (i == nJC_KEYBD_NUMPAD) ) &&
-            ( (JoyGetJoyType(nOtherJoyNum) == nJC_KEYBD_CURSORS) || (JoyGetJoyType(nOtherJoyNum) == nJC_KEYBD_NUMPAD) )
-          )
-        {
+    for (UINT i = nJC_KEYBD_CURSORS; i < nJC_MAX; i++) {
+        if (((i == nJC_KEYBD_CURSORS) || (i == nJC_KEYBD_NUMPAD)) &&
+            ((JoyGetJoyType(nOtherJoyNum) == nJC_KEYBD_CURSORS) || (JoyGetJoyType(nOtherJoyNum) == nJC_KEYBD_NUMPAD))
+            ) {
             if (i <= JoyGetJoyType(nJoyNum))
                 removedItemCompensation++;
             continue;
         }
 
-        if (JoyGetJoyType(nOtherJoyNum) != i)
-        {
-            memcpy(pszMem, ppszJoyChoices[i], strlen(ppszJoyChoices[i])+1);
-            pszMem += strlen(ppszJoyChoices[i])+1;
+        if (JoyGetJoyType(nOtherJoyNum) != i) {
+            memcpy(pszMem, ppszJoyChoices[i], strlen(ppszJoyChoices[i]) + 1);
+            pszMem += strlen(ppszJoyChoices[i]) + 1;
             pnJoyTranslationTbl[nIdx++] = i;
         }
     }
@@ -285,8 +268,7 @@ void CPageInput::InitJoystickChoices(HWND hWnd, int nJoyNum, int nIdcValue)
     m_PropertySheetHelper.FillComboBox(hWnd, nIdcValue, pnzJoystickChoices, JoyGetJoyType(nJoyNum) - removedItemCompensation);
 }
 
-void CPageInput::InitSlotOptions(HWND hWnd)
-{
+void PageInput::InitSlotOptions(HWND hWnd) {
     const SS_CARDTYPE Slot4 = m_PropertySheetHelper.GetConfigNew().m_Slot[4];
 
     InitJoystickChoices(hWnd, JN_JOYSTICK0, IDC_JOYSTICK0);

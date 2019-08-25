@@ -29,7 +29,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "PageConfig.h"
 #include "PropertySheetHelper.h"
 
-CPageConfig* CPageConfig::ms_this = 0;  // reinit'd in ctor
+PageConfig * PageConfig::ms_this = 0;  // reinit'd in ctor
 
 enum APPLEIICHOICE {
     MENUITEM_IIORIGINAL,
@@ -38,70 +38,65 @@ enum APPLEIICHOICE {
     MENUITEM_ENHANCEDIIE
 };
 
-const TCHAR CPageConfig::m_ComputerChoices[] =
-                TEXT("Apple ][ (Original)\0")
-                TEXT("Apple ][+\0")
-                TEXT("Apple //e\0")
-                TEXT("Enhanced Apple //e\0");
+const TCHAR PageConfig::m_ComputerChoices[] =
+TEXT("Apple ][ (Original)\0")
+TEXT("Apple ][+\0")
+TEXT("Apple //e\0")
+TEXT("Enhanced Apple //e\0");
 
-INT_PTR CALLBACK CPageConfig::DlgProc(HWND hWnd, UINT message, WPARAM wparam, LPARAM lparam)
-{
+INT_PTR CALLBACK PageConfig::DlgProc(HWND hWnd, UINT message, WPARAM wparam, LPARAM lparam) {
     // Switch from static func to our instance
-    return CPageConfig::ms_this->DlgProcInternal(hWnd, message, wparam, lparam);
+    return PageConfig::ms_this->DlgProcInternal(hWnd, message, wparam, lparam);
 }
 
-BOOL CPageConfig::DlgProcInternal(HWND hWnd, UINT message, WPARAM wparam, LPARAM lparam)
-{
-    switch (message)
-    {
+BOOL PageConfig::DlgProcInternal(HWND hWnd, UINT message, WPARAM wparam, LPARAM lparam) {
+    switch (message) {
     case WM_NOTIFY:
-        {
-            // Property Sheet notifications
+    {
+        // Property Sheet notifications
 
-            switch (((LPPSHNOTIFY)lparam)->hdr.code)
-            {
-            case PSN_SETACTIVE:
-                // About to become the active page
-                m_PropertySheetHelper.SetLastPage(m_Page);
-                InitOptions(hWnd);
-                break;
-            case PSN_KILLACTIVE:
-                // About to stop being active page
-                {
-                    DWORD NewComputerMenuItem = (DWORD) SendDlgItemMessage(hWnd, IDC_COMPUTER, CB_GETCURSEL, 0, 0);
-                    SetWindowLong(hWnd, DWLP_MSGRESULT, FALSE);     // Changes are valid
-                }
-                break;
-            case PSN_APPLY:
-                DlgOK(hWnd);
-                SetWindowLong(hWnd, DWLP_MSGRESULT, PSNRET_NOERROR);    // Changes are valid
-                break;
-            case PSN_QUERYCANCEL:
-                // Can use this to ask user to confirm cancel
-                break;
-            case PSN_RESET:
-                DlgCANCEL(hWnd);
-                break;
-            }
+        switch (((LPPSHNOTIFY)lparam)->hdr.code) {
+        case PSN_SETACTIVE:
+            // About to become the active page
+            m_PropertySheetHelper.SetLastPage(m_Page);
+            InitOptions(hWnd);
+            break;
+        case PSN_KILLACTIVE:
+            // About to stop being active page
+        {
+            DWORD NewComputerMenuItem = (DWORD)SendDlgItemMessage(hWnd, IDC_COMPUTER, CB_GETCURSEL, 0, 0);
+            SetWindowLong(hWnd, DWLP_MSGRESULT, FALSE);     // Changes are valid
         }
         break;
+        case PSN_APPLY:
+            DlgOK(hWnd);
+            SetWindowLong(hWnd, DWLP_MSGRESULT, PSNRET_NOERROR);    // Changes are valid
+            break;
+        case PSN_QUERYCANCEL:
+            // Can use this to ask user to confirm cancel
+            break;
+        case PSN_RESET:
+            DlgCANCEL(hWnd);
+            break;
+        }
+    }
+    break;
 
     case WM_COMMAND:
-        switch (LOWORD(wparam))
-        {
+        switch (LOWORD(wparam)) {
         case IDC_AUTHENTIC_SPEED:   // Authentic Machine Speed
-            SendDlgItemMessage(hWnd,IDC_SLIDER_CPU_SPEED,TBM_SETPOS,1,SPEED_NORMAL);
-            EnableTrackbar(hWnd,0);
+            SendDlgItemMessage(hWnd, IDC_SLIDER_CPU_SPEED, TBM_SETPOS, 1, SPEED_NORMAL);
+            EnableTrackbar(hWnd, 0);
             break;
 
         case IDC_CUSTOM_SPEED:      // Select Custom Speed
-            SetFocus(GetDlgItem(hWnd,IDC_SLIDER_CPU_SPEED));
-            EnableTrackbar(hWnd,1);
+            SetFocus(GetDlgItem(hWnd, IDC_SLIDER_CPU_SPEED));
+            EnableTrackbar(hWnd, 1);
             break;
 
         case IDC_SLIDER_CPU_SPEED:  // CPU speed slider
-            CheckRadioButton(hWnd,IDC_AUTHENTIC_SPEED,IDC_CUSTOM_SPEED,IDC_CUSTOM_SPEED);
-            EnableTrackbar(hWnd,1);
+            CheckRadioButton(hWnd, IDC_AUTHENTIC_SPEED, IDC_CUSTOM_SPEED, IDC_CUSTOM_SPEED);
+            EnableTrackbar(hWnd, 1);
             break;
 
         case IDC_BENCHMARK:
@@ -124,13 +119,11 @@ BOOL CPageConfig::DlgProcInternal(HWND hWnd, UINT message, WPARAM wparam, LPARAM
             break;
 
         case IDC_COMPUTER:
-            if(HIWORD(wparam) == CBN_SELCHANGE)
-            {
-                const DWORD NewComputerMenuItem = (DWORD) SendDlgItemMessage(hWnd, IDC_COMPUTER, CB_GETCURSEL, 0, 0);
+            if (HIWORD(wparam) == CBN_SELCHANGE) {
+                const DWORD NewComputerMenuItem = (DWORD)SendDlgItemMessage(hWnd, IDC_COMPUTER, CB_GETCURSEL, 0, 0);
                 const eApple2Type NewApple2Type = GetApple2Type(NewComputerMenuItem);
                 m_PropertySheetHelper.GetConfigNew().m_Apple2Type = NewApple2Type;
-                if (NewApple2Type != A2TYPE_CLONE)
-                {
+                if (NewApple2Type != A2TYPE_CLONE) {
                     m_PropertySheetHelper.GetConfigNew().m_CpuType = ProbeMainCpuDefault(NewApple2Type);
                 }
                 else // A2TYPE_CLONE
@@ -141,24 +134,22 @@ BOOL CPageConfig::DlgProcInternal(HWND hWnd, UINT message, WPARAM wparam, LPARAM
             break;
 
         case IDC_VIDEOTYPE:
-            if(HIWORD(wparam) == CBN_SELCHANGE)
-            {
-                const VideoType_e newVideoType = (VideoType_e) SendDlgItemMessage(hWnd, IDC_VIDEOTYPE, CB_GETCURSEL, 0, 0);
+            if (HIWORD(wparam) == CBN_SELCHANGE) {
+                const VideoType_e newVideoType = (VideoType_e)SendDlgItemMessage(hWnd, IDC_VIDEOTYPE, CB_GETCURSEL, 0, 0);
                 EnableWindow(GetDlgItem(hWnd, IDC_CHECK_VERTICAL_BLEND), (newVideoType == VT_COLOR_MONITOR_RGB) ? TRUE : FALSE);
             }
             break;
 
 #if 0
         case IDC_RECALIBRATE:
-            RegSaveValue(TEXT(""),TEXT("RunningOnOS"),0,0);
+            RegSaveValue(TEXT(""), TEXT("RunningOnOS"), 0, 0);
             if (MessageBox(hWnd,
                 TEXT("The emulator has been set to recalibrate ")
                 TEXT("itself the next time it is started.\n\n")
                 TEXT("Would you like to restart the emulator now?"),
                 TEXT(REG_CONFIG),
-                MB_ICONQUESTION | MB_OKCANCEL | MB_SETFOREGROUND) == IDOK)
-            {
-                    PropSheet_PressButton(GetParent(hWnd), PSBTN_OK);
+                MB_ICONQUESTION | MB_OKCANCEL | MB_SETFOREGROUND) == IDOK) {
+                PropSheet_PressButton(GetParent(hWnd), PSBTN_OK);
             }
             break;
 #endif
@@ -170,133 +161,123 @@ BOOL CPageConfig::DlgProcInternal(HWND hWnd, UINT message, WPARAM wparam, LPARAM
         break;
 
     case WM_INITDIALOG:
+    {
+        // Convert Apple2 type to menu item
         {
-            // Convert Apple2 type to menu item
-            {
-                int nCurrentChoice = 0;
-                switch (m_PropertySheetHelper.GetConfigNew().m_Apple2Type)
-                {
-                case A2TYPE_APPLE2:         nCurrentChoice = MENUITEM_IIORIGINAL; break;
-                case A2TYPE_APPLE2PLUS:     nCurrentChoice = MENUITEM_IIPLUS; break;
-                case A2TYPE_APPLE2E:        nCurrentChoice = MENUITEM_IIE; break;
-                case A2TYPE_APPLE2EENHANCED:nCurrentChoice = MENUITEM_ENHANCEDIIE; break;
-                default: _ASSERT(0); break;
-                }
-
-                m_PropertySheetHelper.FillComboBox(hWnd, IDC_COMPUTER, m_ComputerChoices, nCurrentChoice);
+            int nCurrentChoice = 0;
+            switch (m_PropertySheetHelper.GetConfigNew().m_Apple2Type) {
+            case A2TYPE_APPLE2:         nCurrentChoice = MENUITEM_IIORIGINAL; break;
+            case A2TYPE_APPLE2PLUS:     nCurrentChoice = MENUITEM_IIPLUS; break;
+            case A2TYPE_APPLE2E:        nCurrentChoice = MENUITEM_IIE; break;
+            case A2TYPE_APPLE2EENHANCED:nCurrentChoice = MENUITEM_ENHANCEDIIE; break;
+            default: _ASSERT(0); break;
             }
 
-            CheckDlgButton(hWnd, IDC_CHECK_CONFIRM_REBOOT, g_bConfirmReboot ? BST_CHECKED : BST_UNCHECKED );
-
-            m_PropertySheetHelper.FillComboBox(hWnd,IDC_VIDEOTYPE, g_aVideoChoices, GetVideoType());
-            CheckDlgButton(hWnd, IDC_CHECK_HALF_SCAN_LINES, IsVideoStyle(VS_HALF_SCANLINES) ? BST_CHECKED : BST_UNCHECKED);
-            CheckDlgButton(hWnd, IDC_CHECK_FS_SHOW_SUBUNIT_STATUS, GetFullScreenShowSubunitStatus() ? BST_CHECKED : BST_UNCHECKED);
-
-            CheckDlgButton(hWnd, IDC_CHECK_VERTICAL_BLEND, IsVideoStyle(VS_COLOR_VERTICAL_BLEND) ? BST_CHECKED : BST_UNCHECKED);
-            EnableWindow(GetDlgItem(hWnd, IDC_CHECK_VERTICAL_BLEND), (GetVideoType() == VT_COLOR_MONITOR_RGB) ? TRUE : FALSE);
-
-            m_PropertySheetHelper.FillComboBox(hWnd,IDC_SERIALPORT, sg_SSC.GetSerialPortChoices(), sg_SSC.GetSerialPort());
-            EnableWindow(GetDlgItem(hWnd, IDC_SERIALPORT), !sg_SSC.IsActive() ? TRUE : FALSE);
-
-            CheckDlgButton(hWnd, IDC_CHECK_50HZ_VIDEO, (GetVideoRefreshRate() == VR_50HZ) ? BST_CHECKED : BST_UNCHECKED);
-
-            SendDlgItemMessage(hWnd,IDC_SLIDER_CPU_SPEED,TBM_SETRANGE,1,MAKELONG(0,40));
-            SendDlgItemMessage(hWnd,IDC_SLIDER_CPU_SPEED,TBM_SETPAGESIZE,0,5);
-            SendDlgItemMessage(hWnd,IDC_SLIDER_CPU_SPEED,TBM_SETTICFREQ,10,0);
-            SendDlgItemMessage(hWnd,IDC_SLIDER_CPU_SPEED,TBM_SETPOS,1,g_dwSpeed);
-
-            {
-                BOOL bCustom = TRUE;
-                if (g_dwSpeed == SPEED_NORMAL)
-                {
-                    bCustom = FALSE;
-                    REGLOAD(TEXT(REGVALUE_CUSTOM_SPEED),(DWORD *)&bCustom);
-                }
-                CheckRadioButton(hWnd, IDC_AUTHENTIC_SPEED, IDC_CUSTOM_SPEED, bCustom ? IDC_CUSTOM_SPEED : IDC_AUTHENTIC_SPEED);
-                SetFocus(GetDlgItem(hWnd, bCustom ? IDC_SLIDER_CPU_SPEED : IDC_AUTHENTIC_SPEED));
-                EnableTrackbar(hWnd, bCustom);
-            }
-
-            InitOptions(hWnd);
-
-            break;
+            m_PropertySheetHelper.FillComboBox(hWnd, IDC_COMPUTER, m_ComputerChoices, nCurrentChoice);
         }
+
+        CheckDlgButton(hWnd, IDC_CHECK_CONFIRM_REBOOT, g_bConfirmReboot ? BST_CHECKED : BST_UNCHECKED);
+
+        m_PropertySheetHelper.FillComboBox(hWnd, IDC_VIDEOTYPE, g_aVideoChoices, GetVideoType());
+        CheckDlgButton(hWnd, IDC_CHECK_HALF_SCAN_LINES, IsVideoStyle(VS_HALF_SCANLINES) ? BST_CHECKED : BST_UNCHECKED);
+        CheckDlgButton(hWnd, IDC_CHECK_FS_SHOW_SUBUNIT_STATUS, GetFullScreenShowSubunitStatus() ? BST_CHECKED : BST_UNCHECKED);
+
+        CheckDlgButton(hWnd, IDC_CHECK_VERTICAL_BLEND, IsVideoStyle(VS_COLOR_VERTICAL_BLEND) ? BST_CHECKED : BST_UNCHECKED);
+        EnableWindow(GetDlgItem(hWnd, IDC_CHECK_VERTICAL_BLEND), (GetVideoType() == VT_COLOR_MONITOR_RGB) ? TRUE : FALSE);
+
+        m_PropertySheetHelper.FillComboBox(hWnd, IDC_SERIALPORT, sg_SSC.GetSerialPortChoices(), sg_SSC.GetSerialPort());
+        EnableWindow(GetDlgItem(hWnd, IDC_SERIALPORT), !sg_SSC.IsActive() ? TRUE : FALSE);
+
+        CheckDlgButton(hWnd, IDC_CHECK_50HZ_VIDEO, (GetVideoRefreshRate() == VR_50HZ) ? BST_CHECKED : BST_UNCHECKED);
+
+        SendDlgItemMessage(hWnd, IDC_SLIDER_CPU_SPEED, TBM_SETRANGE, 1, MAKELONG(0, 40));
+        SendDlgItemMessage(hWnd, IDC_SLIDER_CPU_SPEED, TBM_SETPAGESIZE, 0, 5);
+        SendDlgItemMessage(hWnd, IDC_SLIDER_CPU_SPEED, TBM_SETTICFREQ, 10, 0);
+        SendDlgItemMessage(hWnd, IDC_SLIDER_CPU_SPEED, TBM_SETPOS, 1, g_dwSpeed);
+
+        {
+            BOOL bCustom = TRUE;
+            if (g_dwSpeed == SPEED_NORMAL) {
+                bCustom = FALSE;
+                REGLOAD(TEXT(REGVALUE_CUSTOM_SPEED), (DWORD *)& bCustom);
+            }
+            CheckRadioButton(hWnd, IDC_AUTHENTIC_SPEED, IDC_CUSTOM_SPEED, bCustom ? IDC_CUSTOM_SPEED : IDC_AUTHENTIC_SPEED);
+            SetFocus(GetDlgItem(hWnd, bCustom ? IDC_SLIDER_CPU_SPEED : IDC_AUTHENTIC_SPEED));
+            EnableTrackbar(hWnd, bCustom);
+        }
+
+        InitOptions(hWnd);
+
+        break;
+    }
 
     case WM_LBUTTONDOWN:
-        {
-            POINT pt = { LOWORD(lparam), HIWORD(lparam) };
-            ClientToScreen(hWnd,&pt);
-            RECT rect;
-            GetWindowRect(GetDlgItem(hWnd,IDC_SLIDER_CPU_SPEED),&rect);
-            if ((pt.x >= rect.left) && (pt.x <= rect.right) &&
-                (pt.y >= rect.top) && (pt.y <= rect.bottom))
-            {
-                CheckRadioButton(hWnd, IDC_AUTHENTIC_SPEED, IDC_CUSTOM_SPEED, IDC_CUSTOM_SPEED);
-                EnableTrackbar(hWnd,1);
-                SetFocus(GetDlgItem(hWnd,IDC_SLIDER_CPU_SPEED));
-                ScreenToClient(GetDlgItem(hWnd,IDC_SLIDER_CPU_SPEED),&pt);
-                PostMessage(GetDlgItem(hWnd,IDC_SLIDER_CPU_SPEED),WM_LBUTTONDOWN,wparam,MAKELONG(pt.x,pt.y));
-            }
-            break;
+    {
+        POINT pt = { LOWORD(lparam), HIWORD(lparam) };
+        ClientToScreen(hWnd, &pt);
+        RECT rect;
+        GetWindowRect(GetDlgItem(hWnd, IDC_SLIDER_CPU_SPEED), &rect);
+        if ((pt.x >= rect.left) && (pt.x <= rect.right) &&
+            (pt.y >= rect.top) && (pt.y <= rect.bottom)) {
+            CheckRadioButton(hWnd, IDC_AUTHENTIC_SPEED, IDC_CUSTOM_SPEED, IDC_CUSTOM_SPEED);
+            EnableTrackbar(hWnd, 1);
+            SetFocus(GetDlgItem(hWnd, IDC_SLIDER_CPU_SPEED));
+            ScreenToClient(GetDlgItem(hWnd, IDC_SLIDER_CPU_SPEED), &pt);
+            PostMessage(GetDlgItem(hWnd, IDC_SLIDER_CPU_SPEED), WM_LBUTTONDOWN, wparam, MAKELONG(pt.x, pt.y));
         }
+        break;
+    }
 
     case WM_SYSCOLORCHANGE:
-        SendDlgItemMessage(hWnd,IDC_SLIDER_CPU_SPEED,WM_SYSCOLORCHANGE,0,0);
+        SendDlgItemMessage(hWnd, IDC_SLIDER_CPU_SPEED, WM_SYSCOLORCHANGE, 0, 0);
         break;
     }
 
     return FALSE;
 }
 
-void CPageConfig::DlgOK(HWND hWnd)
-{
+void PageConfig::DlgOK(HWND hWnd) {
     bool bVideoReinit = false;
 
-    const VideoType_e newVideoType = (VideoType_e) SendDlgItemMessage(hWnd, IDC_VIDEOTYPE, CB_GETCURSEL, 0, 0);
-    if (GetVideoType() != newVideoType)
-    {
+    const VideoType_e newVideoType = (VideoType_e)SendDlgItemMessage(hWnd, IDC_VIDEOTYPE, CB_GETCURSEL, 0, 0);
+    if (GetVideoType() != newVideoType) {
         SetVideoType(newVideoType);
         bVideoReinit = true;
     }
 
     const bool newHalfScanLines = IsDlgButtonChecked(hWnd, IDC_CHECK_HALF_SCAN_LINES) != 0;
     const bool currentHalfScanLines = IsVideoStyle(VS_HALF_SCANLINES);
-    if (currentHalfScanLines != newHalfScanLines)
-    {
+    if (currentHalfScanLines != newHalfScanLines) {
         if (newHalfScanLines)
-            SetVideoStyle( (VideoStyle_e) (GetVideoStyle() | VS_HALF_SCANLINES) );
+            SetVideoStyle((VideoStyle_e)(GetVideoStyle() | VS_HALF_SCANLINES));
         else
-            SetVideoStyle( (VideoStyle_e) (GetVideoStyle() & ~VS_HALF_SCANLINES) );
+            SetVideoStyle((VideoStyle_e)(GetVideoStyle() & ~VS_HALF_SCANLINES));
         bVideoReinit = true;
     }
 
     const bool newVerticalBlend = IsDlgButtonChecked(hWnd, IDC_CHECK_VERTICAL_BLEND) != 0;
     const bool currentVerticalBlend = IsVideoStyle(VS_COLOR_VERTICAL_BLEND);
-    if (currentVerticalBlend != newVerticalBlend)
-    {
+    if (currentVerticalBlend != newVerticalBlend) {
         if (newVerticalBlend)
-            SetVideoStyle( (VideoStyle_e) (GetVideoStyle() | VS_COLOR_VERTICAL_BLEND) );
+            SetVideoStyle((VideoStyle_e)(GetVideoStyle() | VS_COLOR_VERTICAL_BLEND));
         else
-            SetVideoStyle( (VideoStyle_e) (GetVideoStyle() & ~VS_COLOR_VERTICAL_BLEND) );
+            SetVideoStyle((VideoStyle_e)(GetVideoStyle() & ~VS_COLOR_VERTICAL_BLEND));
         bVideoReinit = true;
     }
 
     const bool isNewVideoRate50Hz = IsDlgButtonChecked(hWnd, IDC_CHECK_50HZ_VIDEO) != 0;
     const bool isCurrentVideoRate50Hz = GetVideoRefreshRate() == VR_50HZ;
-    if (isCurrentVideoRate50Hz != isNewVideoRate50Hz)
-    {
+    if (isCurrentVideoRate50Hz != isNewVideoRate50Hz) {
         m_PropertySheetHelper.GetConfigNew().m_videoRefreshRate = isNewVideoRate50Hz ? VR_50HZ : VR_60HZ;
     }
 
-    if (bVideoReinit)
-    {
+    if (bVideoReinit) {
         Config_Save_Video();
 
         FrameRefreshStatus(DRAW_TITLE, false);
 
         VideoReinitialize();
-        if ((g_nAppMode != MODE_LOGO) && (g_nAppMode != MODE_DEBUG))
-        {
+        if ((g_nAppMode != MODE_LOGO) && (g_nAppMode != MODE_DEBUG)) {
             VideoRedrawScreen();
         }
     }
@@ -304,8 +285,7 @@ void CPageConfig::DlgOK(HWND hWnd)
     //
 
     const bool bNewFSSubunitStatus = IsDlgButtonChecked(hWnd, IDC_CHECK_FS_SHOW_SUBUNIT_STATUS) ? true : false;
-    if (GetFullScreenShowSubunitStatus() != bNewFSSubunitStatus)
-    {
+    if (GetFullScreenShowSubunitStatus() != bNewFSSubunitStatus) {
         REGSAVE(TEXT(REGVALUE_FS_SHOW_SUBUNIT_STATUS), bNewFSSubunitStatus ? 1 : 0);
         SetFullScreenShowSubunitStatus(bNewFSSubunitStatus);
 
@@ -316,27 +296,26 @@ void CPageConfig::DlgOK(HWND hWnd)
     //
 
     const BOOL bNewConfirmReboot = IsDlgButtonChecked(hWnd, IDC_CHECK_CONFIRM_REBOOT) ? 1 : 0;
-    if (g_bConfirmReboot != bNewConfirmReboot)
-    {
+    if (g_bConfirmReboot != bNewConfirmReboot) {
         REGSAVE(TEXT(REGVALUE_CONFIRM_REBOOT), bNewConfirmReboot);
         g_bConfirmReboot = bNewConfirmReboot;
     }
 
     //
 
-    const DWORD uNewSerialPort = (DWORD) SendDlgItemMessage(hWnd, IDC_SERIALPORT, CB_GETCURSEL, 0, 0);
+    const DWORD uNewSerialPort = (DWORD)SendDlgItemMessage(hWnd, IDC_SERIALPORT, CB_GETCURSEL, 0, 0);
     sg_SSC.CommSetSerialPort(hWnd, uNewSerialPort);
-    RegSaveString(  TEXT(REG_CONFIG),
-                    TEXT(REGVALUE_SERIAL_PORT_NAME),
-                    TRUE,
-                    sg_SSC.GetSerialPortName() );
+    RegSaveString(TEXT(REG_CONFIG),
+        TEXT(REGVALUE_SERIAL_PORT_NAME),
+        TRUE,
+        sg_SSC.GetSerialPortName());
 
-    //
+//
 
     if (IsDlgButtonChecked(hWnd, IDC_AUTHENTIC_SPEED))
         g_dwSpeed = SPEED_NORMAL;
     else
-        g_dwSpeed = (DWORD)SendDlgItemMessage(hWnd, IDC_SLIDER_CPU_SPEED,TBM_GETPOS, 0, 0);
+        g_dwSpeed = (DWORD)SendDlgItemMessage(hWnd, IDC_SLIDER_CPU_SPEED, TBM_GETPOS, 0, 0);
 
     SetCurrentCLK6502();
 
@@ -346,44 +325,38 @@ void CPageConfig::DlgOK(HWND hWnd)
     m_PropertySheetHelper.PostMsgAfterClose(hWnd, m_Page);
 }
 
-void CPageConfig::InitOptions(HWND hWnd)
-{
+void PageConfig::InitOptions(HWND hWnd) {
     // Nothing to do:
     // - no changes made on any other pages affect this page
 }
 
 // Config->Computer: Menu item to eApple2Type
-eApple2Type CPageConfig::GetApple2Type(DWORD NewMenuItem)
-{
-    switch (NewMenuItem)
-    {
-        case MENUITEM_IIORIGINAL:   return A2TYPE_APPLE2;
-        case MENUITEM_IIPLUS:       return A2TYPE_APPLE2PLUS;
-        case MENUITEM_IIE:          return A2TYPE_APPLE2E;
-        case MENUITEM_ENHANCEDIIE:  return A2TYPE_APPLE2EENHANCED;
-        default:                    return A2TYPE_APPLE2EENHANCED;
+eApple2Type PageConfig::GetApple2Type(DWORD NewMenuItem) {
+    switch (NewMenuItem) {
+    case MENUITEM_IIORIGINAL:   return A2TYPE_APPLE2;
+    case MENUITEM_IIPLUS:       return A2TYPE_APPLE2PLUS;
+    case MENUITEM_IIE:          return A2TYPE_APPLE2E;
+    case MENUITEM_ENHANCEDIIE:  return A2TYPE_APPLE2EENHANCED;
+    default:                    return A2TYPE_APPLE2EENHANCED;
     }
 }
 
-void CPageConfig::EnableTrackbar(HWND hWnd, BOOL enable)
-{
-    EnableWindow(GetDlgItem(hWnd,IDC_SLIDER_CPU_SPEED),enable);
-    EnableWindow(GetDlgItem(hWnd,IDC_0_5_MHz),enable);
-    EnableWindow(GetDlgItem(hWnd,IDC_1_0_MHz),enable);
-    EnableWindow(GetDlgItem(hWnd,IDC_2_0_MHz),enable);
-    EnableWindow(GetDlgItem(hWnd,IDC_MAX_MHz),enable);
+void PageConfig::EnableTrackbar(HWND hWnd, BOOL enable) {
+    EnableWindow(GetDlgItem(hWnd, IDC_SLIDER_CPU_SPEED), enable);
+    EnableWindow(GetDlgItem(hWnd, IDC_0_5_MHz), enable);
+    EnableWindow(GetDlgItem(hWnd, IDC_1_0_MHz), enable);
+    EnableWindow(GetDlgItem(hWnd, IDC_2_0_MHz), enable);
+    EnableWindow(GetDlgItem(hWnd, IDC_MAX_MHz), enable);
 }
 
 
-bool CPageConfig::IsOkToBenchmark(HWND hWnd, const bool bConfigChanged)
-{
-    if (bConfigChanged)
-    {
+bool PageConfig::IsOkToBenchmark(HWND hWnd, const bool bConfigChanged) {
+    if (bConfigChanged) {
         if (MessageBox(hWnd,
-                TEXT("The hardware configuration has changed. Benchmarking will lose these changes.\n\n")
-                TEXT("Are you sure you want to do this?"),
-                TEXT("Benchmarks"),
-                MB_ICONQUESTION | MB_OKCANCEL | MB_SETFOREGROUND) == IDCANCEL)
+            TEXT("The hardware configuration has changed. Benchmarking will lose these changes.\n\n")
+            TEXT("Are you sure you want to do this?"),
+            TEXT("Benchmarks"),
+            MB_ICONQUESTION | MB_OKCANCEL | MB_SETFOREGROUND) == IDCANCEL)
             return false;
     }
 
@@ -391,12 +364,12 @@ bool CPageConfig::IsOkToBenchmark(HWND hWnd, const bool bConfigChanged)
         return true;
 
     if (MessageBox(hWnd,
-            TEXT("Running the benchmarks will reset the state of ")
-            TEXT("the emulated machine, causing you to lose any ")
-            TEXT("unsaved work.\n\n")
-            TEXT("Are you sure you want to do this?"),
-            TEXT("Benchmarks"),
-            MB_ICONQUESTION | MB_OKCANCEL | MB_SETFOREGROUND) == IDCANCEL)
+        TEXT("Running the benchmarks will reset the state of ")
+        TEXT("the emulated machine, causing you to lose any ")
+        TEXT("unsaved work.\n\n")
+        TEXT("Are you sure you want to do this?"),
+        TEXT("Benchmarks"),
+        MB_ICONQUESTION | MB_OKCANCEL | MB_SETFOREGROUND) == IDCANCEL)
         return false;
 
     return true;

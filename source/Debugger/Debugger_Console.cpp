@@ -45,58 +45,55 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
     // g_aBufferedInput[1] ^
     // g_aBufferedInput[2] |
     // g_aBufferedInput[3] |
-    
+
     // Buffer
-        bool      g_bConsoleBufferPaused = false; // buffered output is waiting for user to continue
-        int       g_nConsoleBuffer = 0;
-        conchar_t g_aConsoleBuffer[ CONSOLE_BUFFER_HEIGHT ][ CONSOLE_WIDTH ]; // TODO: std::vector< line_t >
+bool      g_bConsoleBufferPaused = false; // buffered output is waiting for user to continue
+int       g_nConsoleBuffer = 0;
+conchar_t g_aConsoleBuffer[CONSOLE_BUFFER_HEIGHT][CONSOLE_WIDTH]; // TODO: std::vector< line_t >
 
-    // Cursor
-        char      g_sConsoleCursor[] = "_";
-    
-    // Display
-        char      g_aConsolePrompt[] = ">!"; // input, assembler // NUM_PROMPTS
-        char      g_sConsolePrompt[] = ">"; // No, NOT Integer Basic!  The nostalgic '*' "Monitor" doesn't look as good, IMHO. :-(
-        int       g_nConsolePromptLen = 1;
+// Cursor
+char      g_sConsoleCursor[] = "_";
 
-        bool      g_bConsoleFullWidth = true; // false
+// Display
+char      g_aConsolePrompt[] = ">!"; // input, assembler // NUM_PROMPTS
+char      g_sConsolePrompt[] = ">"; // No, NOT Integer Basic!  The nostalgic '*' "Monitor" doesn't look as good, IMHO. :-(
+int       g_nConsolePromptLen = 1;
 
-        int       g_iConsoleDisplayStart  = 0; // to allow scrolling
-        int       g_nConsoleDisplayTotal  = 0; // number of lines added to console
-        int       g_nConsoleDisplayLines  = 0;
-        int       g_nConsoleDisplayWidth  = 0;
-        conchar_t g_aConsoleDisplay[ CONSOLE_HEIGHT ][ CONSOLE_WIDTH ];
+bool      g_bConsoleFullWidth = true; // false
 
-    // Input History
-        int   g_nHistoryLinesStart = 0;
-        int   g_nHistoryLinesTotal = 0; // number of commands entered
-        char  g_aHistoryLines[ HISTORY_HEIGHT ][ HISTORY_WIDTH ] = {""};
+int       g_iConsoleDisplayStart = 0; // to allow scrolling
+int       g_nConsoleDisplayTotal = 0; // number of lines added to console
+int       g_nConsoleDisplayLines = 0;
+int       g_nConsoleDisplayWidth = 0;
+conchar_t g_aConsoleDisplay[CONSOLE_HEIGHT][CONSOLE_WIDTH];
 
-    // Input Line
+// Input History
+int   g_nHistoryLinesStart = 0;
+int   g_nHistoryLinesTotal = 0; // number of commands entered
+char  g_aHistoryLines[HISTORY_HEIGHT][HISTORY_WIDTH] = { "" };
 
-        // Raw input Line (has prompt)
-        char g_aConsoleInput[ CONSOLE_WIDTH ]; // = g_aConsoleDisplay[0];
+// Input Line
 
-        // Cooked input line (no prompt)
-        int          g_nConsoleInputChars  = 0;
-              char * g_pConsoleInput       = 0; // points to past prompt
-        const char * g_pConsoleFirstArg    = 0; // points to first arg
-        bool         g_bConsoleInputQuoted = false; // Allows lower-case to be entered
-        char         g_nConsoleInputSkip   = '~';
+    // Raw input Line (has prompt)
+char g_aConsoleInput[CONSOLE_WIDTH]; // = g_aConsoleDisplay[0];
+
+// Cooked input line (no prompt)
+int          g_nConsoleInputChars = 0;
+char * g_pConsoleInput = 0; // points to past prompt
+const char * g_pConsoleFirstArg = 0; // points to first arg
+bool         g_bConsoleInputQuoted = false; // Allows lower-case to be entered
+char         g_nConsoleInputSkip = '~';
 
 // Prototypes _______________________________________________________________
 
 // Console ________________________________________________________________________________________
 
-int ConsoleLineLength( const conchar_t * pText )
-{
+int ConsoleLineLength(const conchar_t * pText) {
     int nLen = 0;
-    const conchar_t *pSrc = pText;
+    const conchar_t * pSrc = pText;
 
-    if (pText )
-    {
-        while (*pSrc)
-        {
+    if (pText) {
+        while (*pSrc) {
             pSrc++;
         }
         nLen = (int)(pSrc - pText);
@@ -106,18 +103,15 @@ int ConsoleLineLength( const conchar_t * pText )
 
 
 //===========================================================================
-const conchar_t* ConsoleBufferPeek ()
-{
-    return g_aConsoleBuffer[ 0 ];
+const conchar_t * ConsoleBufferPeek() {
+    return g_aConsoleBuffer[0];
 }
 
 
 //===========================================================================
-bool ConsolePrint ( const char * pText )
-{
-    while (g_nConsoleBuffer >= CONSOLE_BUFFER_HEIGHT)
-    {
-        ConsoleBufferToDisplay();   
+bool ConsolePrint(const char * pText) {
+    while (g_nConsoleBuffer >= CONSOLE_BUFFER_HEIGHT) {
+        ConsoleBufferToDisplay();
     }
 
     // Convert color string to native console color text
@@ -125,70 +119,62 @@ bool ConsolePrint ( const char * pText )
     char c;
 
     int x = 0;
-    const char *pSrc = pText;
-    conchar_t  *pDst = & g_aConsoleBuffer[ g_nConsoleBuffer ][ 0 ];
+    const char * pSrc = pText;
+    conchar_t * pDst = &g_aConsoleBuffer[g_nConsoleBuffer][0];
 
     conchar_t g = 0;
     bool bHaveColor = false;
     char cColor = 0;
 
-    while ((x < CONSOLE_WIDTH) && (c = *pSrc))
-    {
-        if ((c == '\n') || (x >= (CONSOLE_WIDTH - 1)))
-        {
+    while ((x < CONSOLE_WIDTH) && (c = *pSrc)) {
+        if ((c == '\n') || (x >= (CONSOLE_WIDTH - 1))) {
             *pDst = 0;
             x = 0;
-            if (g_nConsoleBuffer >= CONSOLE_BUFFER_HEIGHT)
-            {
-                ConsoleBufferToDisplay();   
+            if (g_nConsoleBuffer >= CONSOLE_BUFFER_HEIGHT) {
+                ConsoleBufferToDisplay();
             }
-            else
-            {
+            else {
                 g_nConsoleBuffer++;
-            }                           
-            pDst = & g_aConsoleBuffer[ g_nConsoleBuffer ][ 0 ];
+            }
+            pDst = &g_aConsoleBuffer[g_nConsoleBuffer][0];
         }
-        else
-        {
+        else {
             g = (c & _CONSOLE_COLOR_MASK);
 
             // `# `A  color encode mouse text
-            if (ConsoleColor_IsCharMeta( c ))
-            {
-                if (! pSrc[1])
+            if (ConsoleColor_IsCharMeta(c)) {
+                if (!pSrc[1])
                     break;
 
-                if (ConsoleColor_IsCharMeta( pSrc[1] )) // ` `
+                if (ConsoleColor_IsCharMeta(pSrc[1])) // ` `
                 {
                     bHaveColor = false;
                     cColor = 0;
-                    g = ConsoleColor_MakeColor( cColor, c );
+                    g = ConsoleColor_MakeColor(cColor, c);
                     *pDst = g;
                     x++;
                     pDst++;
                 }
                 else
-                if (ConsoleColor_IsCharColor( pSrc[1] )) // ` #
-                {
-                    cColor = pSrc[1];
-                    bHaveColor = true;
-                }
-                else // ` @
-                {
-                    c = ConsoleColor_MakeMouse( pSrc[1] );
-                    g = ConsoleColor_MakeColor( cColor, c );
-                    *pDst = g;
-                    x++;
-                    pDst++;
-                }
+                    if (ConsoleColor_IsCharColor(pSrc[1])) // ` #
+                    {
+                        cColor = pSrc[1];
+                        bHaveColor = true;
+                    }
+                    else // ` @
+                    {
+                        c = ConsoleColor_MakeMouse(pSrc[1]);
+                        g = ConsoleColor_MakeColor(cColor, c);
+                        *pDst = g;
+                        x++;
+                        pDst++;
+                    }
                 pSrc++;
                 pSrc++;
             }
-            else
-            {
-                if (bHaveColor)
-                {
-                    g = ConsoleColor_MakeColor( cColor, c );    
+            else {
+                if (bHaveColor) {
+                    g = ConsoleColor_MakeColor(cColor, c);
                     bHaveColor = false;
                 }
                 *pDst = g;
@@ -261,14 +247,12 @@ bool ConsolePrint ( const char * pText )
     return true;
 }
 
-bool ConsolePrintVa ( char* buf, size_t bufsz, const char * pFormat, va_list va )
-{
+bool ConsolePrintVa(char * buf, size_t bufsz, const char * pFormat, va_list va) {
     vsnprintf_s(buf, bufsz, _TRUNCATE, pFormat, va);
     return ConsolePrint(buf);
 }
 
-bool ConsoleBufferPushVa ( char* buf, size_t bufsz, const char * pFormat, va_list va )
-{
+bool ConsoleBufferPushVa(char * buf, size_t bufsz, const char * pFormat, va_list va) {
     vsnprintf_s(buf, bufsz, _TRUNCATE, pFormat, va);
     return ConsoleBufferPush(buf);
 }
@@ -276,39 +260,32 @@ bool ConsoleBufferPushVa ( char* buf, size_t bufsz, const char * pFormat, va_lis
 // Add string to buffered output
 // Shifts the buffered console output lines "Up"
 //===========================================================================
-bool ConsoleBufferPush ( const char * pText )
-{
-    while (g_nConsoleBuffer >= CONSOLE_BUFFER_HEIGHT)
-    {
+bool ConsoleBufferPush(const char * pText) {
+    while (g_nConsoleBuffer >= CONSOLE_BUFFER_HEIGHT) {
         ConsoleBufferToDisplay();
     }
 
     conchar_t c;
 
     int x = 0;
-    const char *pSrc = pText;
-    conchar_t  *pDst = & g_aConsoleBuffer[ g_nConsoleBuffer ][ 0 ];
+    const char * pSrc = pText;
+    conchar_t * pDst = &g_aConsoleBuffer[g_nConsoleBuffer][0];
 
-    while ((x < CONSOLE_WIDTH) && *pSrc)
-    {
+    while ((x < CONSOLE_WIDTH) && *pSrc) {
         c = *pSrc;
-        if ((c == '\n') || (x == (CONSOLE_WIDTH - 1)))
-        {
+        if ((c == '\n') || (x == (CONSOLE_WIDTH - 1))) {
             *pDst = 0;
             x = 0;
-            if (g_nConsoleBuffer >= CONSOLE_BUFFER_HEIGHT)
-            {
-                ConsoleBufferToDisplay();   
+            if (g_nConsoleBuffer >= CONSOLE_BUFFER_HEIGHT) {
+                ConsoleBufferToDisplay();
             }
-            else
-            {
+            else {
                 g_nConsoleBuffer++;
             }
             pSrc++;
-            pDst = & g_aConsoleBuffer[ g_nConsoleBuffer ][ 0 ];
+            pDst = &g_aConsoleBuffer[g_nConsoleBuffer][0];
         }
-        else
-        {
+        else {
             *pDst = (c & _CONSOLE_COLOR_MASK);
             x++;
             pSrc++;
@@ -323,15 +300,13 @@ bool ConsoleBufferPush ( const char * pText )
 
 // Shifts the buffered console output "down"
 //===========================================================================
-void ConsoleBufferPop ()
-{
+void ConsoleBufferPop() {
     int y = 0;
-    while (y < g_nConsoleBuffer)
-    {
+    while (y < g_nConsoleBuffer) {
         memcpy(
-            g_aConsoleBuffer[ y ],
-            g_aConsoleBuffer[ y+1 ],
-            sizeof( conchar_t ) * CONSOLE_WIDTH
+            g_aConsoleBuffer[y],
+            g_aConsoleBuffer[y + 1],
+            sizeof(conchar_t) * CONSOLE_WIDTH
         );
         y++;
     }
@@ -343,22 +318,19 @@ void ConsoleBufferPop ()
 
 // Remove string from buffered output
 //===========================================================================
-void ConsoleBufferToDisplay ()
-{
-    ConsoleDisplayPush( ConsoleBufferPeek() );
+void ConsoleBufferToDisplay() {
+    ConsoleDisplayPush(ConsoleBufferPeek());
     ConsoleBufferPop();
 }
 
 // No mark-up. Straight ASCII conversion
 //===========================================================================
-void ConsoleConvertFromText ( conchar_t * sText, const char * pText )
-{
+void ConsoleConvertFromText(conchar_t * sText, const char * pText) {
     int x = 0;
-    const char *pSrc = pText;
-    conchar_t  *pDst = sText;
-    while (pSrc && *pSrc)
-    {
-        *pDst = (conchar_t) (*pSrc & _CONSOLE_COLOR_MASK);
+    const char * pSrc = pText;
+    conchar_t * pDst = sText;
+    while (pSrc && *pSrc) {
+        *pDst = (conchar_t)(*pSrc & _CONSOLE_COLOR_MASK);
         pSrc++;
         pDst++;
     }
@@ -366,45 +338,40 @@ void ConsoleConvertFromText ( conchar_t * sText, const char * pText )
 }
 
 //===========================================================================
-Update_t ConsoleDisplayError ( const char * pText)
-{
-    ConsoleBufferPush( pText );
+Update_t ConsoleDisplayError(const char * pText) {
+    ConsoleBufferPush(pText);
     return ConsoleUpdate();
 }
 
 
 //===========================================================================
-void ConsoleDisplayPush ( const char * pText )
-{
-    conchar_t sText[ CONSOLE_WIDTH * 2 ];
-    ConsoleConvertFromText( sText, pText );
-    ConsoleDisplayPush( sText );
+void ConsoleDisplayPush(const char * pText) {
+    conchar_t sText[CONSOLE_WIDTH * 2];
+    ConsoleConvertFromText(sText, pText);
+    ConsoleDisplayPush(sText);
 }
 
 
 // Shifts the console display lines "up"
 //===========================================================================
-void ConsoleDisplayPush ( const conchar_t * pText )
-{
-    int nLen = MIN( g_nConsoleDisplayTotal, CONSOLE_HEIGHT - 1 - CONSOLE_FIRST_LINE);
-    while (nLen--)
-    {
+void ConsoleDisplayPush(const conchar_t * pText) {
+    int nLen = MIN(g_nConsoleDisplayTotal, CONSOLE_HEIGHT - 1 - CONSOLE_FIRST_LINE);
+    while (nLen--) {
         memcpy(
-              (char*) g_aConsoleDisplay[(nLen + 1 + CONSOLE_FIRST_LINE )]
-            , (char*) g_aConsoleDisplay[nLen + CONSOLE_FIRST_LINE]
+            (char *)g_aConsoleDisplay[(nLen + 1 + CONSOLE_FIRST_LINE)]
+            , (char *)g_aConsoleDisplay[nLen + CONSOLE_FIRST_LINE]
             , sizeof(conchar_t) * CONSOLE_WIDTH
         );
     }
 
-    if (pText)
-    {
+    if (pText) {
         memcpy(
-              (char*) g_aConsoleDisplay[ CONSOLE_FIRST_LINE ]
+            (char *)g_aConsoleDisplay[CONSOLE_FIRST_LINE]
             , pText
             , sizeof(conchar_t) * CONSOLE_WIDTH
         );
     }
-    
+
     g_nConsoleDisplayTotal++;
     if (g_nConsoleDisplayTotal > (CONSOLE_HEIGHT - CONSOLE_FIRST_LINE))
         g_nConsoleDisplayTotal = (CONSOLE_HEIGHT - CONSOLE_FIRST_LINE);
@@ -413,46 +380,41 @@ void ConsoleDisplayPush ( const conchar_t * pText )
 
 
 //===========================================================================
-void ConsoleDisplayPause ()
-{
-    if (g_nConsoleBuffer)
-    {
+void ConsoleDisplayPause() {
+    if (g_nConsoleBuffer) {
 #if CONSOLE_INPUT_CHAR16
         ConsoleConvertFromText(
             g_aConsoleInput,
             "...press SPACE continue, ESC skip..."
         );
-        g_nConsolePromptLen = ConsoleLineLength( g_pConsoleInput ) + 1;
+        g_nConsolePromptLen = ConsoleLineLength(g_pConsoleInput) + 1;
 #else
         strcpy(
             g_aConsoleInput,
             "...press SPACE continue, ESC skip..."
         );
-        g_nConsolePromptLen = (int)strlen( g_pConsoleInput ) + 1;
+        g_nConsolePromptLen = (int)strlen(g_pConsoleInput) + 1;
 #endif
         g_nConsoleInputChars = 0;
         g_bConsoleBufferPaused = true;
     }
-    else
-    {
+    else {
         ConsoleInputReset();
     }
 }
 
 //===========================================================================
-bool ConsoleInputBackSpace ()
-{
-    if (g_nConsoleInputChars)
-    {
-        g_pConsoleInput[ g_nConsoleInputChars ] = CHAR_SPACE;
+bool ConsoleInputBackSpace() {
+    if (g_nConsoleInputChars) {
+        g_pConsoleInput[g_nConsoleInputChars] = CHAR_SPACE;
 
         g_nConsoleInputChars--;
 
-        if ((g_pConsoleInput[ g_nConsoleInputChars ] == CHAR_QUOTE_DOUBLE) ||
-            (g_pConsoleInput[ g_nConsoleInputChars ] == CHAR_QUOTE_SINGLE))
-            g_bConsoleInputQuoted = ! g_bConsoleInputQuoted;
+        if ((g_pConsoleInput[g_nConsoleInputChars] == CHAR_QUOTE_DOUBLE) ||
+            (g_pConsoleInput[g_nConsoleInputChars] == CHAR_QUOTE_SINGLE))
+            g_bConsoleInputQuoted = !g_bConsoleInputQuoted;
 
-        g_pConsoleInput[ g_nConsoleInputChars ] = CHAR_SPACE;
+        g_pConsoleInput[g_nConsoleInputChars] = CHAR_SPACE;
         return true;
     }
     return false;
@@ -460,12 +422,10 @@ bool ConsoleInputBackSpace ()
 
 // Clears prompt too
 //===========================================================================
-bool ConsoleInputClear ()
-{
-    ZeroMemory( g_aConsoleInput, CONSOLE_WIDTH );
+bool ConsoleInputClear() {
+    ZeroMemory(g_aConsoleInput, CONSOLE_WIDTH);
 
-    if (g_nConsoleInputChars)
-    {
+    if (g_nConsoleInputChars) {
         g_nConsoleInputChars = 0;
         return true;
     }
@@ -473,11 +433,10 @@ bool ConsoleInputClear ()
 }
 
 //===========================================================================
-bool ConsoleInputChar ( const char ch )
-{
+bool ConsoleInputChar(const char ch) {
     if (g_nConsoleInputChars < g_nConsoleDisplayWidth) // bug? include prompt?
     {
-        g_pConsoleInput[ g_nConsoleInputChars ] = ch;
+        g_pConsoleInput[g_nConsoleInputChars] = ch;
         g_nConsoleInputChars++;
         return true;
     }
@@ -485,15 +444,12 @@ bool ConsoleInputChar ( const char ch )
 }
 
 //===========================================================================
-void ConsoleUpdateCursor ( char ch )
-{
+void ConsoleUpdateCursor(char ch) {
     if (ch)
         g_sConsoleCursor[0] = ch;
-    else
-    {
-        ch = (char) g_aConsoleInput[ g_nConsoleInputChars + g_nConsolePromptLen ];
-        if (! ch)
-        {
+    else {
+        ch = (char)g_aConsoleInput[g_nConsoleInputChars + g_nConsolePromptLen];
+        if (!ch) {
             ch = CHAR_SPACE;
         }
         g_sConsoleCursor[0] = ch;
@@ -502,16 +458,14 @@ void ConsoleUpdateCursor ( char ch )
 
 
 //===========================================================================
-const char * ConsoleInputPeek ()
-{
+const char * ConsoleInputPeek() {
 //  return g_aConsoleDisplay[0];
 //  return g_pConsoleInput;
     return g_aConsoleInput;
 }
 
 //===========================================================================
-void ConsoleInputReset ()
-{
+void ConsoleInputReset() {
     // Not using g_aConsoleInput since we get drawing of the input Line for "Free"
     // Even if we add console scrolling, we don't need any special logic to draw the input line.
     g_bConsoleInputQuoted = false;
@@ -524,24 +478,22 @@ void ConsoleInputReset ()
 
 //  int nLen = strlen( g_aConsoleInput );
 #if CONSOLE_INPUT_CHAR16
-    int nLen = ConsoleLineLength( g_aConsoleInput );
+    int nLen = ConsoleLineLength(g_aConsoleInput);
 #else
-    int nLen = (int)strlen( g_aConsoleInput );
+    int nLen = (int)strlen(g_aConsoleInput);
 #endif
 
-    g_pConsoleInput = &g_aConsoleInput[ g_nConsolePromptLen ];
+    g_pConsoleInput = &g_aConsoleInput[g_nConsolePromptLen];
     g_nConsoleInputChars = 0;
 }
 
 //===========================================================================
-int ConsoleInputTabCompletion ()
-{
+int ConsoleInputTabCompletion() {
     return UPDATE_CONSOLE_INPUT;
 }
 
 //===========================================================================
-Update_t ConsoleScrollHome ()
-{
+Update_t ConsoleScrollHome() {
     g_iConsoleDisplayStart = g_nConsoleDisplayTotal - CONSOLE_FIRST_LINE;
     if (g_iConsoleDisplayStart < 0)
         g_iConsoleDisplayStart = 0;
@@ -550,16 +502,14 @@ Update_t ConsoleScrollHome ()
 }
 
 //===========================================================================
-Update_t ConsoleScrollEnd ()
-{
+Update_t ConsoleScrollEnd() {
     g_iConsoleDisplayStart = 0;
 
     return UPDATE_CONSOLE_DISPLAY;
 }
 
 //===========================================================================
-Update_t ConsoleScrollUp ( int nLines )
-{
+Update_t ConsoleScrollUp(int nLines) {
     g_iConsoleDisplayStart += nLines;
 
     if (g_iConsoleDisplayStart > (g_nConsoleDisplayTotal - CONSOLE_FIRST_LINE))
@@ -572,8 +522,7 @@ Update_t ConsoleScrollUp ( int nLines )
 }
 
 //===========================================================================
-Update_t ConsoleScrollDn ( int nLines )
-{
+Update_t ConsoleScrollDn(int nLines) {
     g_iConsoleDisplayStart -= nLines;
     if (g_iConsoleDisplayStart < 0)
         g_iConsoleDisplayStart = 0;
@@ -582,32 +531,27 @@ Update_t ConsoleScrollDn ( int nLines )
 }
 
 //===========================================================================
-Update_t ConsoleScrollPageUp ()
-{
-    ConsoleScrollUp( g_nConsoleDisplayLines - CONSOLE_FIRST_LINE );
+Update_t ConsoleScrollPageUp() {
+    ConsoleScrollUp(g_nConsoleDisplayLines - CONSOLE_FIRST_LINE);
 
     return UPDATE_CONSOLE_DISPLAY;
 }
 
 //===========================================================================
-Update_t ConsoleScrollPageDn ()
-{
-    ConsoleScrollDn( g_nConsoleDisplayLines - CONSOLE_FIRST_LINE );
+Update_t ConsoleScrollPageDn() {
+    ConsoleScrollDn(g_nConsoleDisplayLines - CONSOLE_FIRST_LINE);
 
     return UPDATE_CONSOLE_DISPLAY;
 }
 
 //===========================================================================
-Update_t ConsoleBufferTryUnpause (int nLines)
-{
-    for( int y = 0; y < nLines; y++ )
-    {
+Update_t ConsoleBufferTryUnpause(int nLines) {
+    for (int y = 0; y < nLines; y++) {
         ConsoleBufferToDisplay();
     }
 
     g_bConsoleBufferPaused = false;
-    if (g_nConsoleBuffer)
-    {
+    if (g_nConsoleBuffer) {
         g_bConsoleBufferPaused = true;
         ConsoleDisplayPause();
         return UPDATE_CONSOLE_INPUT | UPDATE_CONSOLE_DISPLAY;
@@ -618,20 +562,17 @@ Update_t ConsoleBufferTryUnpause (int nLines)
 
 // Flush the console
 //===========================================================================
-Update_t ConsoleUpdate ()
-{
-    if (! g_bConsoleBufferPaused)
-    {
-        int nLines = MIN( g_nConsoleBuffer, g_nConsoleDisplayLines - 1);
-        return ConsoleBufferTryUnpause( nLines );
+Update_t ConsoleUpdate() {
+    if (!g_bConsoleBufferPaused) {
+        int nLines = MIN(g_nConsoleBuffer, g_nConsoleDisplayLines - 1);
+        return ConsoleBufferTryUnpause(nLines);
     }
 
     return UPDATE_CONSOLE_DISPLAY;
 }
 
 //===========================================================================
-void ConsoleFlush ()
-{
+void ConsoleFlush() {
     int nLines = g_nConsoleBuffer;
-    ConsoleBufferTryUnpause( nLines );
+    ConsoleBufferTryUnpause(nLines);
 }

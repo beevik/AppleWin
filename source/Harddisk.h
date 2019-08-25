@@ -23,8 +23,7 @@ along with AppleWin; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-enum HardDrive_e
-{
+enum HardDrive_e {
     HARDDISK_1 = 0,
     HARDDISK_2,
     NUM_HARDDISKS
@@ -44,9 +43,9 @@ bool HD_IsDriveUnplugged(const int iDrive);
 void HD_LoadLastDiskImage(const int iDrive);
 
 // 1.19.0.0 Hard Disk Status/Indicator Light
-void HD_GetLightStatus (Disk_Status_e *pDisk1Status_);
+void HD_GetLightStatus(Disk_Status_e * pDisk1Status_);
 bool HD_ImageSwap(void);
 
 std::string HD_GetSnapshotCardName(void);
-void HD_SaveSnapshot(class YamlSaveHelper& yamlSaveHelper);
-bool HD_LoadSnapshot(class YamlLoadHelper& yamlLoadHelper, UINT slot, UINT version, const std::string strSaveStatePath);
+void HD_SaveSnapshot(class YamlSaveHelper & yamlSaveHelper);
+bool HD_LoadSnapshot(class YamlLoadHelper & yamlLoadHelper, UINT slot, UINT version, const std::string strSaveStatePath);

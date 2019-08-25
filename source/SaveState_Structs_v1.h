@@ -9,8 +9,7 @@
 
 /////////////////////////////////////////////////////////////////////////////////
 
-struct SS_CPU6502
-{
+struct SS_CPU6502 {
     BYTE A;
     BYTE X;
     BYTE Y;
@@ -23,8 +22,7 @@ struct SS_CPU6502
 
 const UINT uRecvBufferSize = 9;
 
-struct SS_IO_Comms
-{
+struct SS_IO_Comms {
     DWORD  baudrate;
     BYTE   bytesize;
     BYTE   commandbyte;
@@ -36,38 +34,32 @@ struct SS_IO_Comms
     BYTE   stopbits;
 };
 
-struct SS_IO_Joystick
-{
+struct SS_IO_Joystick {
     unsigned __int64 nJoyCntrResetCycle;
 };
 
-struct SS_IO_Keyboard
-{
+struct SS_IO_Keyboard {
     DWORD keyboardqueries;
     BYTE nLastKey;
 };
 
-struct SS_IO_Speaker
-{
+struct SS_IO_Speaker {
     unsigned __int64 nSpkrLastCycle;
 };
 
-struct SS_IO_Video
-{
+struct SS_IO_Video {
     bool bAltCharSet;   // charoffs
     DWORD dwVidMode;
 };
 
-struct SS_BaseMemory
-{
+struct SS_BaseMemory {
     DWORD dwMemMode;
     BOOL bLastWriteRam;
     BYTE nMemMain[nMemMainSize];
     BYTE nMemAux[nMemAuxSize];
 };
 
-struct SS_APPLE2_Unit
-{
+struct SS_APPLE2_Unit {
     SS_UNIT_HDR UnitHdr;
     SS_CPU6502 CPU6502;
     SS_IO_Comms Comms;
@@ -80,8 +72,7 @@ struct SS_APPLE2_Unit
 
 /////////////////////////////////////////////////////////////////////////////////
 
-struct DISK2_Unit
-{
+struct DISK2_Unit {
     char    szFileName[MAX_PATH];
     int     track;
     int     phase;
@@ -95,8 +86,7 @@ struct DISK2_Unit
     BYTE    nTrack[NIBBLES_PER_TRACK_NIB];
 };
 
-struct SS_CARD_DISK2
-{
+struct SS_CARD_DISK2 {
     SS_CARD_HDR Hdr;
     DISK2_Unit  Unit[2];
     WORD    phases;
@@ -110,8 +100,7 @@ struct SS_CARD_DISK2
 
 /////////////////////////////////////////////////////////////////////////////////
 
-struct MB_Unit_v1
-{
+struct MB_Unit_v1 {
     SY6522      RegsSY6522;
     BYTE        RegsAY8910[16];
     SSI263A     RegsSSI263;
@@ -123,16 +112,14 @@ struct MB_Unit_v1
 
 const UINT MB_UNITS_PER_CARD_v1 = 2;
 
-struct SS_CARD_MOCKINGBOARD_v1
-{
+struct SS_CARD_MOCKINGBOARD_v1 {
     SS_CARD_HDR Hdr;
     MB_Unit_v1  Unit[MB_UNITS_PER_CARD_v1];
 };
 
 /////////////////////////////////////////////////////////////////////////////////
 
-struct APPLEWIN_SNAPSHOT_v1
-{
+struct APPLEWIN_SNAPSHOT_v1 {
     SS_FILE_HDR Hdr;
     SS_APPLE2_Unit Apple2Unit;
     SS_CARD_EMPTY Empty1;                   // Slot1

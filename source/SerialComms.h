@@ -3,21 +3,20 @@
 extern class SuperSerialCard sg_SSC;
 
 enum {
-    COMMEVT_WAIT=0,
+    COMMEVT_WAIT = 0,
     COMMEVT_ACK,
     COMMEVT_TERM,
     COMMEVT_MAX
 };
 
 enum eFWMODE {
-    FWMODE_CIC=0,
+    FWMODE_CIC = 0,
     FWMODE_SIC_P8,
     FWMODE_PPC,
     FWMODE_SIC_P8A
 }; // NB. CIC = SSC
 
-struct SSCDipSwitches
-{
+struct SSCDipSwitches {
     //DIPSW1
     UINT    uBaudRate;
     eFWMODE eFirmwareMode;
@@ -33,8 +32,7 @@ struct SSCDipSwitches
 #define TEXT_SERIAL_COM TEXT("COM")
 #define TEXT_SERIAL_TCP TEXT("TCP")
 
-class SuperSerialCard
-{
+class SuperSerialCard {
 public:
     SuperSerialCard();
     virtual ~SuperSerialCard();
@@ -44,15 +42,23 @@ public:
     void    CommDestroy();
     void    CommSetSerialPort(HWND hWindow, DWORD dwNewSerialPortItem);
     std::string GetSnapshotCardName(void);
-    void    SaveSnapshot(class YamlSaveHelper& yamlSaveHelper);
-    bool    LoadSnapshot(class YamlLoadHelper& yamlLoadHelper, UINT slot, UINT version);
+    void    SaveSnapshot(class YamlSaveHelper & yamlSaveHelper);
+    bool    LoadSnapshot(class YamlLoadHelper & yamlLoadHelper, UINT slot, UINT version);
 
-    char*   GetSerialPortChoices();
-    DWORD   GetSerialPort() { return m_dwSerialPortItem; }  // Drop-down list item
-    char*   GetSerialPortName() { return m_ayCurrentSerialPortName; }
-    void    SetSerialPortName(const char* pSerialPortName);
-    bool    IsActive() { return (m_hCommHandle != INVALID_HANDLE_VALUE) || (m_hCommListenSocket != INVALID_SOCKET); }
-    void    SupportDCD(bool bEnable) { m_bCfgSupportDCD = bEnable; }    // Status
+    char * GetSerialPortChoices();
+    DWORD   GetSerialPort() {
+        return m_dwSerialPortItem;
+    }  // Drop-down list item
+    char * GetSerialPortName() {
+        return m_ayCurrentSerialPortName;
+    }
+    void    SetSerialPortName(const char * pSerialPortName);
+    bool    IsActive() {
+        return (m_hCommHandle != INVALID_HANDLE_VALUE) || (m_hCommListenSocket != INVALID_SOCKET);
+    }
+    void    SupportDCD(bool bEnable) {
+        m_bCfgSupportDCD = bEnable;
+    }    // Status
 
     void    CommTcpSerialAccept();
     void    CommTcpSerialReceive();
@@ -86,15 +92,17 @@ private:
     static DWORD WINAPI CommThread(LPVOID lpParameter);
     bool    CommThInit();
     void    CommThUninit();
-    UINT    GetNumSerialPortChoices() { return (UINT)m_vecSerialPortsItems.size(); }
+    UINT    GetNumSerialPortChoices() {
+        return (UINT)m_vecSerialPortsItems.size();
+    }
     void    ScanCOMPorts();
-    void    SaveSnapshotDIPSW(class YamlSaveHelper& yamlSaveHelper, std::string key, SSCDipSwitches& dipsw);
-    void    LoadSnapshotDIPSW(class YamlLoadHelper& yamlLoadHelper, std::string key, SSCDipSwitches& dipsw);
+    void    SaveSnapshotDIPSW(class YamlSaveHelper & yamlSaveHelper, std::string key, SSCDipSwitches & dipsw);
+    void    LoadSnapshotDIPSW(class YamlLoadHelper & yamlLoadHelper, std::string key, SSCDipSwitches & dipsw);
 
     //
 
 public:
-    static const UINT SIZEOF_SERIALCHOICE_ITEM = 8*sizeof(char);
+    static const UINT SIZEOF_SERIALCHOICE_ITEM = 8 * sizeof(char);
 
 private:
     char    m_ayCurrentSerialPortName[SIZEOF_SERIALCHOICE_ITEM];
@@ -102,7 +110,7 @@ private:
 
     static const UINT SERIALPORTITEM_INVALID_COM_PORT = 0;
     std::vector<UINT> m_vecSerialPortsItems;    // Includes "None" & "TCP" items
-    char*   m_aySerialPortChoices;
+    char * m_aySerialPortChoices;
     UINT    m_uTCPChoiceItemIdx;
 
     static SSCDipSwitches    m_DIPSWDefault;
@@ -147,7 +155,7 @@ private:
     HANDLE m_hCommEvent[COMMEVT_MAX];
     OVERLAPPED m_o;
 
-    BYTE* m_pExpansionRom;
+    BYTE * m_pExpansionRom;
     UINT m_uSlot;
 
     bool m_bCfgSupportDCD;

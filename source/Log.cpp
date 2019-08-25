@@ -28,12 +28,11 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include "StdAfx.h"
 
-FILE* g_fh = NULL;
+FILE * g_fh = NULL;
 
 //---------------------------------------------------------------------------
 
-void LogInit(void)
-{
+void LogInit(void) {
     if (g_fh)
         return;
 
@@ -45,20 +44,18 @@ void LogInit(void)
     fprintf(g_fh, "*** Logging started: %s %s\n", aDateStr, aTimeStr);
 }
 
-void LogDone(void)
-{
+void LogDone(void) {
     if (!g_fh)
         return;
 
-    fprintf(g_fh,"*** Logging ended\n\n");
+    fprintf(g_fh, "*** Logging ended\n\n");
     fclose(g_fh);
     g_fh = NULL;
 }
 
 //---------------------------------------------------------------------------
 
-void LogOutput(LPCTSTR format, ...)
-{
+void LogOutput(LPCTSTR format, ...) {
     TCHAR output[256];
 
     va_list args;
@@ -71,8 +68,7 @@ void LogOutput(LPCTSTR format, ...)
 
 //---------------------------------------------------------------------------
 
-void LogFileOutput(LPCTSTR format, ...)
-{
+void LogFileOutput(LPCTSTR format, ...) {
     if (!g_fh)
         return;
 

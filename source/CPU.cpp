@@ -95,14 +95,14 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "YamlHelper.h"
 
 // 6502 Accumulator Bit Flags
-    #define  AF_SIGN       0x80
-    #define  AF_OVERFLOW   0x40
-    #define  AF_RESERVED   0x20
-    #define  AF_BREAK      0x10
-    #define  AF_DECIMAL    0x08
-    #define  AF_INTERRUPT  0x04
-    #define  AF_ZERO       0x02
-    #define  AF_CARRY      0x01
+#define  AF_SIGN       0x80
+#define  AF_OVERFLOW   0x40
+#define  AF_RESERVED   0x20
+#define  AF_BREAK      0x10
+#define  AF_DECIMAL    0x08
+#define  AF_INTERRUPT  0x04
+#define  AF_ZERO       0x02
+#define  AF_CARRY      0x01
 
 #define  SHORTOPCODES  22
 #define  BENCHOPCODES  33
@@ -138,13 +138,11 @@ static volatile BOOL g_bNmiFlank = FALSE; // Positive going flank on NMI line
 static eCpuType g_MainCPU = CPU_65C02;
 static eCpuType g_ActiveCPU = CPU_65C02;
 
-eCpuType GetMainCpu(void)
-{
+eCpuType GetMainCpu(void) {
     return g_MainCPU;
 }
 
-void SetMainCpu(eCpuType cpu)
-{
+void SetMainCpu(eCpuType cpu) {
     _ASSERT(cpu != CPU_Z80);
     if (cpu == CPU_Z80)
         return;
@@ -152,28 +150,23 @@ void SetMainCpu(eCpuType cpu)
     g_MainCPU = cpu;
 }
 
-static bool IsCpu65C02(eApple2Type apple2Type)
-{
+static bool IsCpu65C02(eApple2Type apple2Type) {
     return (apple2Type == A2TYPE_APPLE2EENHANCED) || (apple2Type & A2TYPE_APPLE2C);
 }
 
-eCpuType ProbeMainCpuDefault(eApple2Type apple2Type)
-{
+eCpuType ProbeMainCpuDefault(eApple2Type apple2Type) {
     return IsCpu65C02(apple2Type) ? CPU_65C02 : CPU_6502;
 }
 
-void SetMainCpuDefault(eApple2Type apple2Type)
-{
-    SetMainCpu( ProbeMainCpuDefault(apple2Type) );
+void SetMainCpuDefault(eApple2Type apple2Type) {
+    SetMainCpu(ProbeMainCpuDefault(apple2Type));
 }
 
-eCpuType GetActiveCpu(void)
-{
+eCpuType GetActiveCpu(void) {
     return g_ActiveCPU;
 }
 
-void SetActiveCpu(eCpuType cpu)
-{
+void SetActiveCpu(eCpuType cpu) {
     g_ActiveCPU = cpu;
 }
 
@@ -205,28 +198,26 @@ static UINT g_nMin = 0xFFFFFFFF;
 static UINT g_nMax = 0;
 #endif
 
-static __forceinline void DoIrqProfiling(DWORD uCycles)
-{
+static __forceinline void DoIrqProfiling(DWORD uCycles) {
 #ifdef _DEBUG
-    if(regs.ps & AF_INTERRUPT)
+    if (regs.ps & AF_INTERRUPT)
         return;     // Still in Apple's ROM
 
     g_nCycleIrqEnd = g_nCumulativeCycles + uCycles;
-    g_nCycleIrqTime = (UINT) (g_nCycleIrqEnd - g_nCycleIrqStart);
+    g_nCycleIrqTime = (UINT)(g_nCycleIrqEnd - g_nCycleIrqStart);
 
-    if(g_nCycleIrqTime > g_nMax) g_nMax = g_nCycleIrqTime;
-    if(g_nCycleIrqTime < g_nMin) g_nMin = g_nCycleIrqTime;
+    if (g_nCycleIrqTime > g_nMax) g_nMax = g_nCycleIrqTime;
+    if (g_nCycleIrqTime < g_nMin) g_nMin = g_nCycleIrqTime;
 
-    if(g_nIdx == BUFFER_SIZE)
+    if (g_nIdx == BUFFER_SIZE)
         return;
 
     g_nBuffer[g_nIdx] = g_nCycleIrqTime;
     g_nIdx++;
 
-    if(g_nIdx == BUFFER_SIZE)
-    {
+    if (g_nIdx == BUFFER_SIZE) {
         UINT nTotal = 0;
-        for(UINT i=0; i<BUFFER_SIZE; i++)
+        for (UINT i = 0; i < BUFFER_SIZE; i++)
             nTotal += g_nBuffer[i];
 
         g_nMean = nTotal / BUFFER_SIZE;
@@ -236,13 +227,11 @@ static __forceinline void DoIrqProfiling(DWORD uCycles)
 
 //===========================================================================
 
-BYTE CpuRead(USHORT addr, ULONG uExecutedCycles)
-{
+BYTE CpuRead(USHORT addr, ULONG uExecutedCycles) {
     return READ;
 }
 
-void CpuWrite(USHORT addr, BYTE a, ULONG uExecutedCycles)
-{
+void CpuWrite(USHORT addr, BYTE a, ULONG uExecutedCycles) {
     WRITE(a);
 }
 
@@ -251,16 +240,13 @@ void CpuWrite(USHORT addr, BYTE a, ULONG uExecutedCycles)
 //#define DBG_HDD_ENTRYPOINT
 #if defined(_DEBUG) && defined(DBG_HDD_ENTRYPOINT)
 // Output a debug msg whenever the HDD f/w is called or jump to.
-static void DebugHddEntrypoint(const USHORT PC)
-{
+static void DebugHddEntrypoint(const USHORT PC) {
     static bool bOldPCAtC7xx = false;
     static WORD OldPC = 0;
     static UINT Count = 0;
 
-    if ((PC >> 8) == 0xC7)
-    {
-        if (!bOldPCAtC7xx /*&& PC != 0xc70a*/)
-        {
+    if ((PC >> 8) == 0xC7) {
+        if (!bOldPCAtC7xx /*&& PC != 0xc70a*/) {
             Count++;
             char szDebug[100];
             sprintf(szDebug, "HDD Entrypoint: $%04X\n", PC);
@@ -269,16 +255,14 @@ static void DebugHddEntrypoint(const USHORT PC)
 
         bOldPCAtC7xx = true;
     }
-    else
-    {
+    else {
         bOldPCAtC7xx = false;
     }
     OldPC = PC;
 }
 #endif
 
-static __forceinline void Fetch(BYTE& iOpcode, ULONG uExecutedCycles)
-{
+static __forceinline void Fetch(BYTE & iOpcode, ULONG uExecutedCycles) {
     const USHORT PC = regs.pc;
 
 #if defined(_DEBUG) && defined(DBG_HDD_ENTRYPOINT)
@@ -286,49 +270,45 @@ static __forceinline void Fetch(BYTE& iOpcode, ULONG uExecutedCycles)
 #endif
 
     iOpcode = ((PC & 0xF000) == 0xC000)
-        ? IORead[(PC>>4) & 0xFF](PC,PC,0,0,uExecutedCycles) // Fetch opcode from I/O memory, but params are still from mem[]
-        : *(mem+PC);
+        ? IORead[(PC >> 4) & 0xFF](PC, PC, 0, 0, uExecutedCycles) // Fetch opcode from I/O memory, but params are still from mem[]
+        : *(mem + PC);
 
     regs.pc++;
 }
 
 //#define ENABLE_NMI_SUPPORT    // Not used - so don't enable
-static __forceinline void NMI(ULONG& uExecutedCycles, BOOL& flagc, BOOL& flagn, BOOL& flagv, BOOL& flagz)
-{
+static __forceinline void NMI(ULONG & uExecutedCycles, BOOL & flagc, BOOL & flagn, BOOL & flagv, BOOL & flagz) {
 #ifdef ENABLE_NMI_SUPPORT
-    if(g_bNmiFlank)
-    {
+    if (g_bNmiFlank) {
         // NMI signals are only serviced once
         g_bNmiFlank = FALSE;
 #ifdef _DEBUG
         g_nCycleIrqStart = g_nCumulativeCycles + uExecutedCycles;
 #endif
         PUSH(regs.pc >> 8)
-        PUSH(regs.pc & 0xFF)
-        EF_TO_AF
-        PUSH(regs.ps & ~AF_BREAK)
-        regs.ps = regs.ps | AF_INTERRUPT & ~AF_DECIMAL;
-        regs.pc = * (WORD*) (mem+0xFFFA);
+            PUSH(regs.pc & 0xFF)
+            EF_TO_AF;
+            PUSH(regs.ps & ~AF_BREAK)
+            regs.ps = regs.ps | AF_INTERRUPT & ~AF_DECIMAL;
+        regs.pc = *(WORD *)(mem + 0xFFFA);
         UINT uExtraCycles = 0;  // Needed for CYC(a) macro
         CYC(7)
     }
 #endif
 }
 
-static __forceinline void IRQ(ULONG& uExecutedCycles, BOOL& flagc, BOOL& flagn, BOOL& flagv, BOOL& flagz)
-{
-    if(g_bmIRQ && !(regs.ps & AF_INTERRUPT))
-    {
+static __forceinline void IRQ(ULONG & uExecutedCycles, BOOL & flagc, BOOL & flagn, BOOL & flagv, BOOL & flagz) {
+    if (g_bmIRQ && !(regs.ps & AF_INTERRUPT)) {
         // IRQ signals are deasserted when a specific r/w operation is done on device
 #ifdef _DEBUG
         g_nCycleIrqStart = g_nCumulativeCycles + uExecutedCycles;
 #endif
         PUSH(regs.pc >> 8)
-        PUSH(regs.pc & 0xFF)
-        EF_TO_AF
-        PUSH(regs.ps & ~AF_BREAK)
-        regs.ps = regs.ps | AF_INTERRUPT & ~AF_DECIMAL;
-        regs.pc = * (WORD*) (mem+0xFFFE);
+            PUSH(regs.pc & 0xFF)
+            EF_TO_AF;
+            PUSH(regs.ps & ~AF_BREAK)
+            regs.ps = regs.ps | AF_INTERRUPT & ~AF_DECIMAL;
+        regs.pc = *(WORD *)(mem + 0xFFFE);
         UINT uExtraCycles = 0;  // Needed for CYC(a) macro
         CYC(7)
     }
@@ -337,10 +317,8 @@ static __forceinline void IRQ(ULONG& uExecutedCycles, BOOL& flagc, BOOL& flagn, 
 const int IRQ_CHECK_OPCODE_FULL_SPEED = 40; // ~128 cycles (assume 3 cycles per opcode)
 static int g_fullSpeedOpcodeCount = IRQ_CHECK_OPCODE_FULL_SPEED;
 
-static __forceinline void CheckInterruptSources(ULONG uExecutedCycles, const bool bVideoUpdate)
-{
-    if (!bVideoUpdate)
-    {
+static __forceinline void CheckInterruptSources(ULONG uExecutedCycles, const bool bVideoUpdate) {
+    if (!bVideoUpdate) {
         g_fullSpeedOpcodeCount--;
         if (g_fullSpeedOpcodeCount >= 0)
             return;
@@ -351,9 +329,8 @@ static __forceinline void CheckInterruptSources(ULONG uExecutedCycles, const boo
 }
 
 // GH#608: IRQ needs to occur within 17 cycles (6 opcodes) of configuring the timer interrupt
-void CpuAdjustIrqCheck(UINT uCyclesUntilInterrupt)
-{
-    const UINT opcodesUntilInterrupt = uCyclesUntilInterrupt/3; // assume 3 cycles per opcode
+void CpuAdjustIrqCheck(UINT uCyclesUntilInterrupt) {
+    const UINT opcodesUntilInterrupt = uCyclesUntilInterrupt / 3; // assume 3 cycles per opcode
     if (g_bFullSpeed && opcodesUntilInterrupt < IRQ_CHECK_OPCODE_FULL_SPEED)
         g_fullSpeedOpcodeCount = opcodesUntilInterrupt;
 }
@@ -366,8 +343,7 @@ void CpuAdjustIrqCheck(UINT uCyclesUntilInterrupt)
 
 //===========================================================================
 
-static DWORD InternalCpuExecute(const DWORD uTotalCycles, const bool bVideoUpdate)
-{
+static DWORD InternalCpuExecute(const DWORD uTotalCycles, const bool bVideoUpdate) {
     if (GetMainCpu() == CPU_6502)
         return Cpu6502(uTotalCycles, bVideoUpdate);     // Apple ][, ][+, //e, Clones
     else
@@ -380,10 +356,8 @@ static DWORD InternalCpuExecute(const DWORD uTotalCycles, const bool bVideoUpdat
 
 //===========================================================================
 
-void CpuDestroy ()
-{
-    if (g_bCritSectionValid)
-    {
+void CpuDestroy() {
+    if (g_bCritSectionValid) {
         DeleteCriticalSection(&g_CriticalSection);
         g_bCritSectionValid = false;
     }
@@ -400,11 +374,10 @@ void CpuDestroy ()
 //  g_nCyclesExecuted
 //  g_nCumulativeCycles
 //
-void CpuCalcCycles(const ULONG nExecutedCycles)
-{
+void CpuCalcCycles(const ULONG nExecutedCycles) {
     // Calc # of cycles executed since this func was last called
     const ULONG nCycles = nExecutedCycles - g_nCyclesExecuted;
-    _ASSERT( (LONG)nCycles >= 0 );
+    _ASSERT((LONG)nCycles >= 0);
     g_nCumulativeCycles += nCycles;
 
     g_nCyclesExecuted = nExecutedCycles;
@@ -426,8 +399,7 @@ ULONG CpuGetCyclesThisVideoFrame(ULONG) // Old func using g_uInternalExecutedCyc
     return g_dwCyclesThisFrame + g_nCyclesExecuted;
 }
 #else
-ULONG CpuGetCyclesThisVideoFrame(const ULONG nExecutedCycles)
-{
+ULONG CpuGetCyclesThisVideoFrame(const ULONG nExecutedCycles) {
     CpuCalcCycles(nExecutedCycles);
     return g_dwCyclesThisFrame + g_nCyclesExecuted;
 }
@@ -435,8 +407,7 @@ ULONG CpuGetCyclesThisVideoFrame(const ULONG nExecutedCycles)
 
 //===========================================================================
 
-DWORD CpuExecute(const DWORD uCycles, const bool bVideoUpdate)
-{
+DWORD CpuExecute(const DWORD uCycles, const bool bVideoUpdate) {
     g_nCyclesExecuted = 0;
 
     MB_StartOfCpuExecute();
@@ -459,8 +430,7 @@ DWORD CpuExecute(const DWORD uCycles, const bool bVideoUpdate)
 
 //===========================================================================
 
-void CpuInitialize ()
-{
+void CpuInitialize() {
     CpuDestroy();
     regs.a = regs.x = regs.y = regs.ps = 0xFF;
     regs.sp = 0x01FF;
@@ -474,31 +444,28 @@ void CpuInitialize ()
 
 //===========================================================================
 
-void CpuSetupBenchmark ()
-{
-    regs.a  = 0;
-    regs.x  = 0;
-    regs.y  = 0;
+void CpuSetupBenchmark() {
+    regs.a = 0;
+    regs.x = 0;
+    regs.y = 0;
     regs.pc = 0x300;
     regs.sp = 0x1FF;
 
     // CREATE CODE SEGMENTS CONSISTING OF GROUPS OF COMMONLY-USED OPCODES
     {
-        int addr   = 0x300;
+        int addr = 0x300;
         int opcode = 0;
-        do
-        {
-            *(mem+addr++) = benchopcode[opcode];
-            *(mem+addr++) = benchopcode[opcode];
+        do {
+            *(mem + addr++) = benchopcode[opcode];
+            *(mem + addr++) = benchopcode[opcode];
 
             if (opcode >= SHORTOPCODES)
-                *(mem+addr++) = 0;
+                * (mem + addr++) = 0;
 
-            if ((++opcode >= BENCHOPCODES) || ((addr & 0x0F) >= 0x0B))
-            {
-                *(mem+addr++) = 0x4C;
-                *(mem+addr++) = (opcode >= BENCHOPCODES) ? 0x00 : ((addr >> 4)+1) << 4;
-                *(mem+addr++) = 0x03;
+            if ((++opcode >= BENCHOPCODES) || ((addr & 0x0F) >= 0x0B)) {
+                *(mem + addr++) = 0x4C;
+                *(mem + addr++) = (opcode >= BENCHOPCODES) ? 0x00 : ((addr >> 4) + 1) << 4;
+                *(mem + addr++) = 0x03;
                 while (addr & 0x0F)
                     ++addr;
             }
@@ -508,34 +475,30 @@ void CpuSetupBenchmark ()
 
 //===========================================================================
 
-void CpuIrqReset()
-{
+void CpuIrqReset() {
     _ASSERT(g_bCritSectionValid);
     if (g_bCritSectionValid) EnterCriticalSection(&g_CriticalSection);
     g_bmIRQ = 0;
     if (g_bCritSectionValid) LeaveCriticalSection(&g_CriticalSection);
 }
 
-void CpuIrqAssert(eIRQSRC Device)
-{
+void CpuIrqAssert(eIRQSRC Device) {
     _ASSERT(g_bCritSectionValid);
     if (g_bCritSectionValid) EnterCriticalSection(&g_CriticalSection);
-    g_bmIRQ |= 1<<Device;
+    g_bmIRQ |= 1 << Device;
     if (g_bCritSectionValid) LeaveCriticalSection(&g_CriticalSection);
 }
 
-void CpuIrqDeassert(eIRQSRC Device)
-{
+void CpuIrqDeassert(eIRQSRC Device) {
     _ASSERT(g_bCritSectionValid);
     if (g_bCritSectionValid) EnterCriticalSection(&g_CriticalSection);
-    g_bmIRQ &= ~(1<<Device);
+    g_bmIRQ &= ~(1 << Device);
     if (g_bCritSectionValid) LeaveCriticalSection(&g_CriticalSection);
 }
 
 //===========================================================================
 
-void CpuNmiReset()
-{
+void CpuNmiReset() {
     _ASSERT(g_bCritSectionValid);
     if (g_bCritSectionValid) EnterCriticalSection(&g_CriticalSection);
     g_bmNMI = 0;
@@ -543,36 +506,33 @@ void CpuNmiReset()
     if (g_bCritSectionValid) LeaveCriticalSection(&g_CriticalSection);
 }
 
-void CpuNmiAssert(eIRQSRC Device)
-{
+void CpuNmiAssert(eIRQSRC Device) {
     _ASSERT(g_bCritSectionValid);
     if (g_bCritSectionValid) EnterCriticalSection(&g_CriticalSection);
     if (g_bmNMI == 0) // NMI line is just becoming active
         g_bNmiFlank = TRUE;
-    g_bmNMI |= 1<<Device;
+    g_bmNMI |= 1 << Device;
     if (g_bCritSectionValid) LeaveCriticalSection(&g_CriticalSection);
 }
 
-void CpuNmiDeassert(eIRQSRC Device)
-{
+void CpuNmiDeassert(eIRQSRC Device) {
     _ASSERT(g_bCritSectionValid);
     if (g_bCritSectionValid) EnterCriticalSection(&g_CriticalSection);
-    g_bmNMI &= ~(1<<Device);
+    g_bmNMI &= ~(1 << Device);
     if (g_bCritSectionValid) LeaveCriticalSection(&g_CriticalSection);
 }
 
 //===========================================================================
 
-void CpuReset()
-{
+void CpuReset() {
     // 7 cycles
     regs.ps = (regs.ps | AF_INTERRUPT) & ~AF_DECIMAL;
-    regs.pc = * (WORD*) (mem+0xFFFC);
+    regs.pc = *(WORD *)(mem + 0xFFFC);
     regs.sp = 0x0100 | ((regs.sp - 3) & 0xFF);
 
     regs.bJammed = 0;
 
-    SetActiveCpu( GetMainCpu() );
+    SetActiveCpu(GetMainCpu());
 }
 
 //===========================================================================
@@ -589,14 +549,12 @@ void CpuReset()
 #define SS_YAML_VALUE_6502 "6502"
 #define SS_YAML_VALUE_65C02 "65C02"
 
-static std::string CpuGetSnapshotStructName(void)
-{
+static std::string CpuGetSnapshotStructName(void) {
     static const std::string name("CPU");
     return name;
 }
 
-void CpuSaveSnapshot(YamlSaveHelper& yamlSaveHelper)
-{
+void CpuSaveSnapshot(YamlSaveHelper & yamlSaveHelper) {
     regs.ps |= (AF_RESERVED | AF_BREAK);
 
     YamlSaveHelper::Label state(yamlSaveHelper, "%s:\n", CpuGetSnapshotStructName().c_str());
@@ -605,13 +563,12 @@ void CpuSaveSnapshot(YamlSaveHelper& yamlSaveHelper)
     yamlSaveHelper.SaveHexUint8(SS_YAML_KEY_REGX, regs.x);
     yamlSaveHelper.SaveHexUint8(SS_YAML_KEY_REGY, regs.y);
     yamlSaveHelper.SaveHexUint8(SS_YAML_KEY_REGP, regs.ps);
-    yamlSaveHelper.SaveHexUint8(SS_YAML_KEY_REGS, (BYTE) regs.sp);
+    yamlSaveHelper.SaveHexUint8(SS_YAML_KEY_REGS, (BYTE)regs.sp);
     yamlSaveHelper.SaveHexUint16(SS_YAML_KEY_REGPC, regs.pc);
     yamlSaveHelper.SaveHexUint64(SS_YAML_KEY_CUMULATIVECYCLES, g_nCumulativeCycles);
 }
 
-void CpuLoadSnapshot(YamlLoadHelper& yamlLoadHelper)
-{
+void CpuLoadSnapshot(YamlLoadHelper & yamlLoadHelper) {
     if (!yamlLoadHelper.GetSubMap(CpuGetSnapshotStructName()))
         return;
 
@@ -622,12 +579,12 @@ void CpuLoadSnapshot(YamlLoadHelper& yamlLoadHelper)
     else throw std::string("Load: Unknown main CPU type");
     SetMainCpu(cpu);
 
-    regs.a  = (BYTE)     yamlLoadHelper.LoadUint(SS_YAML_KEY_REGA);
-    regs.x  = (BYTE)     yamlLoadHelper.LoadUint(SS_YAML_KEY_REGX);
-    regs.y  = (BYTE)     yamlLoadHelper.LoadUint(SS_YAML_KEY_REGY);
-    regs.ps = (BYTE)     yamlLoadHelper.LoadUint(SS_YAML_KEY_REGP) | (AF_RESERVED | AF_BREAK);
-    regs.sp = (USHORT) ((yamlLoadHelper.LoadUint(SS_YAML_KEY_REGS) & 0xff) | 0x100);
-    regs.pc = (USHORT)   yamlLoadHelper.LoadUint(SS_YAML_KEY_REGPC);
+    regs.a = (BYTE)yamlLoadHelper.LoadUint(SS_YAML_KEY_REGA);
+    regs.x = (BYTE)yamlLoadHelper.LoadUint(SS_YAML_KEY_REGX);
+    regs.y = (BYTE)yamlLoadHelper.LoadUint(SS_YAML_KEY_REGY);
+    regs.ps = (BYTE)yamlLoadHelper.LoadUint(SS_YAML_KEY_REGP) | (AF_RESERVED | AF_BREAK);
+    regs.sp = (USHORT)((yamlLoadHelper.LoadUint(SS_YAML_KEY_REGS) & 0xff) | 0x100);
+    regs.pc = (USHORT)yamlLoadHelper.LoadUint(SS_YAML_KEY_REGPC);
 
     CpuIrqReset();
     CpuNmiReset();

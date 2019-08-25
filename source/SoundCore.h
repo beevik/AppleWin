@@ -19,20 +19,22 @@ struct Voice {
     bool bIsSpeaker;
     bool bRecentlyActive;   // (Speaker only) false after 0.2s of speaker inactivity
 };
-typedef Voice *PVOICE;
+typedef Voice * PVOICE;
 
 
 bool DSGetLock(LPDIRECTSOUNDBUFFER pVoice, DWORD dwOffset, DWORD dwBytes,
-                      SHORT** ppDSLockedBuffer0, DWORD* pdwDSLockedBufferSize0,
-                      SHORT** ppDSLockedBuffer1, DWORD* pdwDSLockedBufferSize1);
+    SHORT ** ppDSLockedBuffer0, DWORD * pdwDSLockedBufferSize0,
+    SHORT ** ppDSLockedBuffer1, DWORD * pdwDSLockedBufferSize1);
 
-HRESULT DSGetSoundBuffer(Voice* voice, DWORD dwFlags, DWORD dwBufferSize, DWORD nSampleRate, int nChannels);
-void DSReleaseSoundBuffer(Voice* voice);
+HRESULT DSGetSoundBuffer(Voice * voice, DWORD dwFlags, DWORD dwBufferSize, DWORD nSampleRate, int nChannels);
+void DSReleaseSoundBuffer(Voice * voice);
 
-bool DSZeroVoiceBuffer(PVOICE voice, char* pszDevName, DWORD dwBufferSize);
-bool DSZeroVoiceWritableBuffer(PVOICE voice, char* pszDevName, DWORD dwBufferSize);
+bool DSZeroVoiceBuffer(PVOICE voice, char * pszDevName, DWORD dwBufferSize);
+bool DSZeroVoiceWritableBuffer(PVOICE voice, char * pszDevName, DWORD dwBufferSize);
 
-enum eFADE {FADE_NONE, FADE_IN, FADE_OUT};
+enum eFADE {
+    FADE_NONE, FADE_IN, FADE_OUT
+};
 void SoundCore_SetFade(eFADE FadeType);
 bool SoundCore_GetTimerState();
 void SoundCore_TweakVolumes();
