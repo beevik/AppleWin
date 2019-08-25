@@ -48,9 +48,9 @@ static LPDIRECTSOUND g_lpDS = NULL;
 
 static const UINT uMAX_VOICES = 66; // 64 phonemes + spkr + mockingboard
 static UINT g_uNumVoices = 0;
-static VOICE* g_pVoices[uMAX_VOICES] = {NULL};
+static Voice* g_pVoices[uMAX_VOICES] = {NULL};
 
-static VOICE* g_pSpeakerVoice = NULL;
+static Voice* g_pSpeakerVoice = NULL;
 
 //-------------------------------------
 
@@ -163,7 +163,7 @@ bool DSGetLock(LPDIRECTSOUNDBUFFER pVoice, DWORD dwOffset, DWORD dwBytes,
 
 //-----------------------------------------------------------------------------
 
-HRESULT DSGetSoundBuffer(VOICE* pVoice, DWORD dwFlags, DWORD dwBufferSize, DWORD nSampleRate, int nChannels)
+HRESULT DSGetSoundBuffer(Voice* pVoice, DWORD dwFlags, DWORD dwBufferSize, DWORD nSampleRate, int nChannels)
 {
     WAVEFORMATEX wavfmt;
     DSBUFFERDESC dsbdesc;
@@ -201,7 +201,7 @@ HRESULT DSGetSoundBuffer(VOICE* pVoice, DWORD dwFlags, DWORD dwBufferSize, DWORD
     return hr;
 }
 
-void DSReleaseSoundBuffer(VOICE* pVoice)
+void DSReleaseSoundBuffer(Voice* pVoice)
 {
     if(pVoice->bIsSpeaker)
         g_pSpeakerVoice = NULL;

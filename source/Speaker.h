@@ -6,13 +6,12 @@
 #define  REG_SOUNDTYPE_SMART   2    // Not supported from 1.26
 #define  REG_SOUNDTYPE_WAVE    3
 
-enum SoundType_e
-{
-    SOUND_NONE = 0,
-    SOUND_WAVE
+enum ESoundType {
+    SOUNDTYPE_NONE = 0,
+    SOUNDTYPE_WAVE
 };
 
-extern SoundType_e soundtype;
+extern ESoundType g_soundType;
 extern double     g_fClksPerSpkrSample;
 extern bool       g_bQuieterSpeaker;
 extern short      g_nSpeakerData;
@@ -21,11 +20,9 @@ void    SpkrDestroy ();
 void    SpkrInitialize ();
 void    SpkrReinitialize ();
 void    SpkrReset();
-BOOL    SpkrSetEmulationType (HWND window, SoundType_e newSoundType);
+BOOL    SpkrSetEmulationType (HWND window, ESoundType newSoundType);
 void    SpkrUpdate (DWORD);
 void    SpkrUpdate_Timer();
-void    Spkr_SetErrorInc(const int nErrorInc);
-void    Spkr_SetErrorMax(const int nErrorMax);
 DWORD   SpkrGetVolume();
 void    SpkrSetVolume(DWORD dwVolume, DWORD dwVolumeMax);
 void    Spkr_Mute();

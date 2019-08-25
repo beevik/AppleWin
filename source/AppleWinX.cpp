@@ -96,7 +96,7 @@ bool        g_bDisableDirectSoundMockingboard = false;
 int         g_nMemoryClearType = MIP_FF_FF_00_00; // Note: -1 = random MIP in Memory.cpp MemReset()
 
 IPropertySheet&     sg_PropertySheet = * new CPropertySheet;
-CSuperSerialCard    sg_SSC;
+SuperSerialCard    sg_SSC;
 Disk2InterfaceCard sg_Disk2Card;
 
 SS_CARDTYPE g_Slot0 = CT_LanguageCard;  // Just for Apple II or II+ or similar clones
@@ -594,14 +594,14 @@ void LoadConfiguration(void)
     case REG_SOUNDTYPE_DIRECT:  // Not supported from 1.26
     case REG_SOUNDTYPE_SMART:   // Not supported from 1.26
     default:
-        soundtype = SOUND_NONE;
+        g_soundType = SOUNDTYPE_NONE;
         break;
     case REG_SOUNDTYPE_WAVE:
-        soundtype = SOUND_WAVE;
+        g_soundType = SOUNDTYPE_WAVE;
         break;
     }
 
-    char aySerialPortName[ CSuperSerialCard::SIZEOF_SERIALCHOICE_ITEM ];
+    char aySerialPortName[ SuperSerialCard::SIZEOF_SERIALCHOICE_ITEM ];
     if (RegLoadString(  TEXT(REG_CONFIG),
         TEXT(REGVALUE_SERIAL_PORT_NAME),
         TRUE,

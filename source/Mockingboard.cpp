@@ -193,8 +193,8 @@ static const SHORT nWaveDataMax = (SHORT)0x7FFF;
 static short g_nMixBuffer[g_dwDSBufferSize / sizeof(short)];
 
 
-static VOICE MockingboardVoice = {0};
-static VOICE SSI263Voice[64] = {0};
+static Voice MockingboardVoice = {0};
+static Voice SSI263Voice[64] = {0};
 
 static const int g_nNumEvents = 2;
 static HANDLE g_hSSI263Event[g_nNumEvents] = {NULL};    // 1: Phoneme finished playing, 2: Exit thread

@@ -1,7 +1,7 @@
 #include "StdAfx.h"
 #include "Phonemes.h"
 
-const PHONEME_INFO g_nPhonemeInfo[] = 
+const PhonemeInfo g_nPhonemeInfo[] = 
 {
     {0x00000000,0x00000A60},{0x00000A60,0x00000A4C},
     {0x000014AC,0x00000A22},{0x00001ECE,0x00000A93},

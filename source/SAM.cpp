@@ -56,7 +56,7 @@ static BYTE __stdcall IOWrite_SAM(WORD pc, WORD addr, BYTE bWrite, BYTE d, ULONG
     // with the SAM data. The mute gets reset after the speaker code detects
     // silence.
 
-    if (soundtype != SOUND_WAVE)
+    if (g_soundType != SOUNDTYPE_WAVE)
         return MemReadFloatingBus(nExecutedCycles);
 
     // use existing speaker code to bring timing up to date

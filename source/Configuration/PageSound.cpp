@@ -103,7 +103,7 @@ BOOL CPageSound::DlgProcInternal(HWND hWnd, UINT message, WPARAM wparam, LPARAM 
 
     case WM_INITDIALOG:
         {
-            m_PropertySheetHelper.FillComboBox(hWnd,IDC_SOUNDTYPE, m_soundchoices, (int)soundtype);
+            m_PropertySheetHelper.FillComboBox(hWnd,IDC_SOUNDTYPE, m_soundchoices, (int)g_soundType);
 
             SendDlgItemMessage(hWnd,IDC_SPKR_VOLUME,TBM_SETRANGE,1,MAKELONG(VOLUME_MIN,VOLUME_MAX));
             SendDlgItemMessage(hWnd,IDC_SPKR_VOLUME,TBM_SETPAGESIZE,0,10);
@@ -131,14 +131,14 @@ BOOL CPageSound::DlgProcInternal(HWND hWnd, UINT message, WPARAM wparam, LPARAM 
 
 void CPageSound::DlgOK(HWND hWnd)
 {
-    const SoundType_e newSoundType = (SoundType_e) SendDlgItemMessage(hWnd, IDC_SOUNDTYPE, CB_GETCURSEL, 0, 0);
+    const ESoundType newSoundType = (ESoundType) SendDlgItemMessage(hWnd, IDC_SOUNDTYPE, CB_GETCURSEL, 0, 0);
 
     const DWORD dwSpkrVolume = (DWORD)SendDlgItemMessage(hWnd, IDC_SPKR_VOLUME, TBM_GETPOS, 0, 0);
     const DWORD dwMBVolume = (DWORD)SendDlgItemMessage(hWnd, IDC_MB_VOLUME, TBM_GETPOS, 0, 0);
 
     if (SpkrSetEmulationType(hWnd, newSoundType))
     {
-        DWORD dwSoundType = (soundtype == SOUND_NONE) ? REG_SOUNDTYPE_NONE : REG_SOUNDTYPE_WAVE;
+        DWORD dwSoundType = (g_soundType == SOUNDTYPE_NONE) ? REG_SOUNDTYPE_NONE : REG_SOUNDTYPE_WAVE;
         REGSAVE(TEXT("Sound Emulation"), dwSoundType);
     }
 

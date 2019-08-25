@@ -1,11 +1,22 @@
 #pragma once
 
-extern class CSuperSerialCard sg_SSC;
+extern class SuperSerialCard sg_SSC;
 
-enum {COMMEVT_WAIT=0, COMMEVT_ACK, COMMEVT_TERM, COMMEVT_MAX};
-enum eFWMODE {FWMODE_CIC=0, FWMODE_SIC_P8, FWMODE_PPC, FWMODE_SIC_P8A}; // NB. CIC = SSC
+enum {
+    COMMEVT_WAIT=0,
+    COMMEVT_ACK,
+    COMMEVT_TERM,
+    COMMEVT_MAX
+};
 
-typedef struct
+enum eFWMODE {
+    FWMODE_CIC=0,
+    FWMODE_SIC_P8,
+    FWMODE_PPC,
+    FWMODE_SIC_P8A
+}; // NB. CIC = SSC
+
+struct SSCDipSwitches
 {
     //DIPSW1
     UINT    uBaudRate;
@@ -17,16 +28,16 @@ typedef struct
     UINT    uParity;
     bool    bLinefeed;
     bool    bInterrupts;    // NB. Can't be read from s/w
-} SSC_DIPSW;
+};
 
 #define TEXT_SERIAL_COM TEXT("COM")
 #define TEXT_SERIAL_TCP TEXT("TCP")
 
-class CSuperSerialCard
+class SuperSerialCard
 {
 public:
-    CSuperSerialCard();
-    virtual ~CSuperSerialCard();
+    SuperSerialCard();
+    virtual ~SuperSerialCard();
 
     void    CommInitialize(LPBYTE pCxRomPeripheral, UINT uSlot);
     void    CommReset();
@@ -77,8 +88,8 @@ private:
     void    CommThUninit();
     UINT    GetNumSerialPortChoices() { return (UINT)m_vecSerialPortsItems.size(); }
     void    ScanCOMPorts();
-    void    SaveSnapshotDIPSW(class YamlSaveHelper& yamlSaveHelper, std::string key, SSC_DIPSW& dipsw);
-    void    LoadSnapshotDIPSW(class YamlLoadHelper& yamlLoadHelper, std::string key, SSC_DIPSW& dipsw);
+    void    SaveSnapshotDIPSW(class YamlSaveHelper& yamlSaveHelper, std::string key, SSCDipSwitches& dipsw);
+    void    LoadSnapshotDIPSW(class YamlLoadHelper& yamlLoadHelper, std::string key, SSCDipSwitches& dipsw);
 
     //
 
@@ -94,8 +105,8 @@ private:
     char*   m_aySerialPortChoices;
     UINT    m_uTCPChoiceItemIdx;
 
-    static SSC_DIPSW    m_DIPSWDefault;
-    SSC_DIPSW           m_DIPSWCurrent;
+    static SSCDipSwitches    m_DIPSWDefault;
+    SSCDipSwitches           m_DIPSWCurrent;
 
     static const UINT m_kDefaultBaudRate = CBR_9600;
     UINT    m_uBaudRate;
