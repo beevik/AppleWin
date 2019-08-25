@@ -160,6 +160,7 @@ project("AppleWin")
         path.join(srcDir, "cpu"),
         path.join(srcDir, "emulator"),
         path.join(srcDir, "debugger"),
+        path.join(rsrcDir),
         path.join(externDir, "zlib"),
         path.join(externDir, "zip_lib"),
         path.join(externDir, "yaml/include"),
@@ -170,7 +171,9 @@ project("AppleWin")
         path.join(srcDir, "**.h"),
         path.join(srcDir, "**.cpp"),
         path.join(srcDir, "**.inl"),
-        path.join(rsrcDir, "*"),
+        path.join(rsrcDir, "*.rc"),
+        path.join(rsrcDir, "firmware/*"),
+        path.join(rsrcDir, "rom/*"),
         path.join(rootDir, "bin/History.txt"),
         path.join(rootDir, "docs/CodingConventions.txt"),
         path.join(rootDir, "docs/Debugger_Changelog.txt"),
@@ -224,32 +227,38 @@ project("AppleWin")
             path.join(rootDir, "docs/**"),
             path.join(rootDir, "bin/**"),
         },
-        ["Resource Files"] = {
-            path.join(rootDir, "resource/**"),
+        ["Resources"] = {
+            path.join(rsrcDir, "*.rc"),
         },
-        ["Source Files"] = {
+        ["Resources/System ROMs"] = {
+            path.join(rsrcDir, "rom/*"),
+        },
+        ["Resources/Firmware ROMs"] = {
+            path.join(rsrcDir, "firmware/*"),
+        },
+        ["Source"] = {
             path.join(srcDir, "AppleWinX.*"),
             path.join(srcDir, "StdAfx.*"),
         },
-        ["Source Files/_Headers"] = {
+        ["Source/_Headers"] = {
             path.join(srcDir, "Common.h"),
             path.join(rsrcDir, "resource.h"),
         },
-        ["Source Files/Configuration"] = {
+        ["Source/Configuration"] = {
             path.join(srcDir, "Configuration/*"),
         },
-        ["Source Files/CPU"] = {
+        ["Source/CPU"] = {
             path.join(srcDir, "CPU*"),
             path.join(srcDir, "cpu/*"),
         },
-        ["Source Files/Debugger"] = {
+        ["Source/Debugger"] = {
             path.join(srcDir, "Debugger/*"),
         },
-        ["Source Files/Disk"] = {
+        ["Source/Disk"] = {
             path.join(srcDir, "Disk*"),
             path.join(srcDir, "Harddisk*"),
         },
-        ["Source Files/Emulator"] = {
+        ["Source/Emulator"] = {
             path.join(srcDir, "AY8910*"),
             path.join(srcDir, "Joystick*"),
             path.join(srcDir, "Keyboard*"),
@@ -270,7 +279,7 @@ project("AppleWin")
             path.join(srcDir, "YamlHelper*"),
             path.join(srcDir, "z80emu*"),
         },
-        ["Source Files/Video"] = {
+        ["Source/Video"] = {
             path.join(srcDir, "Frame*"),
             path.join(srcDir, "NTSC*"),
             path.join(srcDir, "RGB*"),
@@ -311,7 +320,7 @@ project("yaml")
     }
 
     vpaths {
-        ["Source Files"] = { path.join(externDir, "yaml/*") },
+        ["Source"] = { path.join(externDir, "yaml/*") },
     }
 
 

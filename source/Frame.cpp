@@ -45,8 +45,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "SoundCore.h"
 #include "Speaker.h"
 #include "Video.h"
-
-#include "../resource/resource.h"
 #include "Configuration/PropertySheet.h"
 #include "Debugger/Debug.h"
 
@@ -56,6 +54,12 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 // 3D border around the 560x384 Apple II display
 #define  VIEWPORTX   5
 #define  VIEWPORTY   5
+
+// SM_CXPADDEDBORDER is not supported on 2000 & XP:
+// http://msdn.microsoft.com/en-nz/library/windows/desktop/ms724385(v=vs.85).aspx
+#ifndef SM_CXPADDEDBORDER
+#   define SM_CXPADDEDBORDER 92
+#endif
 
 static const int kDEFAULT_VIEWPORT_SCALE = 2;
        int g_nViewportCX = GetFrameBufferBorderlessWidth()  * kDEFAULT_VIEWPORT_SCALE;
@@ -2201,9 +2205,6 @@ static void SetupTooltipControls(void)
     SendMessage(tooltipwindow, TTM_ADDTOOL, 0, (LPARAM)&toolinfo);
 }
 
-// SM_CXPADDEDBORDER is not supported on 2000 & XP, but GetSystemMetrics() returns 0 for unknown values, so this use of SM_CXPADDEDBORDER works on 2000 & XP too:
-// http://msdn.microsoft.com/en-nz/library/windows/desktop/ms724385(v=vs.85).aspx
-// NB. GetSystemMetrics(SM_CXPADDEDBORDER) returns 0 for Win7, when built with VS2008 (see GH#571)
 static void GetWidthHeight(int& nWidth, int& nHeight)
 {
     nWidth  = g_nViewportCX + VIEWPORTX*2
@@ -2212,24 +2213,6 @@ static void GetWidthHeight(int& nWidth, int& nHeight)
     nHeight = g_nViewportCY + VIEWPORTY*2
                             + (GetSystemMetrics(SM_CYFIXEDFRAME) + GetSystemMetrics(SM_CXPADDEDBORDER)) * 2 // NB. No SM_CYPADDEDBORDER
                             + GetSystemMetrics(SM_CYCAPTION);
-
-#if 0   // GH#571
-    LogOutput("g_nViewportCX                       = %d\n", g_nViewportCX);
-    LogOutput("VIEWPORTX                           = %d (const)\n", VIEWPORTX);
-    LogOutput("BUTTONCX                            = %d (const)\n", BUTTONCX);
-    LogOutput("GetSystemMetrics(SM_CXFRAME)        = %d (unused)\n", GetSystemMetrics(SM_CXFRAME));
-    LogOutput("GetSystemMetrics(SM_CXFIXEDFRAME)   = %d\n", GetSystemMetrics(SM_CXFIXEDFRAME));
-    LogOutput("GetSystemMetrics(SM_CXBORDER)       = %d (unused)\n", GetSystemMetrics(SM_CXBORDER));
-    LogOutput("GetSystemMetrics(SM_CXPADDEDBORDER) = %d\n", GetSystemMetrics(SM_CXPADDEDBORDER));
-    LogOutput("nWidth                              = %d\n", nWidth);
-    LogOutput("g_nViewportCY                       = %d\n", g_nViewportCY);
-    LogOutput("VIEWPORTY                           = %d (const)\n", VIEWPORTY);
-    LogOutput("GetSystemMetrics(SM_CYFRAME)        = %d (unused)\n", GetSystemMetrics(SM_CYFRAME));
-    LogOutput("GetSystemMetrics(SM_CYFIXEDFRAME)   = %d\n", GetSystemMetrics(SM_CYFIXEDFRAME));
-    LogOutput("GetSystemMetrics(SM_CYBORDER)       = %d (unused)\n", GetSystemMetrics(SM_CYBORDER));
-    LogOutput("GetSystemMetrics(SM_CYCAPTION)      = %d\n", GetSystemMetrics(SM_CYCAPTION));
-    LogOutput("nHeight                             = %d\n\n", nHeight);
-#endif
 }
 
 static void FrameResizeWindow(int nNewScale)

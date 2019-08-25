@@ -40,8 +40,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Video.h"
 #include "YamlHelper.h"
 
-#include "../resource/resource.h"
-
 // About m_enhanceDisk:
 // . In general m_enhanceDisk==false is used for authentic disk access speed, whereas m_enhanceDisk==true is for enhanced speed.
 // Details:

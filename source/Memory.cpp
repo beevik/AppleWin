@@ -49,8 +49,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Tape.h"
 #include "Video.h"
 #include "RGBMonitor.h"
-
-#include "../resource/resource.h"
 #include "Configuration/IPropertySheet.h"
 #include "Debugger/DebugDefs.h"
 #include "YamlHelper.h"

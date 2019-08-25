@@ -23,9 +23,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include "StdAfx.h"
 #include "Frame.h"
-#include "../resource/resource.h"
 
-static const char g_szGPL[] = 
+static const char g_szGPL[] =
 "This program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation; either version 2 of the License, or (at your option) any later version.\r\n\
 \r\n\
 This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.\r\n\
@@ -64,7 +63,7 @@ static INT_PTR CALLBACK DlgProcAbout(HWND hWnd, UINT message, WPARAM wparam, LPA
             SendDlgItemMessage(hWnd, IDC_APPLEWIN_ICON, STM_SETIMAGE, IMAGE_ICON, (LPARAM)hIcon);
 
             char szAppleWinVersion[50];
-            sprintf(szAppleWinVersion, "AppleWin v%s", VERSIONSTRING);
+            sprintf(szAppleWinVersion, "AppleWinX v%s", VERSIONSTRING);
             SendDlgItemMessage(hWnd, IDC_APPLEWIN_VERSION, WM_SETTEXT, 0, (LPARAM)szAppleWinVersion);
 
             SendDlgItemMessage(hWnd, IDC_GPL_TEXT, WM_SETTEXT, 0, (LPARAM)g_szGPL);

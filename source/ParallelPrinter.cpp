@@ -32,7 +32,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "ParallelPrinter.h"
 #include "Registry.h"
 #include "YamlHelper.h"
-#include "../resource/resource.h"
 
 static DWORD inactivity = 0;
 static unsigned int g_PrinterIdleLimit = 10;
