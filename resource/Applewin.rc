@@ -25,18 +25,18 @@ LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
 // TEXTINCLUDE
 //
 
-1 TEXTINCLUDE 
+1 TEXTINCLUDE
 BEGIN
     "resource.h\0"
 END
 
-2 TEXTINCLUDE 
+2 TEXTINCLUDE
 BEGIN
     "#include ""winres.h""\r\n"
     "\0"
 END
 
-3 TEXTINCLUDE 
+3 TEXTINCLUDE
 BEGIN
     "\r\n"
     "\0"
@@ -50,39 +50,39 @@ END
 // Bitmap
 //
 
-FULLSCR_BUTTON          BITMAP                  "FULLSCR.BMP"
+FULLSCR_BUTTON          BITMAP                  "Fullscreen.bmp"
 
-RUN_BUTTON              BITMAP                  "RUN.BMP"
+RUN_BUTTON              BITMAP                  "Run.bmp"
 
-DEBUG_BUTTON            BITMAP                  "DEBUG.BMP"
+DEBUG_BUTTON            BITMAP                  "Debug.bmp"
 
-DRIVE1_BUTTON           BITMAP                  "DRIVE1.BMP"
+DRIVE1_BUTTON           BITMAP                  "Drive1.bmp"
 
-DRIVE2_BUTTON           BITMAP                  "DRIVE2.BMP"
+DRIVE2_BUTTON           BITMAP                  "Drive2.bmp"
 
-SETUP_BUTTON            BITMAP                  "SETUP.BMP"
+SETUP_BUTTON            BITMAP                  "Setup.bmp"
 
-CHARSET40               BITMAP                  "CHARSET4.BMP"
+CHARSET40               BITMAP                  "CharSet4.bmp"
 
-DISKOFF_BITMAP          BITMAP                  "DISKOFF.BMP"
+DISKOFF_BITMAP          BITMAP                  "DiskOff.bmp"
 
-DISKREAD_BITMAP         BITMAP                  "DISKREAD.BMP"
+DISKREAD_BITMAP         BITMAP                  "DiskRead.bmp"
 
-DISKWRITE_BITMAP        BITMAP                  "DISKWRIT.BMP"
+DISKWRITE_BITMAP        BITMAP                  "DiskWrite.bmp"
 
-DISKPROT_BITMAP         BITMAP                  "DISKPROT.BMP"
+DISKPROT_BITMAP         BITMAP                  "DiskProtect.bmp"
 
-LED_CAPSOFF_BITMAP      BITMAP                  "LED_CAPS_OFF.BMP"
+LED_CAPSOFF_BITMAP      BITMAP                  "LEDCapsOff.bmp"
 
-LED_CAPSON_BITMAP       BITMAP                  "LED_CAPS_ON.BMP"
+LED_CAPSON_BITMAP       BITMAP                  "LEDCapsOn.bmp"
 
-HELP_BUTTON             BITMAP                  "HELP.BMP"
+HELP_BUTTON             BITMAP                  "Help.bmp"
 
-DRIVESWAP_BUTTON        BITMAP                  "DRIVESWAP.BMP"
+DRIVESWAP_BUTTON        BITMAP                  "DriveSwap.bmp"
 
-IDB_APPLEWIN            BITMAP                  "ApplewinLogo.bmp"
+IDB_APPLEWIN            BITMAP                  "AppleWinLogo.bmp"
 
-IDB_DEBUG_FONT_7X8      BITMAP                  "Debug_Font.bmp"
+IDB_DEBUG_FONT_7X8      BITMAP                  "DebugFont.bmp"
 
 
 /////////////////////////////////////////////////////////////////////////////
@@ -227,9 +227,9 @@ END
 
 // Icon with lowest ID value placed first to ensure application icon
 // remains consistent on all systems.
-APPLEWIN_ICON           ICON                    "APPLEWIN.ICO"
+APPLEWIN_ICON           ICON                    "AppleWin.ico"
 
-DISK_ICON               ICON                    "DISK.ICO"
+DISK_ICON               ICON                    "Disk.ico"
 
 
 /////////////////////////////////////////////////////////////////////////////
@@ -293,7 +293,7 @@ IDR_DISK2_FW            FIRMWARE                "Disk2.rom"
 
 IDR_SSC_FW              FIRMWARE                "SSC.rom"
 
-IDR_HDDRVR_FW           FIRMWARE                "Hddrvr.bin"
+IDR_HDDRVR_FW           FIRMWARE                "HardDrive.rom"
 
 IDR_PRINTDRVR_FW        FIRMWARE                "Parallel.rom"
 
@@ -315,9 +315,9 @@ IDR_APPLE2_PLUS_ROM     ROM                     "Apple2_Plus.rom"
 
 IDR_APPLE2E_ROM         ROM                     "Apple2e.rom"
 
-IDR_APPLE2E_ENHANCED_ROM ROM                     "Apple2e_Enhanced.rom"
+IDR_APPLE2E_ENHANCED_ROM ROM                    "Apple2e_Enhanced.rom"
 
-IDR_FREEZES_F8_ROM      ROM                     "FREEZES_NON-AUTOSTART_F8_ROM.rom"
+IDR_FREEZES_F8_ROM      ROM                     "FreezeF8.rom"
 
 
 /////////////////////////////////////////////////////////////////////////////

@@ -157,7 +157,7 @@ void SetMainCpu(eCpuType cpu)
 
 static bool IsCpu65C02(eApple2Type apple2Type)
 {
-    return (apple2Type == A2TYPE_APPLE2EENHANCED) || (apple2Type & A2TYPE_APPLE2C); 
+    return (apple2Type == A2TYPE_APPLE2EENHANCED) || (apple2Type & A2TYPE_APPLE2C);
 }
 
 eCpuType ProbeMainCpuDefault(eApple2Type apple2Type)
@@ -182,9 +182,8 @@ void SetActiveCpu(eCpuType cpu)
 
 //
 
-#include "CPU/cpu_general.inl"
-
-#include "CPU/cpu_instructions.inl"
+#include "CPU/CpuGeneral.inl"
+#include "CPU/CpuInstructions.inl"
 
 // Break into debugger on invalid opcodes
 //#define INV IsDebugBreakOnInvalid(AM_1);
@@ -430,9 +429,9 @@ void CpuAdjustIrqCheck(UINT uCyclesUntilInterrupt)
 
 //===========================================================================
 
-#include "CPU/cpu6502.h"  // MOS 6502
-#include "CPU/cpu65C02.h" // WDC 65C02
-#include "CPU/cpu65d02.h" // Debug CPU Memory Visualizer
+#include "CPU/Cpu6502.h"  // MOS 6502
+#include "CPU/Cpu65C02.h" // WDC 65C02
+#include "CPU/Cpu65D02.h" // Debug CPU Memory Visualizer
 
 //===========================================================================
 
@@ -669,7 +668,7 @@ void CpuSaveSnapshot(YamlSaveHelper& yamlSaveHelper)
 {
     regs.ps |= (AF_RESERVED | AF_BREAK);
 
-    YamlSaveHelper::Label state(yamlSaveHelper, "%s:\n", CpuGetSnapshotStructName().c_str());   
+    YamlSaveHelper::Label state(yamlSaveHelper, "%s:\n", CpuGetSnapshotStructName().c_str());
     yamlSaveHelper.SaveString(SS_YAML_KEY_CPU_TYPE, GetMainCpu() == CPU_6502 ? SS_YAML_VALUE_6502 : SS_YAML_VALUE_65C02);
     yamlSaveHelper.SaveHexUint8(SS_YAML_KEY_REGA, regs.a);
     yamlSaveHelper.SaveHexUint8(SS_YAML_KEY_REGX, regs.x);

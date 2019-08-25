@@ -79,10 +79,10 @@ void NTSC_VideoUpdateCycles( long cycles6502 )
 
 //-------------------------------------
 
-#include "../../source/CPU/cpu_general.inl"
-#include "../../source/CPU/cpu_instructions.inl"
-#include "../../source/CPU/cpu6502.h"  // MOS 6502
-#include "../../source/CPU/cpu65C02.h"  // WDC 65C02
+#include "../../source/CPU/CpuGeneral.inl"
+#include "../../source/CPU/CpuInstructions.inl"
+#include "../../source/CPU/Cpu6502.h"  // MOS 6502
+#include "../../source/CPU/Cpu65C02.h"  // WDC 65C02
 
 void init(void)
 {
@@ -126,7 +126,7 @@ int GH264_test(void)
     regs.pc = 0x300;
     WORD abs = regs.pc+3;
     WORD dst = abs+2;
-    mem[regs.pc+0] = 0x6c;  // JMP (IND) 
+    mem[regs.pc+0] = 0x6c;  // JMP (IND)
     mem[regs.pc+1] = abs&0xff;
     mem[regs.pc+2] = abs>>8;
     mem[regs.pc+3] = dst&0xff;
