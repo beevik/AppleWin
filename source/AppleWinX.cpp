@@ -80,9 +80,6 @@ TCHAR     g_sProgramDir[MAX_PATH] = TEXT(""); // Directory of where AppleWin exe
 TCHAR     g_sDebugDir  [MAX_PATH] = TEXT(""); // TODO: Not currently used
 TCHAR     g_sScreenShotDir[MAX_PATH] = TEXT(""); // TODO: Not currently used
 bool      g_bCapturePrintScreenKey = true;
-static bool g_bHookSystemKey = true;
-static bool g_bHookAltTab = false;
-static bool g_bHookAltGrControl = false;
 
 TCHAR     g_sCurrentDir[MAX_PATH] = TEXT(""); // Also Starting Dir.  Debugger uses this when load/save
 bool      g_bRestart = false;
@@ -180,11 +177,6 @@ bool GetLoadedSaveStateFlag(void)
 void SetLoadedSaveStateFlag(const bool bFlag)
 {
     g_bLoadedSaveState = bFlag;
-}
-
-bool GetHookAltGrControl(void)
-{
-    return g_bHookAltGrControl;
 }
 
 static void ResetToLogoMode(void)
@@ -892,117 +884,6 @@ static void RegisterHotKeys(void)
     }
 }
 
-//---------------------------------------------------------------------------
-
-static HINSTANCE g_hinstDLL = 0;
-static HHOOK g_hhook = 0;
-
-static HANDLE g_hHookThread = NULL;
-static DWORD g_HookThreadId = 0;
-
-// Pre: g_hFrameWindow must be valid
-static bool HookFilterForKeyboard()
-{
-    g_hinstDLL = LoadLibrary(TEXT("HookFilter.dll"));
-
-    _ASSERT(g_hFrameWindow);
-
-    typedef void (*RegisterHWNDProc)(HWND, bool, bool);
-    RegisterHWNDProc RegisterHWND = (RegisterHWNDProc) GetProcAddress(g_hinstDLL, "RegisterHWND");
-    if (RegisterHWND)
-        RegisterHWND(g_hFrameWindow, g_bHookAltTab, g_bHookAltGrControl);
-
-    HOOKPROC hkprcLowLevelKeyboardProc = (HOOKPROC) GetProcAddress(g_hinstDLL, "LowLevelKeyboardProc");
-
-    g_hhook = SetWindowsHookEx(
-                        WH_KEYBOARD_LL,
-                        hkprcLowLevelKeyboardProc,
-                        g_hinstDLL,
-                        0);
-
-    if (g_hhook != 0 && g_hFrameWindow != 0)
-        return true;
-
-    std::string msg("Failed to install hook filter for system keys");
-
-    DWORD dwErr = GetLastError();
-    MessageBox(GetDesktopWindow(), msg.c_str(), "Warning", MB_ICONASTERISK | MB_OK);
-
-    msg += "\n";
-    LogFileOutput(msg.c_str());
-    return false;
-}
-
-static void UnhookFilterForKeyboard()
-{
-    UnhookWindowsHookEx(g_hhook);
-    FreeLibrary(g_hinstDLL);
-}
-
-static DWORD WINAPI HookThread(LPVOID lpParameter)
-{
-    if (!HookFilterForKeyboard())
-        return -1;
-
-    MSG msg;
-    while(GetMessage(&msg, NULL, 0, 0) > 0)
-    {
-        if (msg.message == WM_QUIT)
-            break;
-
-        TranslateMessage(&msg);
-        DispatchMessage(&msg);
-    }
-
-    UnhookFilterForKeyboard();
-    return 0;
-}
-
-static bool InitHookThread()
-{
-    g_hHookThread = CreateThread(NULL,          // lpThreadAttributes
-                                0,              // dwStackSize
-                                (LPTHREAD_START_ROUTINE) HookThread,
-                                0,              // lpParameter
-                                0,              // dwCreationFlags : 0 = Run immediately
-                                &g_HookThreadId);   // lpThreadId
-    if (g_hHookThread == NULL)
-        return false;
-
-    return true;
-}
-
-static void UninitHookThread()
-{
-    if (g_hHookThread)
-    {
-        if (!PostThreadMessage(g_HookThreadId, WM_QUIT, 0, 0))
-        {
-            _ASSERT(0);
-            return;
-        }
-
-        do
-        {
-            DWORD dwExitCode;
-            if (GetExitCodeThread(g_hHookThread, &dwExitCode))
-            {
-                if(dwExitCode == STILL_ACTIVE)
-                    Sleep(10);
-                else
-                    break;
-            }
-        }
-        while(1);
-
-        CloseHandle(g_hHookThread);
-        g_hHookThread = NULL;
-        g_HookThreadId = 0;
-    }
-}
-
-//===========================================================================
-
 LPSTR GetCurrArg(LPSTR lpCmdLine)
 {
     if(*lpCmdLine == '\"')
@@ -1357,18 +1238,6 @@ int APIENTRY WinMain(HINSTANCE passinstance, HINSTANCE, LPSTR lpCmdLine, int)
         {
             g_bShowPrintScreenWarningDialog = false;
         }
-        else if (strcmp(lpCmdLine, "-no-hook-system-key") == 0)     // Don't hook the System keys (eg. Left-ALT+ESC/SPACE/TAB) GH#556
-        {
-            g_bHookSystemKey = false;
-        }
-        else if (strcmp(lpCmdLine, "-hook-alt-tab") == 0)           // GH#556
-        {
-            g_bHookAltTab = true;
-        }
-        else if (strcmp(lpCmdLine, "-hook-altgr-control") == 0)     // GH#556
-        {
-            g_bHookAltGrControl = true;
-        }
         else if (strcmp(lpCmdLine, "-altgr-sends-wmchar") == 0)     // GH#625
         {
             KeybSetAltGrSendsWM_CHAR(true);
@@ -1633,12 +1502,6 @@ int APIENTRY WinMain(HINSTANCE passinstance, HINSTANCE, LPSTR lpCmdLine, int)
             LogFileOutput("Main: RegisterHotKeys()\n");
         }
 
-        if (g_bHookSystemKey)
-        {
-            if (InitHookThread())   // needs valid g_hFrameWindow (for message pump)
-                LogFileOutput("Main: HookFilterForKeyboard()\n");
-        }
-
         // Need to test if it's safe to call ResetMachineState(). In the meantime, just call DiskReset():
         sg_Disk2Card.Reset(true);   // Switch from a booting A][+ to a non-autostart A][, so need to turn off floppy motor
         LogFileOutput("Main: DiskReset()\n");
@@ -1747,12 +1610,6 @@ int APIENTRY WinMain(HINSTANCE passinstance, HINSTANCE, LPSTR lpCmdLine, int)
 
         DSUninit();
         LogFileOutput("Main: DSUninit()\n");
-
-        if (g_bHookSystemKey)
-        {
-            UninitHookThread();
-            LogFileOutput("Main: UnhookFilterForKeyboard()\n");
-        }
     }
     while (g_bRestart);
 

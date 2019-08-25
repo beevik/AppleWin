@@ -191,9 +191,6 @@ project("AppleWin")
         path.join(rootDir, "docs/Video_Cleanup.txt"),
         path.join(rootDir, "docs/Wishlist.txt"),
     }
-    removefiles {
-        path.join(srcDir, "HookFilter/*"),
-    }
 
     -- Libraries that must be linked to build the executable
     links {
@@ -215,7 +212,6 @@ project("AppleWin")
         "yaml",
         "zlib",
         "zip_lib",
-        "HookFilter",
         "TestCPU6502",
     }
 
@@ -391,31 +387,6 @@ project("zip_lib")
     files {
         path.join(externDir, "zip_lib/**.h"),
         path.join(externDir, "zip_lib/**.c"),
-    }
-
-
-
-------------------------------------------------------------------------------
--- HookFilter DLL project
---
--- Generate the HookFilter DLL.
-------------------------------------------------------------------------------
-project("HookFilter")
-    kind "SharedLib"
-    uuid(os.uuid("lib-HookFilter"))
-    set_output_dirs("HookFilter")
-
-    includedirs {
-        path.join(rootDir, "zlib"),
-    }
-
-    defines {
-        "_USRDLL",
-        "HOOKFILTER_EXPORTS",
-    }
-
-    files {
-        path.join(srcDir, "HookFilter/**.cpp"),
     }
 
 
