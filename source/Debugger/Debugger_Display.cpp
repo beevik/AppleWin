@@ -31,7 +31,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Debug.h"
 #include "Debugger_Display.h"
 
-#include "../Applewin.h"
+#include "../AppleWinX.h"
 #include "../CPU.h"
 #include "../Frame.h"
 #include "../LanguageCard.h"

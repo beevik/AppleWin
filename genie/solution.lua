@@ -248,7 +248,7 @@ project("AppleWin")
             path.join(rootDir, "resource/**"),
         },
         ["Source Files"] = {
-            path.join(srcDir, "Applewin.*"),
+            path.join(srcDir, "AppleWinX.*"),
             path.join(srcDir, "StdAfx.*"),
         },
         ["Source Files/_Headers"] = {

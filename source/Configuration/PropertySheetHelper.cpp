@@ -23,7 +23,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include "StdAfx.h"
 
-#include "../Applewin.h"    // g_nAppMode, g_uScrollLockToggle, sg_PropertySheet
+#include "../AppleWinX.h"    // g_nAppMode, g_uScrollLockToggle, sg_PropertySheet
 #include "../Disk.h"
 #include "../Frame.h"
 #include "../Log.h"

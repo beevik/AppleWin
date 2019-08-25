@@ -57,12 +57,6 @@ const TCHAR* const CPageInput::m_pszJoy1Choices[J1C_MAX] = {
                                     CPageInput::m_szJoyChoice5,
                                     CPageInput::m_szJoyChoice6 };
 
-const TCHAR CPageInput::m_szCPMSlotChoice_Slot4[] = TEXT("Slot 4\0");
-const TCHAR CPageInput::m_szCPMSlotChoice_Slot5[] = TEXT("Slot 5\0");
-const TCHAR CPageInput::m_szCPMSlotChoice_Unplugged[] = TEXT("Unplugged\0");
-const TCHAR CPageInput::m_szCPMSlotChoice_Unavailable[] = TEXT("Unavailable\0");
-
-
 BOOL CALLBACK CPageInput::DlgProc(HWND hWnd, UINT message, WPARAM wparam, LPARAM lparam)
 {
     // Switch from static func to our instance
@@ -142,18 +136,6 @@ BOOL CPageInput::DlgProcInternal(HWND hWnd, UINT message, WPARAM wparam, LPARAM 
 
         case IDC_SCROLLLOCK_TOGGLE:
             m_uScrollLockToggle = IsDlgButtonChecked(hWnd, IDC_SCROLLLOCK_TOGGLE) ? 1 : 0;
-            break;
-
-        case IDC_CPM_CONFIG:
-            if(HIWORD(wparam) == CBN_SELCHANGE)
-            {
-                const DWORD NewCPMChoiceItem = (DWORD) SendDlgItemMessage(hWnd, IDC_CPM_CONFIG, CB_GETCURSEL, 0, 0);
-                const CPMCHOICE NewCPMChoice = m_CPMComboItemToChoice[NewCPMChoiceItem];
-                if (NewCPMChoice == m_CPMChoice)
-                    break;
-
-                InitOptions(hWnd);  // re-init
-            }
             break;
 
         case IDC_PASTE_FROM_CLIPBOARD:
@@ -309,82 +291,9 @@ void CPageInput::InitSlotOptions(HWND hWnd)
 {
     const SS_CARDTYPE Slot4 = m_PropertySheetHelper.GetConfigNew().m_Slot[4];
 
-    InitCPMChoices(hWnd);
-
     InitJoystickChoices(hWnd, JN_JOYSTICK0, IDC_JOYSTICK0);
     InitJoystickChoices(hWnd, JN_JOYSTICK1, IDC_JOYSTICK1);
 
     EnableWindow(GetDlgItem(hWnd, IDC_CURSORCONTROL), JoyUsingKeyboardCursors() ? TRUE : FALSE);
     EnableWindow(GetDlgItem(hWnd, IDC_CENTERINGCONTROL), JoyUsingKeyboard() ? TRUE : FALSE);
-}
-
-void CPageInput::InitCPMChoices(HWND hWnd)
-{
-    const SS_CARDTYPE Slot4 = m_PropertySheetHelper.GetConfigNew().m_Slot[4];
-    const SS_CARDTYPE Slot5 = m_PropertySheetHelper.GetConfigNew().m_Slot[5];
-
-    m_CPMChoice = CPM_UNPLUGGED;
-
-    for (UINT i=0; i<_CPM_MAX_CHOICES; i++)
-        m_CPMComboItemToChoice[i] = CPM_UNAVAILABLE;
-
-    UINT uStringOffset = 0;
-    UINT uComboItemIdx = 0;
-
-    const bool bIsSlot4Empty = Slot4 == CT_Empty;
-    const bool bIsSlot4CPM   = false;
-    const bool bIsSlot5Empty = Slot5 == CT_Empty;
-    const bool bIsSlot5CPM   = false;
-
-    if (bIsSlot4Empty || bIsSlot4CPM)
-    {
-        const UINT uStrLen = (UINT)strlen(m_szCPMSlotChoice_Slot4)+1;
-        memcpy(&m_szCPMSlotChoices[uStringOffset], m_szCPMSlotChoice_Slot4, uStrLen);
-        uStringOffset += uStrLen;
-
-        m_CPMComboItemToChoice[uComboItemIdx++] = CPM_SLOT4;
-    }
-
-    if (bIsSlot5Empty || bIsSlot5CPM)
-    {
-        const UINT uStrLen = (UINT)strlen(m_szCPMSlotChoice_Slot5)+1;
-        memcpy(&m_szCPMSlotChoices[uStringOffset], m_szCPMSlotChoice_Slot5, uStrLen);
-        uStringOffset += uStrLen;
-
-        m_CPMComboItemToChoice[uComboItemIdx++] = CPM_SLOT5;
-    }
-
-    if (uStringOffset)
-    {
-        const UINT uStrLen = (UINT)strlen(m_szCPMSlotChoice_Unplugged)+1;
-        memcpy(&m_szCPMSlotChoices[uStringOffset], m_szCPMSlotChoice_Unplugged, uStrLen);
-        uStringOffset += uStrLen;
-
-        m_CPMComboItemToChoice[uComboItemIdx] = CPM_UNPLUGGED;
-    }
-    else
-    {
-        const UINT uStrLen = (UINT)strlen(m_szCPMSlotChoice_Unavailable)+1;
-        memcpy(&m_szCPMSlotChoices[uStringOffset], m_szCPMSlotChoice_Unavailable, uStrLen);
-        uStringOffset += uStrLen;
-
-        m_CPMChoice = CPM_UNAVAILABLE;  // Force this
-        m_CPMComboItemToChoice[uComboItemIdx] = CPM_UNAVAILABLE;
-    }
-
-    m_szCPMSlotChoices[uStringOffset] = 0;  // Doubly null terminated
-
-    // 
-
-    UINT uCurrentChoice = uComboItemIdx;    // Default to last item (either UNPLUGGED or UNAVAILABLE)
-    for (UINT i=0; i<=uComboItemIdx; i++)
-    {
-        if (m_CPMComboItemToChoice[i] == m_CPMChoice)
-        {
-            uCurrentChoice = i;
-            break;
-        }
-    }
-
-    m_PropertySheetHelper.FillComboBox(hWnd, IDC_CPM_CONFIG, m_szCPMSlotChoices, uCurrentChoice);
 }

@@ -21,7 +21,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 // Includes
     #include "StdAfx.h"
-    #include "Applewin.h"
+    #include "AppleWinX.h"
     #include "CPU.h"    // CpuGetCyclesThisVideoFrame()
     #include "Frame.h"
     #include "Memory.h" // MemGetMainPtr() MemGetAuxPtr()

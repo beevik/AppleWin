@@ -17,8 +17,7 @@ public:
         m_uCenteringControl(JOYSTICK_MODE_CENTERING),
         m_bmAutofire(0),
         m_uMouseShowCrosshair(0),
-        m_uMouseRestrictToWindow(0),
-        m_CPMChoice(CPM_UNPLUGGED)
+        m_uMouseRestrictToWindow(0)
     {
         CPageInput::ms_this = this;
     }
@@ -49,7 +48,6 @@ private:
     void InitOptions(HWND hWnd);
     void InitJoystickChoices(HWND hWnd, int nJoyNum, int nIdcValue);
     void InitSlotOptions(HWND hWnd);
-    void InitCPMChoices(HWND hWnd);
 
     static CPageInput* ms_this;
     static const UINT MaxMenuChoiceLen = 40;
@@ -63,11 +61,6 @@ private:
     static const TCHAR m_szJoyChoice6[];
     static const TCHAR* const m_pszJoy0Choices[J0C_MAX];
     static const TCHAR* const m_pszJoy1Choices[J1C_MAX];
-
-    static const TCHAR m_szCPMSlotChoice_Slot4[];
-    static const TCHAR m_szCPMSlotChoice_Slot5[];
-    static const TCHAR m_szCPMSlotChoice_Unplugged[];
-    static const TCHAR m_szCPMSlotChoice_Unavailable[];
 
     int m_nJoy0ChoiceTranlationTbl[J0C_MAX];
     TCHAR m_joystick0choices[J0C_MAX * MaxMenuChoiceLen];
@@ -83,9 +76,4 @@ private:
     UINT m_bmAutofire;          // bitmask b2:0
     UINT m_uMouseShowCrosshair;
     UINT m_uMouseRestrictToWindow;
-
-    enum CPMCHOICE {CPM_SLOT4=0, CPM_SLOT5, CPM_UNPLUGGED, CPM_UNAVAILABLE, _CPM_MAX_CHOICES};
-    TCHAR m_szCPMSlotChoices[_CPM_MAX_CHOICES * MaxMenuChoiceLen];
-    CPMCHOICE m_CPMChoice; 
-    CPMCHOICE m_CPMComboItemToChoice[_CPM_MAX_CHOICES];
 };

@@ -84,7 +84,6 @@ enum AppMode_e
 #define  REGVALUE_MOUSE_CROSSHAIR    "Mouse crosshair"
 #define  REGVALUE_MOUSE_RESTRICT_TO_WINDOW "Mouse restrict to window"
 #define  REGVALUE_THE_FREEZES_F8_ROM "The Freeze's F8 Rom"
-#define  REGVALUE_CPM_CONFIG         "CPM Config"
 #define  REGVALUE_DUMP_TO_PRINTER    "Dump to printer"
 #define  REGVALUE_CONVERT_ENCODING   "Convert printer encoding for clones"
 #define  REGVALUE_FILTER_UNPRINTABLE "Filter unprintable characters"

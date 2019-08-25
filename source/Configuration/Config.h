@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../Applewin.h"
+#include "../AppleWinX.h"
 #include "../CPU.h"
 #include "../DiskImage.h"   // Disk_Status_e
 #include "../Harddisk.h"    // HD_CardIsEnabled()
