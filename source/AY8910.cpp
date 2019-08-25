@@ -31,7 +31,6 @@
 #include <crtdbg.h>
 #include "AY8910.h"
 
-#include "AppleWinX.h"       // For g_fh
 #include "YamlHelper.h"
 
 /* The AY white noise RNG algorithm is based on info from MAME's ay8910.c -

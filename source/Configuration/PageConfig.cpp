@@ -22,12 +22,10 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
 #include "StdAfx.h"
-
-#include "../AppleWinX.h"
-#include "../Frame.h"
-#include "../Registry.h"
-#include "../SerialComms.h"
-#include "../Video.h"
+#include "Frame.h"
+#include "Registry.h"
+#include "SerialComms.h"
+#include "Video.h"
 #include "../resource/resource.h"
 #include "PageConfig.h"
 #include "PropertySheetHelper.h"

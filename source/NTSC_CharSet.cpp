@@ -20,9 +20,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
 #include "StdAfx.h"
-#include "AppleWinX.h"
 #include "Video.h"
-
 #include "NTSC_CharSet.h"
 
 unsigned char csbits_enhanced2e[2][256][8]; // Enhanced //e (2732 4K video ROM)

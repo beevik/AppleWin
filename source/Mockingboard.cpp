@@ -76,17 +76,13 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 //
 
 #include "StdAfx.h"
-
 #include "SaveState_Structs_v1.h"
-
-#include "AppleWinX.h"
 #include "CPU.h"
 #include "Log.h"
 #include "Memory.h"
 #include "Mockingboard.h"
 #include "SoundCore.h"
 #include "YamlHelper.h"
-
 #include "AY8910.h"
 #include "Phonemes.h"
 

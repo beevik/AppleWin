@@ -1,10 +1,10 @@
 #pragma once
 
-#include "../AppleWinX.h"
-#include "../CPU.h"
-#include "../DiskImage.h"   // Disk_Status_e
-#include "../Harddisk.h"    // HD_CardIsEnabled()
-#include "../Video.h"       // VideoRefreshRate_e, GetVideoRefreshRate()
+#include "AppleWinX.h"
+#include "CPU.h"
+#include "DiskImage.h"   // Disk_Status_e
+#include "Harddisk.h"    // HD_CardIsEnabled()
+#include "Video.h"       // VideoRefreshRate_e, GetVideoRefreshRate()
 
 class CConfigNeedingRestart
 {

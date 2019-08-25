@@ -38,12 +38,9 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 // - This is because the 2-joystick version of Mario Bros expects the 2nd joystick to control Apple switch #2.
 
 #include "StdAfx.h"
-
-#include "AppleWinX.h"
 #include "CPU.h"
 #include "Memory.h"
 #include "YamlHelper.h"
-
 #include "Configuration/PropertySheet.h"
 
 #define BUTTONTIME  5000    // This is the latch (debounce) time in usecs for the joystick buttons

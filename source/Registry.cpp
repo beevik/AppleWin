@@ -28,7 +28,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include "StdAfx.h"
 
-
 //===========================================================================
 BOOL RegLoadString (LPCTSTR section, LPCTSTR key, BOOL peruser,
                     LPTSTR buffer, DWORD chars) {

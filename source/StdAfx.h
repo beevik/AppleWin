@@ -56,3 +56,5 @@ typedef UINT64 uint64_t;
 #endif
 
 #define USE_SPEECH_API
+
+#include "AppleWinX.h"

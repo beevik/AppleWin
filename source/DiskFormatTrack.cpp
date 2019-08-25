@@ -43,7 +43,6 @@ Writes the following: (in 1 continuous write operation)
 */
 
 #include "StdAfx.h"
-
 #include "Disk.h"
 #include "Log.h"
 #include "YamlHelper.h"

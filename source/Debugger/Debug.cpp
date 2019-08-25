@@ -30,19 +30,16 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 //#pragma warning(disable: 4786)
 
 #include "StdAfx.h"
-
 #include "Debug.h"
 #include "DebugDefs.h"
-
-#include "../AppleWinX.h"
-#include "../CPU.h"
-#include "../Disk.h"
-#include "../Frame.h"
-#include "../Keyboard.h"
-#include "../Memory.h"
-#include "../NTSC.h"
-#include "../SoundCore.h"   // SoundCore_SetFade()
-#include "../Video.h"
+#include "CPU.h"
+#include "Disk.h"
+#include "Frame.h"
+#include "Keyboard.h"
+#include "Memory.h"
+#include "NTSC.h"
+#include "SoundCore.h"   // SoundCore_SetFade()
+#include "Video.h"
 
 //  #define DEBUG_COMMAND_HELP  1
 //  #define DEBUG_ASM_HASH 1

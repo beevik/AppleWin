@@ -31,8 +31,6 @@
   Riccardo Macri  Mar 2015
 */
 #include "StdAfx.h"
-
-#include "AppleWinX.h"
 #include "Memory.h"
 #include "SAM.h"
 #include "Speaker.h"

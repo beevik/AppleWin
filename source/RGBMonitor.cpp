@@ -1,7 +1,6 @@
 // Sync'd with 1.25.0.4 source
 
 #include "StdAfx.h"
-
 #include "Frame.h"
 #include "Memory.h" // MemGetMainPtr() MemGetAuxPtr()
 #include "Video.h"

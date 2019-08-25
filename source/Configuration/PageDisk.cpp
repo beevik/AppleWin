@@ -22,11 +22,9 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
 #include "StdAfx.h"
-
-#include "../AppleWinX.h"
-#include "../Disk.h"    // Drive_e, Disk_Status_e
-#include "../Frame.h"
-#include "../Registry.h"
+#include "Disk.h"    // Drive_e, Disk_Status_e
+#include "Frame.h"
+#include "Registry.h"
 #include "../resource/resource.h"
 #include "PageDisk.h"
 #include "PropertySheetHelper.h"

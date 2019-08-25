@@ -27,17 +27,14 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
 #include "StdAfx.h"
-
 #include "Debug.h"
 #include "Debugger_Display.h"
-
-#include "../AppleWinX.h"
-#include "../CPU.h"
-#include "../Frame.h"
-#include "../LanguageCard.h"
-#include "../Memory.h"
-#include "../Mockingboard.h"
-#include "../Video.h"
+#include "CPU.h"
+#include "Frame.h"
+#include "LanguageCard.h"
+#include "Memory.h"
+#include "Mockingboard.h"
+#include "Video.h"
 
 // NEW UI debugging - force display ALL meta-info (regs, stack, bp, watches, zp) for debugging purposes
 #define DEBUG_FORCE_DISPLAY 0

@@ -34,15 +34,12 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 // SSC-pg is an abbreviation for pages references to "Super Serial Card, Installation and Operating Manual" by Apple
 
 #include "StdAfx.h"
-
-#include "AppleWinX.h"
 #include "CPU.h"
 #include "Frame.h"
 #include "Log.h"
 #include "Memory.h"
 #include "SerialComms.h"
 #include "YamlHelper.h"
-
 #include "../resource/resource.h"
 
 #define TCP_SERIAL_PORT 1977

@@ -22,11 +22,10 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
 #include "StdAfx.h"
-#include "../Common.h"
-
-#include "../ParallelPrinter.h"
-#include "../Registry.h"
-#include "../SaveState.h"
+#include "Common.h"
+#include "ParallelPrinter.h"
+#include "Registry.h"
+#include "SaveState.h"
 #include "../resource/resource.h"
 #include "PageAdvanced.h"
 #include "PropertySheetHelper.h"
