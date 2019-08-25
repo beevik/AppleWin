@@ -41,6 +41,7 @@ targetDir   = path.join(rootDir, "build")
 objDir      = path.join(rootDir, "build/obj")
 srcDir      = path.join(rootDir, "source")
 rsrcDir     = path.join(rootDir, "resource")
+externDir   = path.join(rootDir, "external")
 
 if _ACTION == "clean" then
     os.rmdir(targetDir)
@@ -167,12 +168,13 @@ project("AppleWin")
 
     -- List include paths
     includedirs {
+        path.join(srcDir),
         path.join(srcDir, "cpu"),
         path.join(srcDir, "emulator"),
         path.join(srcDir, "debugger"),
-        path.join(rootDir, "zlib"),
-        path.join(rootDir, "zip_lib"),
-        path.join(rootDir, "libyaml/include"),
+        path.join(externDir, "zlib"),
+        path.join(externDir, "zip_lib"),
+        path.join(externDir, "yaml/include"),
     }
 
     -- List all files that should appear in the project
@@ -332,8 +334,8 @@ project("yaml")
     }
 
     includedirs {
-        path.join(rootDir, "libyaml/win32"),
-        path.join(rootDir, "libyaml/include"),
+        path.join(externDir, "yaml/win32"),
+        path.join(externDir, "yaml/include"),
     }
 
     defines {
@@ -344,12 +346,12 @@ project("yaml")
     }
 
     files {
-        path.join(rootDir, "libyaml/**.h"),
-        path.join(rootDir, "libyaml/**.c"),
+        path.join(externDir, "yaml/**.h"),
+        path.join(externDir, "yaml/**.c"),
     }
 
     vpaths {
-        ["Source Files"] = { path.join(rootDir, "libyaml/*") },
+        ["Source Files"] = { path.join(externDir, "yaml/*") },
     }
 
 
@@ -373,8 +375,8 @@ project("zlib")
     }
 
     files {
-        path.join(rootDir, "zlib/**.h"),
-        path.join(rootDir, "zlib/**.c"),
+        path.join(externDir, "zlib/**.h"),
+        path.join(externDir, "zlib/**.c"),
     }
 
 
@@ -393,7 +395,7 @@ project("zip_lib")
     }
 
     includedirs {
-        path.join(rootDir, "zlib"),
+        path.join(externDir, "zlib"),
     }
 
     defines {
@@ -402,8 +404,8 @@ project("zip_lib")
     }
 
     files {
-        path.join(rootDir, "zip_lib/**.h"),
-        path.join(rootDir, "zip_lib/**.c"),
+        path.join(externDir, "zip_lib/**.h"),
+        path.join(externDir, "zip_lib/**.c"),
     }
 
 
