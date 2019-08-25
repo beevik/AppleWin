@@ -10,21 +10,21 @@
 
 typedef struct
 {
-	LPDIRECTSOUNDBUFFER lpDSBvoice;
-	LPDIRECTSOUNDNOTIFY lpDSNotify;
-	bool bActive;			// Playback is active
-	bool bMute;
-	LONG nVolume;			// Current volume (as used by DirectSound)
-	LONG nFadeVolume;		// Current fade volume (as used by DirectSound)
-	DWORD dwUserVolume;		// Volume from slider on Property Sheet (0=Max)
-	bool bIsSpeaker;
-	bool bRecentlyActive;	// (Speaker only) false after 0.2s of speaker inactivity
+    LPDIRECTSOUNDBUFFER lpDSBvoice;
+    LPDIRECTSOUNDNOTIFY lpDSNotify;
+    bool bActive;           // Playback is active
+    bool bMute;
+    LONG nVolume;           // Current volume (as used by DirectSound)
+    LONG nFadeVolume;       // Current fade volume (as used by DirectSound)
+    DWORD dwUserVolume;     // Volume from slider on Property Sheet (0=Max)
+    bool bIsSpeaker;
+    bool bRecentlyActive;   // (Speaker only) false after 0.2s of speaker inactivity
 } VOICE, *PVOICE;
 
 
 bool DSGetLock(LPDIRECTSOUNDBUFFER pVoice, DWORD dwOffset, DWORD dwBytes,
-					  SHORT** ppDSLockedBuffer0, DWORD* pdwDSLockedBufferSize0,
-					  SHORT** ppDSLockedBuffer1, DWORD* pdwDSLockedBufferSize1);
+                      SHORT** ppDSLockedBuffer0, DWORD* pdwDSLockedBufferSize0,
+                      SHORT** ppDSLockedBuffer1, DWORD* pdwDSLockedBufferSize1);
 
 HRESULT DSGetSoundBuffer(VOICE* pVoice, DWORD dwFlags, DWORD dwBufferSize, DWORD nSampleRate, int nChannels);
 void DSReleaseSoundBuffer(VOICE* pVoice);

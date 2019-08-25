@@ -1,21 +1,21 @@
 AddressingMode_e
-		  AM_IMPLIED
-		, AM_1    //    Invalid 1 Byte
-		, AM_2    //    Invalid 2 Bytes
-		, AM_3    //    Invalid 3 Bytes
-		, AM_M    //  4 #Immediate
-		, AM_A    //  5 $Absolute
-		, AM_Z    //  6 Zeropage
-		, AM_AX   //  7 Absolute, X
-		, AM_AY   //  8 Absolute, Y
-		, AM_ZX   //  9 Zeropage, X
-		, AM_ZY   // 10 Zeropage, Y
-		, AM_R    // 11 Relative
-		, AM_IZX  // 12 Indexed (Zeropage Indirect, X)
-		, AM_IAX  // 13 Indexed (Absolute Indirect, X)
-		, AM_NZY  // 14 Indirect (Zeropage) Indexed, Y
-		, AM_NZ   // 15 Indirect (Zeropage)
-		, AM_NA   // 16 Indirect (Absolute) i.e. JMP
+          AM_IMPLIED
+        , AM_1    //    Invalid 1 Byte
+        , AM_2    //    Invalid 2 Bytes
+        , AM_3    //    Invalid 3 Bytes
+        , AM_M    //  4 #Immediate
+        , AM_A    //  5 $Absolute
+        , AM_Z    //  6 Zeropage
+        , AM_AX   //  7 Absolute, X
+        , AM_AY   //  8 Absolute, Y
+        , AM_ZX   //  9 Zeropage, X
+        , AM_ZY   // 10 Zeropage, Y
+        , AM_R    // 11 Relative
+        , AM_IZX  // 12 Indexed (Zeropage Indirect, X)
+        , AM_IAX  // 13 Indexed (Absolute Indirect, X)
+        , AM_NZY  // 14 Indirect (Zeropage) Indexed, Y
+        , AM_NZ   // 15 Indirect (Zeropage)
+        , AM_NA   // 16 Indirect (Absolute) i.e. JMP
 
 
 0:34 12 00 00 AA 99
@@ -76,43 +76,43 @@ DW BAS D000:D0BF
 
 
 Debugger_Assembler.
-	int  _6502_GetOpmodeOpbyte ( const int iAddress, int & iOpmode_, int & nOpbyte_ )
+    int  _6502_GetOpmodeOpbyte ( const int iAddress, int & iOpmode_, int & nOpbyte_ )
 Debugger_Display.
-	WORD DrawDisassemblyLine ( int iLine, const WORD nBaseAddress )
-		int GetDisassemblyLine ( WORD nBaseAddress, DisasmLine_t & line_ )
+    WORD DrawDisassemblyLine ( int iLine, const WORD nBaseAddress )
+        int GetDisassemblyLine ( WORD nBaseAddress, DisasmLine_t & line_ )
 Debugger_DisassemblerData
-			void Disassembly_GetData ( WORD nBaseAddress, const DisasmData_t *pData, DisasmLine_t & line_ )
+            void Disassembly_GetData ( WORD nBaseAddress, const DisasmData_t *pData, DisasmLine_t & line_ )
 
-			
-	FormatOpcodeBytes( nBaseAddress, line_ );
+            
+    FormatOpcodeBytes( nBaseAddress, line_ );
 
-	//pMnemonic = g_aOpcodes[ iOpcode ].sMnemonic;
-	line_.iNopcode = pData->iDirective;
-	strcpy( line_.sMnemonic, g_aAssemblerDirectives[ line_.iNopcode ].m_pMnemonic );
+    //pMnemonic = g_aOpcodes[ iOpcode ].sMnemonic;
+    line_.iNopcode = pData->iDirective;
+    strcpy( line_.sMnemonic, g_aAssemblerDirectives[ line_.iNopcode ].m_pMnemonic );
 
-	FormatNopcodeBytes( nBaseAddress, line_ );
+    FormatNopcodeBytes( nBaseAddress, line_ );
 
 bool _6502_GetTargets ( WORD nAddress, int *pTargetPartial_, int *pTargetPointer_, int * pTargetBytes_, bool bIgnoreJSRJMP, bool bIgnoreBranch )
 
 
-	
-	
-	
+    
+    
+    
 WORD DrawDisassemblyLine ( int iLine, const WORD nBaseAddress )
-	// Instruction / Mnemonic
-		linerect.left = (int) aTabs[ TS_INSTRUCTION ];
+    // Instruction / Mnemonic
+        linerect.left = (int) aTabs[ TS_INSTRUCTION ];
 
-		if (! bCursorLine)
-			DebuggerSetColorFG( DebuggerGetColor( iForeground ) );
+        if (! bCursorLine)
+            DebuggerSetColorFG( DebuggerGetColor( iForeground ) );
 
-		if( pData ) // Assembler Data Directive / Data Disassembler
-		{
-//			pMnemonic = g_aAssemblerDirectives[ line.iNopcode ].sMnemonic;
-			if (! bCursorLine) 
-				DebuggerSetColorFG( DebuggerGetColor( FG_DISASM_DIRECTIVE ) ); // ZZZ TODO: FIXME:
-			pMnemonic = line.sMnemonic;
-		}
-		else
-		{
-			pMnemonic = g_aOpcodes[ iOpcode ].sMnemonic;
-		}
+        if( pData ) // Assembler Data Directive / Data Disassembler
+        {
+//          pMnemonic = g_aAssemblerDirectives[ line.iNopcode ].sMnemonic;
+            if (! bCursorLine) 
+                DebuggerSetColorFG( DebuggerGetColor( FG_DISASM_DIRECTIVE ) ); // ZZZ TODO: FIXME:
+            pMnemonic = line.sMnemonic;
+        }
+        else
+        {
+            pMnemonic = g_aOpcodes[ iOpcode ].sMnemonic;
+        }

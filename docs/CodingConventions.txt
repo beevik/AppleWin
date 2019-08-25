@@ -42,61 +42,61 @@ Does this gain anything for such a simple project?
 The following simplied Hungarian style must be used:
 
 Prefixes:
-a	: array
-b	: bool
-e	: enum variable
-g_	: global
-h	: handle
-i	: iterator (eg. UINT, STL-iterator)
-m	: STL map
-m_	: member
-n	: int
-p	: pointer
-r	: reference
-s	: string
-sg_p	: singleton (could also use 'sgp' - to be reviewed)
-u	: unsigned int
-v	: STL vector
+a   : array
+b   : bool
+e   : enum variable
+g_  : global
+h   : handle
+i   : iterator (eg. UINT, STL-iterator)
+m   : STL map
+m_  : member
+n   : int
+p   : pointer
+r   : reference
+s   : string
+sg_p    : singleton (could also use 'sgp' - to be reviewed)
+u   : unsigned int
+v   : STL vector
 
 Tags:
-_e	: named enum definitions
-_t	: struct/typedef
+_e  : named enum definitions
+_t  : struct/typedef
 
 Legacy:
-dw	: DWORD [legacy: existing 'dw' to be replaced with 'u' prefix]
-sz	: string (null-terminated) [legacy: 
+dw  : DWORD [legacy: existing 'dw' to be replaced with 'u' prefix]
+sz  : string (null-terminated) [legacy: 
 
 EG:
-	enum MODE_e {MODE1, MODE2, MODE2};
-	MODE_e eMode;
-	
-	struct PAIR_t
-	{
-		UINT uA;
-		UINT uB;
-	};
+    enum MODE_e {MODE1, MODE2, MODE2};
+    MODE_e eMode;
+    
+    struct PAIR_t
+    {
+        UINT uA;
+        UINT uB;
+    };
 
 Simple loop counters (i,j,k) don't need to adhere to this style.
 
 Don't go Hungarian-mad (you might argue that we already have :)
 . an array of any type can just be prefixed with 'a'. Eg. Array of bools:
-	bool aFlags[NUM_FLAGS];
+    bool aFlags[NUM_FLAGS];
 . a pointer to any type can just be prefixed with 'p'. Eg. Pointer to array of bools:
-	bool* pFlags;
+    bool* pFlags;
 
 Naming for parameters that are being modified (eg. OUT):
 It is recommended (but not mandatory) to use a suffix of OUT or '_', eg:
-	bool Find(int* pFoundOUT);
-	bool Find(int* pFound_);
+    bool Find(int* pFoundOUT);
+    bool Find(int* pFound_);
 
 
 2.2: Matching braces
 These should be have same indentation, unless the braces fit neatly on one line.
 EG:
-	for (int i=0; i<10; i++)
-	{
-		// Some code
-	}
+    for (int i=0; i<10; i++)
+    {
+        // Some code
+    }
 
 2.3: Scope of module vars/funcs
 If module vars/funcs aren't wrapped in a class, then declare as static if not global.

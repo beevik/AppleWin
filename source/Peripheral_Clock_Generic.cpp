@@ -83,39 +83,39 @@ The accumulator is loaded with an #A3 before the JSR to the WRITE
 
 tm* Clock_Util_GetTime()
 {
-	time_t tRawTime;
-	time( &tRawTime );
+    time_t tRawTime;
+    time( &tRawTime );
 
-	tm* pTime = localtime ( &tRawTime );
-	if( pTime ) {
-		mktime( pTime ); // get day of week: tm_wday
-	}
-	return pTime;
+    tm* pTime = localtime ( &tRawTime );
+    if( pTime ) {
+        mktime( pTime ); // get day of week: tm_wday
+    }
+    return pTime;
 }
 
 void Clock_Util_ConvertTimeToProdos( tm *pTime, unsigned char *pProDosBytes4_ )
 {
-	if( pTime )
-	{
-		BYTE nMonth = pTime->tm_mon + 1;
+    if( pTime )
+    {
+        BYTE nMonth = pTime->tm_mon + 1;
 
-		BYTE nDate1 = 0
-			| ((pTime->tm_mday & 0x1F) << 0)
-			| ((nMonth & 0x0F) << 5);
-		BYTE nDate2 = 0
-			| ((pTime->tm_year % 100) << 1)
-			| (nMonth >> 3) & 1;
-		BYTE nTime1 = (pTime->tm_min  & 0x3F); // 60 = max(64) 0x3F
-		BYTE nTime2 = (pTime->tm_hour & 0x1F); // 24 = max(32) 0x1F
-		pProDosBytes4_[0] = nDate1;
-		pProDosBytes4_[1] = nDate2;
-		pProDosBytes4_[2] = nTime1;
-		pProDosBytes4_[3] = nTime2;
-	}
+        BYTE nDate1 = 0
+            | ((pTime->tm_mday & 0x1F) << 0)
+            | ((nMonth & 0x0F) << 5);
+        BYTE nDate2 = 0
+            | ((pTime->tm_year % 100) << 1)
+            | (nMonth >> 3) & 1;
+        BYTE nTime1 = (pTime->tm_min  & 0x3F); // 60 = max(64) 0x3F
+        BYTE nTime2 = (pTime->tm_hour & 0x1F); // 24 = max(32) 0x1F
+        pProDosBytes4_[0] = nDate1;
+        pProDosBytes4_[1] = nDate2;
+        pProDosBytes4_[2] = nTime1;
+        pProDosBytes4_[3] = nTime2;
+    }
 }
 
 void Clock_Generic_UpdateProDos()
 {
-	tm* pTime = Clock_Util_GetTime();
-	Clock_Util_ConvertTimeToProdos( pTime, &mem[ 0xBF90 ] ); // ProDos date/time buffer
+    tm* pTime = Clock_Util_GetTime();
+    Clock_Util_ConvertTimeToProdos( pTime, &mem[ 0xBF90 ] ); // ProDos date/time buffer
 }

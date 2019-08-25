@@ -94,7 +94,7 @@ Requests (Wishlist):
          G_#### = Global Byte
          P_#### = Pointer
          R_#### = Function return
-	 Z_##   = Zero Page
+     Z_##   = Zero Page
 
    Don't know how to generate:
          A_#### = Data Address

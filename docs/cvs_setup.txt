@@ -105,10 +105,10 @@ If you use TortoiseCVS
 a) right click on the AppleWin Parent directory (the folder where AppleWin will be downloaded to)
 b) CVS Checkout,
 and set CVSROOT to:
-	:ext:<username>@cvs.applewin.berlios.de:/cvsroot/applewin
+    :ext:<username>@cvs.applewin.berlios.de:/cvsroot/applewin
 
 c) set Module (case sensitive!) to:
-	AppleWin
+    AppleWin
 d) select OK, and wait to fetch the complete AppleWin directory.
 
 Troubleshooting:
@@ -125,7 +125,7 @@ Troubleshooting:
   AppleWin\CVS\Root
 
 If you use another cvs client, such as WinCVS, or CVSNT, this may work:
-	:ssh:<username>@cvs.applewin.berlios.de:/cvsroot/applewin
+    :ssh:<username>@cvs.applewin.berlios.de:/cvsroot/applewin
 
 
 12. You can download a free source-code 'diff' & 'merge' app for win32

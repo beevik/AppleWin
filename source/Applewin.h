@@ -9,7 +9,7 @@ void LogFileTimeUntilFirstKeyRead(void);
 bool SetCurrentImageDir(const char* pszImageDir);
 
 extern const UINT16* GetOldAppleWinVersion(void);
-extern char VERSIONSTRING[];	// Constructed in WinMain()
+extern char VERSIONSTRING[];    // Constructed in WinMain()
 
 extern const TCHAR     *g_pAppTitle;
 
@@ -46,17 +46,17 @@ extern double     g_fCurrentCLK6502;
 extern int        g_nCpuCyclesFeedback;
 extern DWORD      g_dwCyclesThisFrame;
 
-extern bool       g_bDisableDirectInput;				// Cmd line switch: don't init DI (so no DIMouse support)
-extern bool       g_bDisableDirectSound;				// Cmd line switch: don't init DS (so no MB/Speaker support)
-extern bool       g_bDisableDirectSoundMockingboard;	// Cmd line switch: don't init MB support
-extern int        g_nMemoryClearType;					// Cmd line switch: use specific MIP (Memory Initialization Pattern)
+extern bool       g_bDisableDirectInput;                // Cmd line switch: don't init DI (so no DIMouse support)
+extern bool       g_bDisableDirectSound;                // Cmd line switch: don't init DS (so no MB/Speaker support)
+extern bool       g_bDisableDirectSoundMockingboard;    // Cmd line switch: don't init MB support
+extern int        g_nMemoryClearType;                   // Cmd line switch: use specific MIP (Memory Initialization Pattern)
 
-extern SS_CARDTYPE g_Slot0;	// LC or Saturn in slot0
-extern SS_CARDTYPE g_Slot4;	// Mockingboard, Z80, Mouse in slot4
-extern SS_CARDTYPE g_Slot5;	// Mockingboard, Z80,       in slot5
+extern SS_CARDTYPE g_Slot0; // LC or Saturn in slot0
+extern SS_CARDTYPE g_Slot4; // Mockingboard, Z80, Mouse in slot4
+extern SS_CARDTYPE g_Slot5; // Mockingboard, Z80,       in slot5
 extern SS_CARDTYPE g_SlotAux;
 
-extern HANDLE	g_hCustomRomF8;		// NULL if no custom rom
+extern HANDLE   g_hCustomRomF8;     // NULL if no custom rom
 
 #ifdef USE_SPEECH_API
 class CSpeech;

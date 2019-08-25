@@ -31,7 +31,7 @@
 #include <crtdbg.h>
 #include "AY8910.h"
 
-#include "Applewin.h"		// For g_fh
+#include "Applewin.h"       // For g_fh
 #include "YamlHelper.h"
 
 /* The AY white noise RNG algorithm is based on info from MAME's ay8910.c -
@@ -45,34 +45,34 @@
  * very high at all. And I speak as a Cyrix owner. :-)
  */
 
-libspectrum_signed_word** g_ppSoundBuffers;	// Used to pass param to sound_ay_overlay()
+libspectrum_signed_word** g_ppSoundBuffers; // Used to pass param to sound_ay_overlay()
 
 /* configuration */
-//int sound_enabled = 0;		/* Are we currently using the sound card */
-//int sound_enabled_ever = 0;	/* if it's *ever* been in use; see
-//				   sound_ay_write() and sound_ay_reset() */
-//int sound_stereo = 0;		/* true for stereo *output sample* (only) */
-//int sound_stereo_ay_abc = 0;	/* (AY stereo) true for ABC stereo, else ACB */
-//int sound_stereo_ay_narrow = 0;	/* (AY stereo) true for narrow AY st. sep. */
+//int sound_enabled = 0;        /* Are we currently using the sound card */
+//int sound_enabled_ever = 0;   /* if it's *ever* been in use; see
+//                 sound_ay_write() and sound_ay_reset() */
+//int sound_stereo = 0;     /* true for stereo *output sample* (only) */
+//int sound_stereo_ay_abc = 0;  /* (AY stereo) true for ABC stereo, else ACB */
+//int sound_stereo_ay_narrow = 0;   /* (AY stereo) true for narrow AY st. sep. */
 
-//int sound_stereo_ay = 0;	/* local copy of settings_current.stereo_ay */
-//int sound_stereo_beeper = 0;	/* and settings_current.stereo_beeper */
+//int sound_stereo_ay = 0;  /* local copy of settings_current.stereo_ay */
+//int sound_stereo_beeper = 0;  /* and settings_current.stereo_beeper */
 
 
 /* assume all three tone channels together match the beeper volume (ish).
  * Must be <=127 for all channels; 50+2+(24*3) = 124.
  * (Now scaled up for 16-bit.)
  */
-//#define AMPL_BEEPER		( 50 * 256)
-//#define AMPL_TAPE		( 2 * 256 )
-//#define AMPL_AY_TONE		( 24 * 256 )	/* three of these */
-#define AMPL_AY_TONE		( 42 * 256 )	// 42*3 = 126
+//#define AMPL_BEEPER       ( 50 * 256)
+//#define AMPL_TAPE     ( 2 * 256 )
+//#define AMPL_AY_TONE      ( 24 * 256 )    /* three of these */
+#define AMPL_AY_TONE        ( 42 * 256 )    // 42*3 = 126
 
 /* max. number of sub-frame AY port writes allowed;
  * given the number of port writes theoretically possible in a
  * 50th I think this should be plenty.
  */
-//#define AY_CHANGE_MAX		8000	// [TC] Moved into AY8910.h
+//#define AY_CHANGE_MAX     8000    // [TC] Moved into AY8910.h
 
 ///* frequency to generate sound at for hifi sound */
 //#define HIFI_FREQ              88200
@@ -116,45 +116,45 @@ double CAY8910::m_fCurrentCLK_AY8910 = 0.0;
 
 void CAY8910::init(void)
 {
-	// Init the statics that were in sound_ay_overlay()
-	rng = 1;
-	noise_toggle = 0;
-	env_first = 1; env_rev = 0; env_counter = 15;
+    // Init the statics that were in sound_ay_overlay()
+    rng = 1;
+    noise_toggle = 0;
+    env_first = 1; env_rev = 0; env_counter = 15;
 }
 
 CAY8910::CAY8910(void)
 {
-	init();
-	m_fCurrentCLK_AY8910 = g_fCurrentCLK6502;
+    init();
+    m_fCurrentCLK_AY8910 = g_fCurrentCLK6502;
 };
 
 
 void CAY8910::sound_ay_init( void )
 {
-	/* AY output doesn't match the claimed levels; these levels are based
-	* on the measurements posted to comp.sys.sinclair in Dec 2001 by
-	* Matthew Westcott, adjusted as I described in a followup to his post,
-	* then scaled to 0..0xffff.
-	*/
-	static const int levels[16] = {
-		0x0000, 0x0385, 0x053D, 0x0770,
-		0x0AD7, 0x0FD5, 0x15B0, 0x230C,
-		0x2B4C, 0x43C1, 0x5A4B, 0x732F,
-		0x9204, 0xAFF1, 0xD921, 0xFFFF
-	};
-	int f;
+    /* AY output doesn't match the claimed levels; these levels are based
+    * on the measurements posted to comp.sys.sinclair in Dec 2001 by
+    * Matthew Westcott, adjusted as I described in a followup to his post,
+    * then scaled to 0..0xffff.
+    */
+    static const int levels[16] = {
+        0x0000, 0x0385, 0x053D, 0x0770,
+        0x0AD7, 0x0FD5, 0x15B0, 0x230C,
+        0x2B4C, 0x43C1, 0x5A4B, 0x732F,
+        0x9204, 0xAFF1, 0xD921, 0xFFFF
+    };
+    int f;
 
-	/* scale the values down to fit */
-	for( f = 0; f < 16; f++ )
-		ay_tone_levels[f] = ( levels[f] * AMPL_AY_TONE + 0x8000 ) / 0xffff;
+    /* scale the values down to fit */
+    for( f = 0; f < 16; f++ )
+        ay_tone_levels[f] = ( levels[f] * AMPL_AY_TONE + 0x8000 ) / 0xffff;
 
-	ay_noise_tick = ay_noise_period = 0;
-	ay_env_internal_tick = ay_env_tick = ay_env_period = 0;
-	ay_tone_subcycles = ay_env_subcycles = 0;
-	for( f = 0; f < 3; f++ )
-		ay_tone_tick[f] = ay_tone_high[f] = 0, ay_tone_period[f] = 1;
+    ay_noise_tick = ay_noise_period = 0;
+    ay_env_internal_tick = ay_env_tick = ay_env_period = 0;
+    ay_tone_subcycles = ay_env_subcycles = 0;
+    for( f = 0; f < 3; f++ )
+        ay_tone_tick[f] = ay_tone_high[f] = 0, ay_tone_period[f] = 1;
 
-	ay_change_count = 0;
+    ay_change_count = 0;
 }
 
 
@@ -174,7 +174,7 @@ void CAY8910::sound_init( const char *device )
 
 #if 0
   if( !( !sound_enabled && settings_current.sound &&
-	 settings_current.emulation_speed == 100 ) )
+     settings_current.emulation_speed == 100 ) )
     return;
 
   sound_stereo_ay = settings_current.stereo_ay;
@@ -185,7 +185,7 @@ void CAY8910::sound_init( const char *device )
     sound_stereo = 1;
   ret =
     sound_lowlevel_init( device, &settings_current.sound_freq,
-			 &sound_stereo );
+             &sound_stereo );
   if( ret )
     return;
 #endif
@@ -205,7 +205,7 @@ void CAY8910::sound_init( const char *device )
 
   sound_channels = ( sound_stereo ? 2 : 1 );
 #endif
-  sound_channels = 3;	// 3 mono channels: ABC
+  sound_channels = 3;   // 3 mono channels: ABC
 
 //  hz = ( float ) machine_current->timings.processor_speed /
 //    machine_current->timings.tstates_per_frame;
@@ -218,11 +218,11 @@ void CAY8910::sound_init( const char *device )
 
 #if 0
   if( ( sound_buf = (libspectrum_signed_word*) malloc( sizeof( libspectrum_signed_word ) *
-			    sound_generator_framesiz * sound_channels ) ) ==
+                sound_generator_framesiz * sound_channels ) ) ==
       NULL
       || ( tape_buf =
-	   malloc( sizeof( libspectrum_signed_word ) *
-		   sound_generator_framesiz ) ) == NULL ) {
+       malloc( sizeof( libspectrum_signed_word ) *
+           sound_generator_framesiz ) ) == NULL ) {
     if( sound_buf ) {
       free( sound_buf );
       sound_buf = NULL;
@@ -238,14 +238,14 @@ void CAY8910::sound_init( const char *device )
 #ifdef HAVE_SAMPLERATE
   if( settings_current.sound_hifi ) {
     if( ( convert_input_buffer = malloc( sizeof( float ) *
-					 sound_generator_framesiz *
-					 sound_channels ) ) == NULL
-	|| ( convert_output_buffer =
-	     malloc( sizeof( float ) * sound_framesiz * sound_channels ) ) ==
-	NULL ) {
+                     sound_generator_framesiz *
+                     sound_channels ) ) == NULL
+    || ( convert_output_buffer =
+         malloc( sizeof( float ) * sound_framesiz * sound_channels ) ) ==
+    NULL ) {
       if( convert_input_buffer ) {
-	free( convert_input_buffer );
-	convert_input_buffer = NULL;
+    free( convert_input_buffer );
+    convert_input_buffer = NULL;
       }
       sound_end();
       return;
@@ -255,8 +255,8 @@ void CAY8910::sound_init( const char *device )
   src_state = src_new( SRC_SINC_MEDIUM_QUALITY, sound_channels, &error );
   if( error ) {
     ui_error( UI_ERROR_ERROR,
-	      "error initialising sample rate converter %s",
-	      src_strerror( error ) );
+          "error initialising sample rate converter %s",
+          src_strerror( error ) );
     sound_end();
     return;
   }
@@ -312,11 +312,11 @@ void CAY8910::sound_init( const char *device )
 
 #if 0
   ay_tick_incr = ( int ) ( 65536. *
-			   libspectrum_timings_ay_speed( machine_current->
-							 machine ) /
-			   sound_generator_freq );
+               libspectrum_timings_ay_speed( machine_current->
+                             machine ) /
+               sound_generator_freq );
 #endif
-  ay_tick_incr = ( int ) ( 65536. * m_fCurrentCLK_AY8910 / sound_generator_freq );	// [TC]
+  ay_tick_incr = ( int ) ( 65536. * m_fCurrentCLK_AY8910 / sound_generator_freq );  // [TC]
 }
 
 
@@ -414,37 +414,37 @@ sound_write_buf_pstereo( libspectrum_signed_word * out, int c )
   ( level * 2 * ay_tone_tick[ chan ] / tone_count )
 
 #define AY_DO_TONE( var, chan ) \
-  ( var ) = 0;								\
-  is_low = 0;								\
-  if( level ) {								\
-    if( ay_tone_high[ chan ] )						\
-      ( var ) = ( level );						\
-    else {								\
-      ( var ) = -( level );						\
-      is_low = 1;							\
-    }									\
-  }									\
-  									\
-  ay_tone_tick[ chan ] += tone_count;					\
-  count = 0;								\
-  while( ay_tone_tick[ chan ] >= ay_tone_period[ chan ] ) {		\
-    count++;								\
-    ay_tone_tick[ chan ] -= ay_tone_period[ chan ];			\
-    ay_tone_high[ chan ] = !ay_tone_high[ chan ];			\
-    									\
-    /* has to be here, unfortunately... */				\
-    if( count == 1 && level && ay_tone_tick[ chan ] < tone_count ) {	\
-      if( is_low )							\
-        ( var ) += AY_GET_SUBVAL( chan );				\
-      else								\
-        ( var ) -= AY_GET_SUBVAL( chan );				\
-      }									\
-    }									\
-  									\
-  /* if it's changed more than once during the sample, we can't */	\
-  /* represent it faithfully. So, just hope it's a sample.      */	\
-  /* (That said, this should also help avoid aliasing noise.)   */	\
-  if( count > 1 )							\
+  ( var ) = 0;                              \
+  is_low = 0;                               \
+  if( level ) {                             \
+    if( ay_tone_high[ chan ] )                      \
+      ( var ) = ( level );                      \
+    else {                              \
+      ( var ) = -( level );                     \
+      is_low = 1;                           \
+    }                                   \
+  }                                 \
+                                    \
+  ay_tone_tick[ chan ] += tone_count;                   \
+  count = 0;                                \
+  while( ay_tone_tick[ chan ] >= ay_tone_period[ chan ] ) {     \
+    count++;                                \
+    ay_tone_tick[ chan ] -= ay_tone_period[ chan ];         \
+    ay_tone_high[ chan ] = !ay_tone_high[ chan ];           \
+                                        \
+    /* has to be here, unfortunately... */              \
+    if( count == 1 && level && ay_tone_tick[ chan ] < tone_count ) {    \
+      if( is_low )                          \
+        ( var ) += AY_GET_SUBVAL( chan );               \
+      else                              \
+        ( var ) -= AY_GET_SUBVAL( chan );               \
+      }                                 \
+    }                                   \
+                                    \
+  /* if it's changed more than once during the sample, we can't */  \
+  /* represent it faithfully. So, just hope it's a sample.      */  \
+  /* (That said, this should also help avoid aliasing noise.)   */  \
+  if( count > 1 )                           \
     ( var ) = -( level )
 
 
@@ -454,21 +454,21 @@ sound_write_buf_pstereo( libspectrum_signed_word * out, int c )
  * anything directly in sound_buf, though.
  */
 #define GEN_STEREO( pos, val ) \
-  if( ( pos ) < 0 ) {							\
-    rstereobuf_l[ rstereopos ] += ( val );				\
-    rstereobuf_r[ ( rstereopos - pos ) % STEREO_BUF_SIZE ] += ( val );	\
-  } else {								\
-    rstereobuf_l[ ( rstereopos + pos ) % STEREO_BUF_SIZE ] += ( val );	\
-    rstereobuf_r[ rstereopos ] += ( val );				\
+  if( ( pos ) < 0 ) {                           \
+    rstereobuf_l[ rstereopos ] += ( val );              \
+    rstereobuf_r[ ( rstereopos - pos ) % STEREO_BUF_SIZE ] += ( val );  \
+  } else {                              \
+    rstereobuf_l[ ( rstereopos + pos ) % STEREO_BUF_SIZE ] += ( val );  \
+    rstereobuf_r[ rstereopos ] += ( val );              \
   }
 #endif
 
 
 /* bitmasks for envelope */
-#define AY_ENV_CONT	8
-#define AY_ENV_ATTACK	4
-#define AY_ENV_ALT	2
-#define AY_ENV_HOLD	1
+#define AY_ENV_CONT 8
+#define AY_ENV_ATTACK   4
+#define AY_ENV_ALT  2
+#define AY_ENV_HOLD 1
 
 #define HZ_COMMON_DENOMINATOR 50
 
@@ -494,9 +494,9 @@ void CAY8910::sound_ay_overlay( void )
    avoid overflowing a dword */
   sfreq = sound_generator_freq / HZ_COMMON_DENOMINATOR;
 //  cpufreq = machine_current->timings.processor_speed / HZ_COMMON_DENOMINATOR;
-  cpufreq = (libspectrum_dword) (m_fCurrentCLK_AY8910 / HZ_COMMON_DENOMINATOR);	// [TC]
+  cpufreq = (libspectrum_dword) (m_fCurrentCLK_AY8910 / HZ_COMMON_DENOMINATOR); // [TC]
   for( f = 0; f < ay_change_count; f++ )
-    ay_change[f].ofs = (USHORT) (( ay_change[f].tstates * sfreq ) / cpufreq);	// [TC] Added cast
+    ay_change[f].ofs = (USHORT) (( ay_change[f].tstates * sfreq ) / cpufreq);   // [TC] Added cast
 
   libspectrum_signed_word* pBuf1 = g_ppSoundBuffers[0];
   libspectrum_signed_word* pBuf2 = g_ppSoundBuffers[1];
@@ -522,35 +522,35 @@ void CAY8910::sound_ay_overlay( void )
       case 3:
       case 4:
       case 5:
-	r = reg >> 1;
-	/* a zero-len period is the same as 1 */
-	ay_tone_period[r] = ( sound_ay_registers[ reg & ~1 ] |
-			      ( sound_ay_registers[ reg | 1 ] & 15 ) << 8 );
-	if( !ay_tone_period[r] )
-	  ay_tone_period[r]++;
+    r = reg >> 1;
+    /* a zero-len period is the same as 1 */
+    ay_tone_period[r] = ( sound_ay_registers[ reg & ~1 ] |
+                  ( sound_ay_registers[ reg | 1 ] & 15 ) << 8 );
+    if( !ay_tone_period[r] )
+      ay_tone_period[r]++;
 
-	/* important to get this right, otherwise e.g. Ghouls 'n' Ghosts
-	 * has really scratchy, horrible-sounding vibrato.
-	 */
-	if( ay_tone_tick[r] >= ay_tone_period[r] * 2 )
-	  ay_tone_tick[r] %= ay_tone_period[r] * 2;
-	break;
+    /* important to get this right, otherwise e.g. Ghouls 'n' Ghosts
+     * has really scratchy, horrible-sounding vibrato.
+     */
+    if( ay_tone_tick[r] >= ay_tone_period[r] * 2 )
+      ay_tone_tick[r] %= ay_tone_period[r] * 2;
+    break;
       case 6:
-	ay_noise_tick = 0;
-	ay_noise_period = ( sound_ay_registers[ reg ] & 31 );
-	break;
+    ay_noise_tick = 0;
+    ay_noise_period = ( sound_ay_registers[ reg ] & 31 );
+    break;
       case 11:
       case 12:
-	/* this one *isn't* fixed-point */
-	ay_env_period =
-	  sound_ay_registers[11] | ( sound_ay_registers[12] << 8 );
-	break;
+    /* this one *isn't* fixed-point */
+    ay_env_period =
+      sound_ay_registers[11] | ( sound_ay_registers[12] << 8 );
+    break;
       case 13:
-	ay_env_internal_tick = ay_env_tick = ay_env_subcycles = 0;
-	env_first = 1;
-	env_rev = 0;
-	env_counter = ( sound_ay_registers[13] & AY_ENV_ATTACK ) ? 0 : 15;
-	break;
+    ay_env_internal_tick = ay_env_tick = ay_env_subcycles = 0;
+    env_first = 1;
+    env_rev = 0;
+    env_counter = ( sound_ay_registers[13] & AY_ENV_ATTACK ) ? 0 : 15;
+    break;
       }
     }
 
@@ -564,7 +564,7 @@ void CAY8910::sound_ay_overlay( void )
 
     for( g = 0; g < 3; g++ )
       if( sound_ay_registers[ 8 + g ] & 16 )
-	tone_level[g] = level;
+    tone_level[g] = level;
 
     /* envelope output counter gets incr'd every 16 AY cycles.
      * Has to be a while, as this is sub-output-sample res.
@@ -576,47 +576,47 @@ void CAY8910::sound_ay_overlay( void )
       noise_count++;
       ay_env_tick++;
       while( ay_env_tick >= ay_env_period ) {
-	ay_env_tick -= ay_env_period;
+    ay_env_tick -= ay_env_period;
 
-	/* do a 1/16th-of-period incr/decr if needed */
-	if( env_first ||
-	    ( ( envshape & AY_ENV_CONT ) && !( envshape & AY_ENV_HOLD ) ) ) {
-	  if( env_rev )
-	    env_counter -= ( envshape & AY_ENV_ATTACK ) ? 1 : -1;
-	  else
-	    env_counter += ( envshape & AY_ENV_ATTACK ) ? 1 : -1;
-	  if( env_counter < 0 )
-	    env_counter = 0;
-	  if( env_counter > 15 )
-	    env_counter = 15;
-	}
+    /* do a 1/16th-of-period incr/decr if needed */
+    if( env_first ||
+        ( ( envshape & AY_ENV_CONT ) && !( envshape & AY_ENV_HOLD ) ) ) {
+      if( env_rev )
+        env_counter -= ( envshape & AY_ENV_ATTACK ) ? 1 : -1;
+      else
+        env_counter += ( envshape & AY_ENV_ATTACK ) ? 1 : -1;
+      if( env_counter < 0 )
+        env_counter = 0;
+      if( env_counter > 15 )
+        env_counter = 15;
+    }
 
-	ay_env_internal_tick++;
-	while( ay_env_internal_tick >= 16 ) {
-	  ay_env_internal_tick -= 16;
+    ay_env_internal_tick++;
+    while( ay_env_internal_tick >= 16 ) {
+      ay_env_internal_tick -= 16;
 
-	  /* end of cycle */
-	  if( !( envshape & AY_ENV_CONT ) )
-	    env_counter = 0;
-	  else {
-	    if( envshape & AY_ENV_HOLD ) {
-	      if( env_first && ( envshape & AY_ENV_ALT ) )
-		env_counter = ( env_counter ? 0 : 15 );
-	    } else {
-	      /* non-hold */
-	      if( envshape & AY_ENV_ALT )
-		env_rev = !env_rev;
-	      else
-		env_counter = ( envshape & AY_ENV_ATTACK ) ? 0 : 15;
-	    }
-	  }
+      /* end of cycle */
+      if( !( envshape & AY_ENV_CONT ) )
+        env_counter = 0;
+      else {
+        if( envshape & AY_ENV_HOLD ) {
+          if( env_first && ( envshape & AY_ENV_ALT ) )
+        env_counter = ( env_counter ? 0 : 15 );
+        } else {
+          /* non-hold */
+          if( envshape & AY_ENV_ALT )
+        env_rev = !env_rev;
+          else
+        env_counter = ( envshape & AY_ENV_ATTACK ) ? 0 : 15;
+        }
+      }
 
-	  env_first = 0;
-	}
+      env_first = 0;
+    }
 
-	/* don't keep trying if period is zero */
-	if( !ay_env_period )
-	  break;
+    /* don't keep trying if period is zero */
+    if( !ay_env_period )
+      break;
       }
     }
 
@@ -656,37 +656,37 @@ void CAY8910::sound_ay_overlay( void )
       chan3 = 0;
 
     /* write the sample(s) */
-	*pBuf1++ = chan1;	// [TC]
-	*pBuf2++ = chan2;	// [TC]
-	*pBuf3++ = chan3;	// [TC]
+    *pBuf1++ = chan1;   // [TC]
+    *pBuf2++ = chan2;   // [TC]
+    *pBuf3++ = chan3;   // [TC]
 #if 0
     if( !sound_stereo ) {
       /* mono */
       ( *ptr++ ) += chan1 + chan2 + chan3;
     } else {
       if( !sound_stereo_ay ) {
-	/* stereo output, but mono AY sound; still,
-	 * incr separately in case of beeper pseudostereo.
-	 */
-	( *ptr++ ) += chan1 + chan2 + chan3;
-	( *ptr++ ) += chan1 + chan2 + chan3;
+    /* stereo output, but mono AY sound; still,
+     * incr separately in case of beeper pseudostereo.
+     */
+    ( *ptr++ ) += chan1 + chan2 + chan3;
+    ( *ptr++ ) += chan1 + chan2 + chan3;
       } else {
-	/* stereo with ACB/ABC AY positioning.
-	 * Here we use real stereo positions for the channels.
-	 * Just because, y'know, it's cool and stuff. No, really. :-)
-	 * This is a little tricky, as it works by delaying sounds
-	 * on the left or right channels to model the delay you get
-	 * in the real world when sounds originate at different places.
-	 */
-	GEN_STEREO( rchan1pos, chan1 );
-	GEN_STEREO( rchan2pos, chan2 );
-	GEN_STEREO( rchan3pos, chan3 );
-	( *ptr++ ) += rstereobuf_l[ rstereopos ];
-	( *ptr++ ) += rstereobuf_r[ rstereopos ];
-	rstereobuf_l[ rstereopos ] = rstereobuf_r[ rstereopos ] = 0;
-	rstereopos++;
-	if( rstereopos >= STEREO_BUF_SIZE )
-	  rstereopos = 0;
+    /* stereo with ACB/ABC AY positioning.
+     * Here we use real stereo positions for the channels.
+     * Just because, y'know, it's cool and stuff. No, really. :-)
+     * This is a little tricky, as it works by delaying sounds
+     * on the left or right channels to model the delay you get
+     * in the real world when sounds originate at different places.
+     */
+    GEN_STEREO( rchan1pos, chan1 );
+    GEN_STEREO( rchan2pos, chan2 );
+    GEN_STEREO( rchan3pos, chan3 );
+    ( *ptr++ ) += rstereobuf_l[ rstereopos ];
+    ( *ptr++ ) += rstereobuf_r[ rstereopos ];
+    rstereobuf_l[ rstereopos ] = rstereobuf_r[ rstereopos ] = 0;
+    rstereopos++;
+    if( rstereopos >= STEREO_BUF_SIZE )
+      rstereopos = 0;
       }
     }
 #endif
@@ -697,7 +697,7 @@ void CAY8910::sound_ay_overlay( void )
       ay_noise_tick -= ay_noise_period;
 
       if( ( rng & 1 ) ^ ( ( rng & 2 ) ? 1 : 0 ) )
-	noise_toggle = !noise_toggle;
+    noise_toggle = !noise_toggle;
 
       /* rng is 17-bit shift reg, bit 0 is output.
        * input is bit 0 xor bit 2.
@@ -707,7 +707,7 @@ void CAY8910::sound_ay_overlay( void )
 
       /* don't keep trying if period is zero */
       if( !ay_noise_period )
-	break;
+    break;
     }
   }
 }
@@ -736,7 +736,7 @@ void CAY8910::sound_ay_reset( void )
 {
   int f;
 
-  init();	// AppleWin:TC
+  init();   // AppleWin:TC
 
 /* recalculate timings based on new machines ay clock */
   sound_ay_init();
@@ -753,24 +753,24 @@ void CAY8910::sound_ay_reset( void )
 #if 0
 /* write stereo or mono beeper sample, and incr ptr */
 #define SOUND_WRITE_BUF_BEEPER( ptr, val ) \
-  do {							\
-    if( sound_stereo_beeper ) {				\
-      sound_write_buf_pstereo( ( ptr ), ( val ) );	\
-      ( ptr ) += 2;					\
-    } else {						\
-      *( ptr )++ = ( val );				\
-      if( sound_stereo )				\
-        *( ptr )++ = ( val );				\
-    }							\
+  do {                          \
+    if( sound_stereo_beeper ) {             \
+      sound_write_buf_pstereo( ( ptr ), ( val ) );  \
+      ( ptr ) += 2;                 \
+    } else {                        \
+      *( ptr )++ = ( val );             \
+      if( sound_stereo )                \
+        *( ptr )++ = ( val );               \
+    }                           \
   } while(0)
 
 /* the tape version works by writing to a separate mono buffer,
  * which gets added after being generated.
  */
 #define SOUND_WRITE_BUF( is_tape, ptr, val ) \
-  if( is_tape )					\
-    *( ptr )++ = ( val );			\
-  else						\
+  if( is_tape )                 \
+    *( ptr )++ = ( val );           \
+  else                      \
     SOUND_WRITE_BUF_BEEPER( ptr, val )
 #endif
 
@@ -790,22 +790,22 @@ sound_resample( void )
   data.end_of_input = 0;
 
   src_short_to_float_array( ( const short * ) sound_buf, convert_input_buffer,
-			    sound_generator_framesiz * sound_channels );
+                sound_generator_framesiz * sound_channels );
 
   while( data.input_frames ) {
     error = src_process( src_state, &data );
     if( error ) {
       ui_error( UI_ERROR_ERROR, "hifi sound downsample error %s",
-		src_strerror( error ) );
+        src_strerror( error ) );
       sound_end();
       return;
     }
 
     src_float_to_short_array( convert_output_buffer, ( short * ) sound_buf,
-			      data.output_frames_gen * sound_channels );
+                  data.output_frames_gen * sound_channels );
 
     sound_lowlevel_frame( sound_buf,
-			  data.output_frames_gen * sound_channels );
+              data.output_frames_gen * sound_channels );
 
     data.data_in += data.input_frames_used * sound_channels;
     data.input_frames -= data.input_frames_used;
@@ -855,7 +855,7 @@ void CAY8910::sound_frame( void )
 #endif /* #ifdef HAVE_SAMPLERATE */
 #if 0
     sound_lowlevel_frame( sound_buf,
-			  sound_generator_framesiz * sound_channels );
+              sound_generator_framesiz * sound_channels );
 #endif
 
 #if 0
@@ -921,20 +921,20 @@ sound_beeper( int is_tape, int on )
       ptr = tape_buf + sound_fillpos[1];
     else
       ptr =
-	sound_buf +
-	( sound_stereo ? sound_fillpos[0] * 2 : sound_fillpos[0] );
+    sound_buf +
+    ( sound_stereo ? sound_fillpos[0] * 2 : sound_fillpos[0] );
 
     for( f = sound_fillpos[ bchan ];
-	 f < newpos && f < sound_generator_framesiz;
-	 f++ )
+     f < newpos && f < sound_generator_framesiz;
+     f++ )
       SOUND_WRITE_BUF( bchan, ptr, sound_oldval[ bchan ] );
 
     if( newpos < sound_generator_framesiz ) {
       /* newpos may be less than sound_fillpos, so... */
       if( is_tape )
-	ptr = tape_buf + newpos;
+    ptr = tape_buf + newpos;
       else
-	ptr = sound_buf + ( sound_stereo ? newpos * 2 : newpos );
+    ptr = sound_buf + ( sound_stereo ? newpos * 2 : newpos );
 
       /* write subsample value */
       SOUND_WRITE_BUF( bchan, ptr, subval );
@@ -993,157 +993,157 @@ sound_beeper( int is_tape, int on )
 
 void CAY8910::SaveSnapshot(YamlSaveHelper& yamlSaveHelper, std::string& suffix)
 {
-	std::string unit = std::string(SS_YAML_KEY_AY8910) + suffix;
-	YamlSaveHelper::Label label(yamlSaveHelper, "%s:\n", unit.c_str());
+    std::string unit = std::string(SS_YAML_KEY_AY8910) + suffix;
+    YamlSaveHelper::Label label(yamlSaveHelper, "%s:\n", unit.c_str());
 
-	yamlSaveHelper.SaveUint(SS_YAML_KEY_TONE0_TICK, ay_tone_tick[0]);
-	yamlSaveHelper.SaveUint(SS_YAML_KEY_TONE1_TICK, ay_tone_tick[1]);
-	yamlSaveHelper.SaveUint(SS_YAML_KEY_TONE2_TICK, ay_tone_tick[2]);
-	yamlSaveHelper.SaveUint(SS_YAML_KEY_TONE0_HIGH, ay_tone_high[0]);
-	yamlSaveHelper.SaveUint(SS_YAML_KEY_TONE1_HIGH, ay_tone_high[1]);
-	yamlSaveHelper.SaveUint(SS_YAML_KEY_TONE2_HIGH, ay_tone_high[2]);
-	yamlSaveHelper.SaveUint(SS_YAML_KEY_NOISE_TICK, ay_noise_tick);
-	yamlSaveHelper.SaveUint(SS_YAML_KEY_TONE_SUBCYCLES, ay_tone_subcycles);
-	yamlSaveHelper.SaveUint(SS_YAML_KEY_ENV_SUBCYCLES, ay_env_subcycles);
-	yamlSaveHelper.SaveUint(SS_YAML_KEY_ENV_INTERNAL_TICK, ay_env_internal_tick);
-	yamlSaveHelper.SaveUint(SS_YAML_KEY_ENV_TICK, ay_env_tick);
-	yamlSaveHelper.SaveUint(SS_YAML_KEY_TICK_INCR, ay_tick_incr);
-	yamlSaveHelper.SaveUint(SS_YAML_KEY_TONE0_PERIOD, ay_tone_period[0]);
-	yamlSaveHelper.SaveUint(SS_YAML_KEY_TONE1_PERIOD, ay_tone_period[1]);
-	yamlSaveHelper.SaveUint(SS_YAML_KEY_TONE2_PERIOD, ay_tone_period[2]);
-	yamlSaveHelper.SaveUint(SS_YAML_KEY_NOISE_PERIOD, ay_noise_period);
-	yamlSaveHelper.SaveUint(SS_YAML_KEY_RNG, rng);
-	yamlSaveHelper.SaveUint(SS_YAML_KEY_NOISE_TOGGLE, noise_toggle);
-	yamlSaveHelper.SaveUint(SS_YAML_KEY_ENV_FIRST, env_first);
-	yamlSaveHelper.SaveUint(SS_YAML_KEY_ENV_REV, env_rev);
-	yamlSaveHelper.SaveUint(SS_YAML_KEY_ENV_COUNTER, env_counter);
+    yamlSaveHelper.SaveUint(SS_YAML_KEY_TONE0_TICK, ay_tone_tick[0]);
+    yamlSaveHelper.SaveUint(SS_YAML_KEY_TONE1_TICK, ay_tone_tick[1]);
+    yamlSaveHelper.SaveUint(SS_YAML_KEY_TONE2_TICK, ay_tone_tick[2]);
+    yamlSaveHelper.SaveUint(SS_YAML_KEY_TONE0_HIGH, ay_tone_high[0]);
+    yamlSaveHelper.SaveUint(SS_YAML_KEY_TONE1_HIGH, ay_tone_high[1]);
+    yamlSaveHelper.SaveUint(SS_YAML_KEY_TONE2_HIGH, ay_tone_high[2]);
+    yamlSaveHelper.SaveUint(SS_YAML_KEY_NOISE_TICK, ay_noise_tick);
+    yamlSaveHelper.SaveUint(SS_YAML_KEY_TONE_SUBCYCLES, ay_tone_subcycles);
+    yamlSaveHelper.SaveUint(SS_YAML_KEY_ENV_SUBCYCLES, ay_env_subcycles);
+    yamlSaveHelper.SaveUint(SS_YAML_KEY_ENV_INTERNAL_TICK, ay_env_internal_tick);
+    yamlSaveHelper.SaveUint(SS_YAML_KEY_ENV_TICK, ay_env_tick);
+    yamlSaveHelper.SaveUint(SS_YAML_KEY_TICK_INCR, ay_tick_incr);
+    yamlSaveHelper.SaveUint(SS_YAML_KEY_TONE0_PERIOD, ay_tone_period[0]);
+    yamlSaveHelper.SaveUint(SS_YAML_KEY_TONE1_PERIOD, ay_tone_period[1]);
+    yamlSaveHelper.SaveUint(SS_YAML_KEY_TONE2_PERIOD, ay_tone_period[2]);
+    yamlSaveHelper.SaveUint(SS_YAML_KEY_NOISE_PERIOD, ay_noise_period);
+    yamlSaveHelper.SaveUint(SS_YAML_KEY_RNG, rng);
+    yamlSaveHelper.SaveUint(SS_YAML_KEY_NOISE_TOGGLE, noise_toggle);
+    yamlSaveHelper.SaveUint(SS_YAML_KEY_ENV_FIRST, env_first);
+    yamlSaveHelper.SaveUint(SS_YAML_KEY_ENV_REV, env_rev);
+    yamlSaveHelper.SaveUint(SS_YAML_KEY_ENV_COUNTER, env_counter);
 
-	// New label
-	{
-		YamlSaveHelper::Label registers(yamlSaveHelper, "%s:\n", SS_YAML_KEY_REGISTERS);
+    // New label
+    {
+        YamlSaveHelper::Label registers(yamlSaveHelper, "%s:\n", SS_YAML_KEY_REGISTERS);
 
-		yamlSaveHelper.SaveHexUint12(SS_YAML_KEY_REG_TONE0_PERIOD, (UINT)(sound_ay_registers[1]<<8) | sound_ay_registers[0]);
-		yamlSaveHelper.SaveHexUint12(SS_YAML_KEY_REG_TONE1_PERIOD, (UINT)(sound_ay_registers[3]<<8) | sound_ay_registers[2]);
-		yamlSaveHelper.SaveHexUint12(SS_YAML_KEY_REG_TONE2_PERIOD, (UINT)(sound_ay_registers[5]<<8) | sound_ay_registers[4]);
-		yamlSaveHelper.SaveHexUint8(SS_YAML_KEY_REG_NOISE_PERIOD, sound_ay_registers[6]);
-		yamlSaveHelper.SaveHexUint8(SS_YAML_KEY_REG_MIXER, sound_ay_registers[7]);
-		yamlSaveHelper.SaveHexUint8(SS_YAML_KEY_REG_VOL0, sound_ay_registers[8]);
-		yamlSaveHelper.SaveHexUint8(SS_YAML_KEY_REG_VOL1, sound_ay_registers[9]);
-		yamlSaveHelper.SaveHexUint8(SS_YAML_KEY_REG_VOL2, sound_ay_registers[10]);
-		yamlSaveHelper.SaveHexUint16(SS_YAML_KEY_REG_ENV_PERIOD, (UINT)(sound_ay_registers[12]<<8) | sound_ay_registers[11]);
-		yamlSaveHelper.SaveHexUint4(SS_YAML_KEY_REG_ENV_SHAPE, sound_ay_registers[13]);
-		yamlSaveHelper.SaveHexUint8(SS_YAML_KEY_REG_PORTA, sound_ay_registers[14]);
-		yamlSaveHelper.SaveHexUint8(SS_YAML_KEY_REG_PORTB, sound_ay_registers[15]);
-	}
+        yamlSaveHelper.SaveHexUint12(SS_YAML_KEY_REG_TONE0_PERIOD, (UINT)(sound_ay_registers[1]<<8) | sound_ay_registers[0]);
+        yamlSaveHelper.SaveHexUint12(SS_YAML_KEY_REG_TONE1_PERIOD, (UINT)(sound_ay_registers[3]<<8) | sound_ay_registers[2]);
+        yamlSaveHelper.SaveHexUint12(SS_YAML_KEY_REG_TONE2_PERIOD, (UINT)(sound_ay_registers[5]<<8) | sound_ay_registers[4]);
+        yamlSaveHelper.SaveHexUint8(SS_YAML_KEY_REG_NOISE_PERIOD, sound_ay_registers[6]);
+        yamlSaveHelper.SaveHexUint8(SS_YAML_KEY_REG_MIXER, sound_ay_registers[7]);
+        yamlSaveHelper.SaveHexUint8(SS_YAML_KEY_REG_VOL0, sound_ay_registers[8]);
+        yamlSaveHelper.SaveHexUint8(SS_YAML_KEY_REG_VOL1, sound_ay_registers[9]);
+        yamlSaveHelper.SaveHexUint8(SS_YAML_KEY_REG_VOL2, sound_ay_registers[10]);
+        yamlSaveHelper.SaveHexUint16(SS_YAML_KEY_REG_ENV_PERIOD, (UINT)(sound_ay_registers[12]<<8) | sound_ay_registers[11]);
+        yamlSaveHelper.SaveHexUint4(SS_YAML_KEY_REG_ENV_SHAPE, sound_ay_registers[13]);
+        yamlSaveHelper.SaveHexUint8(SS_YAML_KEY_REG_PORTA, sound_ay_registers[14]);
+        yamlSaveHelper.SaveHexUint8(SS_YAML_KEY_REG_PORTB, sound_ay_registers[15]);
+    }
 
-	// New label
-	if (ay_change_count)
-	{
-		YamlSaveHelper::Label change(yamlSaveHelper, "%s:\n", SS_YAML_KEY_CHANGE);
+    // New label
+    if (ay_change_count)
+    {
+        YamlSaveHelper::Label change(yamlSaveHelper, "%s:\n", SS_YAML_KEY_CHANGE);
 
-		for (int i=0; i<ay_change_count; i++)
-			yamlSaveHelper.Save("0x%04X: " SS_YAML_VALUE_CHANGE_FORMAT "\n", i, ay_change[i].tstates, ay_change[i].ofs, ay_change[i].reg, ay_change[i].val);
-	}
+        for (int i=0; i<ay_change_count; i++)
+            yamlSaveHelper.Save("0x%04X: " SS_YAML_VALUE_CHANGE_FORMAT "\n", i, ay_change[i].tstates, ay_change[i].ofs, ay_change[i].reg, ay_change[i].val);
+    }
 }
 
 bool CAY8910::LoadSnapshot(YamlLoadHelper& yamlLoadHelper, std::string& suffix)
 {
-	std::string unit = std::string(SS_YAML_KEY_AY8910) + suffix;
-	if (!yamlLoadHelper.GetSubMap(unit))
-		throw std::string("Card: Expected key: ") + unit;
+    std::string unit = std::string(SS_YAML_KEY_AY8910) + suffix;
+    if (!yamlLoadHelper.GetSubMap(unit))
+        throw std::string("Card: Expected key: ") + unit;
 
-	ay_tone_tick[0] = yamlLoadHelper.LoadUint(SS_YAML_KEY_TONE0_TICK);
-	ay_tone_tick[1] = yamlLoadHelper.LoadUint(SS_YAML_KEY_TONE1_TICK);
-	ay_tone_tick[2] = yamlLoadHelper.LoadUint(SS_YAML_KEY_TONE2_TICK);
-	ay_tone_high[0] = yamlLoadHelper.LoadUint(SS_YAML_KEY_TONE0_HIGH);
-	ay_tone_high[1] = yamlLoadHelper.LoadUint(SS_YAML_KEY_TONE1_HIGH);
-	ay_tone_high[2] = yamlLoadHelper.LoadUint(SS_YAML_KEY_TONE2_HIGH);
-	ay_noise_tick = yamlLoadHelper.LoadUint(SS_YAML_KEY_NOISE_TICK);
-	ay_tone_subcycles = yamlLoadHelper.LoadUint(SS_YAML_KEY_TONE_SUBCYCLES);
-	ay_env_subcycles = yamlLoadHelper.LoadUint(SS_YAML_KEY_ENV_SUBCYCLES);
-	ay_env_internal_tick = yamlLoadHelper.LoadUint(SS_YAML_KEY_ENV_INTERNAL_TICK);
-	ay_env_tick = yamlLoadHelper.LoadUint(SS_YAML_KEY_ENV_TICK);
-	ay_tick_incr = yamlLoadHelper.LoadUint(SS_YAML_KEY_TICK_INCR);
-	ay_tone_period[0] = yamlLoadHelper.LoadUint(SS_YAML_KEY_TONE0_PERIOD);
-	ay_tone_period[1] = yamlLoadHelper.LoadUint(SS_YAML_KEY_TONE1_PERIOD);
-	ay_tone_period[2] = yamlLoadHelper.LoadUint(SS_YAML_KEY_TONE2_PERIOD);
-	ay_noise_period = yamlLoadHelper.LoadUint(SS_YAML_KEY_NOISE_PERIOD);
-	rng = yamlLoadHelper.LoadUint(SS_YAML_KEY_RNG);
-	noise_toggle = yamlLoadHelper.LoadUint(SS_YAML_KEY_NOISE_TOGGLE);
-	env_first = yamlLoadHelper.LoadUint(SS_YAML_KEY_ENV_FIRST);
-	env_rev = yamlLoadHelper.LoadUint(SS_YAML_KEY_ENV_REV);
-	env_counter = yamlLoadHelper.LoadUint(SS_YAML_KEY_ENV_COUNTER);
+    ay_tone_tick[0] = yamlLoadHelper.LoadUint(SS_YAML_KEY_TONE0_TICK);
+    ay_tone_tick[1] = yamlLoadHelper.LoadUint(SS_YAML_KEY_TONE1_TICK);
+    ay_tone_tick[2] = yamlLoadHelper.LoadUint(SS_YAML_KEY_TONE2_TICK);
+    ay_tone_high[0] = yamlLoadHelper.LoadUint(SS_YAML_KEY_TONE0_HIGH);
+    ay_tone_high[1] = yamlLoadHelper.LoadUint(SS_YAML_KEY_TONE1_HIGH);
+    ay_tone_high[2] = yamlLoadHelper.LoadUint(SS_YAML_KEY_TONE2_HIGH);
+    ay_noise_tick = yamlLoadHelper.LoadUint(SS_YAML_KEY_NOISE_TICK);
+    ay_tone_subcycles = yamlLoadHelper.LoadUint(SS_YAML_KEY_TONE_SUBCYCLES);
+    ay_env_subcycles = yamlLoadHelper.LoadUint(SS_YAML_KEY_ENV_SUBCYCLES);
+    ay_env_internal_tick = yamlLoadHelper.LoadUint(SS_YAML_KEY_ENV_INTERNAL_TICK);
+    ay_env_tick = yamlLoadHelper.LoadUint(SS_YAML_KEY_ENV_TICK);
+    ay_tick_incr = yamlLoadHelper.LoadUint(SS_YAML_KEY_TICK_INCR);
+    ay_tone_period[0] = yamlLoadHelper.LoadUint(SS_YAML_KEY_TONE0_PERIOD);
+    ay_tone_period[1] = yamlLoadHelper.LoadUint(SS_YAML_KEY_TONE1_PERIOD);
+    ay_tone_period[2] = yamlLoadHelper.LoadUint(SS_YAML_KEY_TONE2_PERIOD);
+    ay_noise_period = yamlLoadHelper.LoadUint(SS_YAML_KEY_NOISE_PERIOD);
+    rng = yamlLoadHelper.LoadUint(SS_YAML_KEY_RNG);
+    noise_toggle = yamlLoadHelper.LoadUint(SS_YAML_KEY_NOISE_TOGGLE);
+    env_first = yamlLoadHelper.LoadUint(SS_YAML_KEY_ENV_FIRST);
+    env_rev = yamlLoadHelper.LoadUint(SS_YAML_KEY_ENV_REV);
+    env_counter = yamlLoadHelper.LoadUint(SS_YAML_KEY_ENV_COUNTER);
 
-	if (!yamlLoadHelper.GetSubMap(SS_YAML_KEY_REGISTERS))
-		throw std::string("Card: Expected key: ") + SS_YAML_KEY_REGISTERS;
+    if (!yamlLoadHelper.GetSubMap(SS_YAML_KEY_REGISTERS))
+        throw std::string("Card: Expected key: ") + SS_YAML_KEY_REGISTERS;
 
-	USHORT period = (USHORT) yamlLoadHelper.LoadUint(SS_YAML_KEY_REG_TONE0_PERIOD);
-	sound_ay_registers[0] = period & 0xff;
-	sound_ay_registers[1] = (period >> 8) & 0xf;
-	period = (USHORT) yamlLoadHelper.LoadUint(SS_YAML_KEY_REG_TONE1_PERIOD);
-	sound_ay_registers[2] = period & 0xff;
-	sound_ay_registers[3] = (period >> 8) & 0xf;
-	period = (USHORT) yamlLoadHelper.LoadUint(SS_YAML_KEY_REG_TONE2_PERIOD);
-	sound_ay_registers[4] = period & 0xff;
-	sound_ay_registers[5] = (period >> 8) & 0xf;
-	sound_ay_registers[6] = yamlLoadHelper.LoadUint(SS_YAML_KEY_REG_NOISE_PERIOD);
-	sound_ay_registers[7] = yamlLoadHelper.LoadUint(SS_YAML_KEY_REG_MIXER);
-	sound_ay_registers[8] = yamlLoadHelper.LoadUint(SS_YAML_KEY_REG_VOL0);
-	sound_ay_registers[9] = yamlLoadHelper.LoadUint(SS_YAML_KEY_REG_VOL1);
-	sound_ay_registers[10] = yamlLoadHelper.LoadUint(SS_YAML_KEY_REG_VOL2);
-	period = (USHORT) yamlLoadHelper.LoadUint(SS_YAML_KEY_REG_ENV_PERIOD);
-	sound_ay_registers[11] = period & 0xff;
-	sound_ay_registers[12] = period >> 8;
-	sound_ay_registers[13] = yamlLoadHelper.LoadUint(SS_YAML_KEY_REG_ENV_SHAPE);
-	sound_ay_registers[14] = yamlLoadHelper.LoadUint(SS_YAML_KEY_REG_PORTA);
-	sound_ay_registers[15] = yamlLoadHelper.LoadUint(SS_YAML_KEY_REG_PORTB);
+    USHORT period = (USHORT) yamlLoadHelper.LoadUint(SS_YAML_KEY_REG_TONE0_PERIOD);
+    sound_ay_registers[0] = period & 0xff;
+    sound_ay_registers[1] = (period >> 8) & 0xf;
+    period = (USHORT) yamlLoadHelper.LoadUint(SS_YAML_KEY_REG_TONE1_PERIOD);
+    sound_ay_registers[2] = period & 0xff;
+    sound_ay_registers[3] = (period >> 8) & 0xf;
+    period = (USHORT) yamlLoadHelper.LoadUint(SS_YAML_KEY_REG_TONE2_PERIOD);
+    sound_ay_registers[4] = period & 0xff;
+    sound_ay_registers[5] = (period >> 8) & 0xf;
+    sound_ay_registers[6] = yamlLoadHelper.LoadUint(SS_YAML_KEY_REG_NOISE_PERIOD);
+    sound_ay_registers[7] = yamlLoadHelper.LoadUint(SS_YAML_KEY_REG_MIXER);
+    sound_ay_registers[8] = yamlLoadHelper.LoadUint(SS_YAML_KEY_REG_VOL0);
+    sound_ay_registers[9] = yamlLoadHelper.LoadUint(SS_YAML_KEY_REG_VOL1);
+    sound_ay_registers[10] = yamlLoadHelper.LoadUint(SS_YAML_KEY_REG_VOL2);
+    period = (USHORT) yamlLoadHelper.LoadUint(SS_YAML_KEY_REG_ENV_PERIOD);
+    sound_ay_registers[11] = period & 0xff;
+    sound_ay_registers[12] = period >> 8;
+    sound_ay_registers[13] = yamlLoadHelper.LoadUint(SS_YAML_KEY_REG_ENV_SHAPE);
+    sound_ay_registers[14] = yamlLoadHelper.LoadUint(SS_YAML_KEY_REG_PORTA);
+    sound_ay_registers[15] = yamlLoadHelper.LoadUint(SS_YAML_KEY_REG_PORTB);
 
-	yamlLoadHelper.PopMap();
+    yamlLoadHelper.PopMap();
 
-	ay_change_count = 0;
-	if (yamlLoadHelper.GetSubMap(SS_YAML_KEY_CHANGE))
-	{
-		while(1)
-		{
-			char szIndex[7];
-			sprintf_s(szIndex, sizeof(szIndex), "0x%04X", ay_change_count);
+    ay_change_count = 0;
+    if (yamlLoadHelper.GetSubMap(SS_YAML_KEY_CHANGE))
+    {
+        while(1)
+        {
+            char szIndex[7];
+            sprintf_s(szIndex, sizeof(szIndex), "0x%04X", ay_change_count);
 
-			bool bFound;
-			std::string value = yamlLoadHelper.LoadString_NoThrow(szIndex, bFound);
-			if (!bFound)
-				break;	// done
+            bool bFound;
+            std::string value = yamlLoadHelper.LoadString_NoThrow(szIndex, bFound);
+            if (!bFound)
+                break;  // done
 
-			int _tstates = 0;
-			int _ofs = 0;
-			unsigned int _reg = 0;
-			unsigned int _val = 0;
-			if(4 != sscanf_s(value.c_str(), SS_YAML_VALUE_CHANGE_FORMAT,
-				&_tstates, &_ofs, &_reg, &_val))
-				throw std::string("Card: AY8910: Failed to scanf change list");
+            int _tstates = 0;
+            int _ofs = 0;
+            unsigned int _reg = 0;
+            unsigned int _val = 0;
+            if(4 != sscanf_s(value.c_str(), SS_YAML_VALUE_CHANGE_FORMAT,
+                &_tstates, &_ofs, &_reg, &_val))
+                throw std::string("Card: AY8910: Failed to scanf change list");
 
-			ay_change[ay_change_count].tstates = _tstates;
-			ay_change[ay_change_count].ofs = _ofs;
-			ay_change[ay_change_count].reg = _reg;
-			ay_change[ay_change_count].val = _val;
+            ay_change[ay_change_count].tstates = _tstates;
+            ay_change[ay_change_count].ofs = _ofs;
+            ay_change[ay_change_count].reg = _reg;
+            ay_change[ay_change_count].val = _val;
 
-			ay_change_count++;
-			if (ay_change_count > AY_CHANGE_MAX)
-				throw std::string("Card: AY8910: Too many changes");
-		}
+            ay_change_count++;
+            if (ay_change_count > AY_CHANGE_MAX)
+                throw std::string("Card: AY8910: Too many changes");
+        }
 
-		yamlLoadHelper.PopMap();
-	}
+        yamlLoadHelper.PopMap();
+    }
 
-	yamlLoadHelper.PopMap();
+    yamlLoadHelper.PopMap();
 
-	return true;
+    return true;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
 
 // AY8910 interface
 
-#include "CPU.h"	// For g_nCumulativeCycles
+#include "CPU.h"    // For g_nCumulativeCycles
 
 static CAY8910 g_AY8910[MAX_8910];
 static unsigned __int64 g_uLastCumulativeCycles = 0;
@@ -1151,69 +1151,69 @@ static unsigned __int64 g_uLastCumulativeCycles = 0;
 
 void _AYWriteReg(int chip, int r, int v)
 {
-	libspectrum_dword uOffset = (libspectrum_dword) (g_nCumulativeCycles - g_uLastCumulativeCycles);
-	g_AY8910[chip].sound_ay_write(r, v, uOffset);
+    libspectrum_dword uOffset = (libspectrum_dword) (g_nCumulativeCycles - g_uLastCumulativeCycles);
+    g_AY8910[chip].sound_ay_write(r, v, uOffset);
 }
 
 void AY8910_reset(int chip)
 {
-	// Don't reset the AY CLK, as this is a property of the card (MB/Phasor), not the AY chip
-	g_AY8910[chip].sound_ay_reset();	// Calls: sound_ay_init();
+    // Don't reset the AY CLK, as this is a property of the card (MB/Phasor), not the AY chip
+    g_AY8910[chip].sound_ay_reset();    // Calls: sound_ay_init();
 }
 
 void AY8910UpdateSetCycles()
 {
-	g_uLastCumulativeCycles = g_nCumulativeCycles;
+    g_uLastCumulativeCycles = g_nCumulativeCycles;
 }
 
 void AY8910Update(int chip, INT16** buffer, int nNumSamples)
 {
-	AY8910UpdateSetCycles();
+    AY8910UpdateSetCycles();
 
-	sound_generator_framesiz = nNumSamples;
-	g_ppSoundBuffers = buffer;
-	g_AY8910[chip].sound_frame();
+    sound_generator_framesiz = nNumSamples;
+    g_ppSoundBuffers = buffer;
+    g_AY8910[chip].sound_frame();
 }
 
 void AY8910_InitAll(int nClock, int nSampleRate)
 {
-	for (UINT i=0; i<MAX_8910; i++)
-	{
-		g_AY8910[i].sound_init(NULL);	// Inits mainly static members (except ay_tick_incr)
-		g_AY8910[i].sound_ay_init();
-	}
+    for (UINT i=0; i<MAX_8910; i++)
+    {
+        g_AY8910[i].sound_init(NULL);   // Inits mainly static members (except ay_tick_incr)
+        g_AY8910[i].sound_ay_init();
+    }
 }
 
 void AY8910_InitClock(int nClock)
 {
-	CAY8910::SetCLK( (double)nClock );
-	for (UINT i=0; i<MAX_8910; i++)
-	{
-		g_AY8910[i].sound_init(NULL);	// ay_tick_incr is dependent on AY_CLK
-	}
+    CAY8910::SetCLK( (double)nClock );
+    for (UINT i=0; i<MAX_8910; i++)
+    {
+        g_AY8910[i].sound_init(NULL);   // ay_tick_incr is dependent on AY_CLK
+    }
 }
 
 BYTE* AY8910_GetRegsPtr(UINT uChip)
 {
-	if (uChip >= MAX_8910)
-		return NULL;
+    if (uChip >= MAX_8910)
+        return NULL;
 
-	return g_AY8910[uChip].GetAYRegsPtr();
+    return g_AY8910[uChip].GetAYRegsPtr();
 }
 
 UINT AY8910_SaveSnapshot(YamlSaveHelper& yamlSaveHelper, UINT uChip, std::string& suffix)
 {
-	if (uChip >= MAX_8910)
-		return 0;
+    if (uChip >= MAX_8910)
+        return 0;
 
-	g_AY8910[uChip].SaveSnapshot(yamlSaveHelper, suffix);
-	return 1;
+    g_AY8910[uChip].SaveSnapshot(yamlSaveHelper, suffix);
+    return 1;
 }
 
 UINT AY8910_LoadSnapshot(YamlLoadHelper& yamlLoadHelper, UINT uChip, std::string& suffix)
 {
-	if (uChip >= MAX_8910)
-		return 0;
+    if (uChip >= MAX_8910)
+        return 0;
 
-	return g_AY8910[uChip].LoadSnapshot(yamlLoadHelper, suffix) ? 1 : 0;
+    return g_AY8910[uChip].LoadSnapshot(yamlLoadHelper, suffix) ? 1 : 0;
 }

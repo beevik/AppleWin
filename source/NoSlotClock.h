@@ -30,40 +30,40 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 class CNoSlotClock
 {
-	class RingRegister64
-	{
-	public:
-		RingRegister64();
-		RingRegister64(UINT64 data);
+    class RingRegister64
+    {
+    public:
+        RingRegister64();
+        RingRegister64(UINT64 data);
 
-		void Reset();
-		void WriteNibble(int data);
-		void WriteBits(int data, int count);
-		void WriteBit(int data);
-		void ReadBit(int& data);
-		bool CompareBit(int data);
-		bool NextBit();
+        void Reset();
+        void WriteNibble(int data);
+        void WriteBits(int data, int count);
+        void WriteBit(int data);
+        void ReadBit(int& data);
+        bool CompareBit(int data);
+        bool NextBit();
 
-		UINT64 m_Mask;
-		UINT64 m_Register;
-	};
+        UINT64 m_Mask;
+        UINT64 m_Register;
+    };
 
 public:
-	CNoSlotClock();
+    CNoSlotClock();
 
-	void Reset();
-	bool Read(int address, int& data);
-	void Write(int address);
-	bool ClockRead(int& data);
-	void ClockWrite(int address);
+    void Reset();
+    bool Read(int address, int& data);
+    void Write(int address);
+    bool ClockRead(int& data);
+    void ClockWrite(int address);
 
-	bool m_bClockRegisterEnabled;
-	bool m_bWriteEnabled;
-	RingRegister64 m_ClockRegister;
-	RingRegister64 m_ComparisonRegister;
+    bool m_bClockRegisterEnabled;
+    bool m_bWriteEnabled;
+    RingRegister64 m_ClockRegister;
+    RingRegister64 m_ComparisonRegister;
 
 private:
-	void PopulateClockRegister();
+    void PopulateClockRegister();
 
-	static const UINT64 kClockInitSequence = 0x5CA33AC55CA33AC5;
+    static const UINT64 kClockInitSequence = 0x5CA33AC55CA33AC5;
 };

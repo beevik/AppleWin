@@ -2,14 +2,14 @@
 
 // Registry soundtype:
 #define  REG_SOUNDTYPE_NONE    0
-#define  REG_SOUNDTYPE_DIRECT  1	// Not supported from 1.26
-#define  REG_SOUNDTYPE_SMART   2	// Not supported from 1.26
+#define  REG_SOUNDTYPE_DIRECT  1    // Not supported from 1.26
+#define  REG_SOUNDTYPE_SMART   2    // Not supported from 1.26
 #define  REG_SOUNDTYPE_WAVE    3
 
 enum SoundType_e
 {
-	SOUND_NONE = 0,
-	SOUND_WAVE
+    SOUND_NONE = 0,
+    SOUND_WAVE
 };
 
 extern SoundType_e soundtype;

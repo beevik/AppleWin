@@ -39,10 +39,10 @@ bool P8Shift = false;
 
 void PravetsReset(void)
 {
-	if (g_Apple2Type == A2TYPE_PRAVETS8A)
-	{
-		P8CAPS_ON = false; 
-		TapeWrite(0, 0, 0, 0 ,0);
-		FrameRefreshStatus(DRAW_LEDS);
-	}
+    if (g_Apple2Type == A2TYPE_PRAVETS8A)
+    {
+        P8CAPS_ON = false; 
+        TapeWrite(0, 0, 0, 0 ,0);
+        FrameRefreshStatus(DRAW_LEDS);
+    }
 }

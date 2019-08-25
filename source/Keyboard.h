@@ -1,6 +1,6 @@
 #pragma once
 
-enum	Keystroke_e {NOT_ASCII=0, ASCII};
+enum    Keystroke_e {NOT_ASCII=0, ASCII};
 
 void    ClipboardInitiatePaste();
 

@@ -21,20 +21,20 @@ DWORD   CpuExecute(const DWORD uCycles, const bool bVideoUpdate);
 ULONG   CpuGetCyclesThisVideoFrame(ULONG nExecutedCycles);
 void    CpuInitialize ();
 void    CpuSetupBenchmark ();
-void	CpuIrqReset();
-void	CpuIrqAssert(eIRQSRC Device);
-void	CpuIrqDeassert(eIRQSRC Device);
-void	CpuNmiReset();
-void	CpuNmiAssert(eIRQSRC Device);
-void	CpuNmiDeassert(eIRQSRC Device);
+void    CpuIrqReset();
+void    CpuIrqAssert(eIRQSRC Device);
+void    CpuIrqDeassert(eIRQSRC Device);
+void    CpuNmiReset();
+void    CpuNmiAssert(eIRQSRC Device);
+void    CpuNmiDeassert(eIRQSRC Device);
 void    CpuReset ();
 void    CpuSaveSnapshot(class YamlSaveHelper& yamlSaveHelper);
 void    CpuLoadSnapshot(class YamlLoadHelper& yamlLoadHelper);
 
-BYTE	CpuRead(USHORT addr, ULONG uExecutedCycles);
-void	CpuWrite(USHORT addr, BYTE a, ULONG uExecutedCycles);
+BYTE    CpuRead(USHORT addr, ULONG uExecutedCycles);
+void    CpuWrite(USHORT addr, BYTE a, ULONG uExecutedCycles);
 
-enum eCpuType {CPU_UNKNOWN=0, CPU_6502=1, CPU_65C02, CPU_Z80};	// Don't change! Persisted to Registry
+enum eCpuType {CPU_UNKNOWN=0, CPU_6502=1, CPU_65C02, CPU_Z80};  // Don't change! Persisted to Registry
 
 eCpuType GetMainCpu(void);
 void     SetMainCpu(eCpuType cpu);

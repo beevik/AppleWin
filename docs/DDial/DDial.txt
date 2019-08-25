@@ -11,10 +11,10 @@ NB:
 =======================================
 
 $38EB:
- LDA $28				; [$28] = #$00
- BMI .SKIP_UPDATE_TIME	; $38FF
+ LDA $28                ; [$28] = #$00
+ BMI .SKIP_UPDATE_TIME  ; $38FF
  
- LDA $F4				; [$F8] = #$FF
+ LDA $F4                ; [$F8] = #$FF
  BNE $38F8
  
   LDA #$80+' '
@@ -43,7 +43,7 @@ $395F:
  LDA TAPEIN
  TAY
 $3969:
- EOR #$00		; Default?
+ EOR #$00       ; Default?
  BPL $3979
 
   ; State change on TAPEIN
@@ -59,8 +59,8 @@ $3979:
 =======================================
 
 ; Func entrypoint
-UPDATE_TIME:		; $5205
- LDX $FF			; [$FF] = #$FF
+UPDATE_TIME:        ; $5205
+ LDX $FF            ; [$FF] = #$FF
  BEQ $5220
  BPL $520D
   LDX #$09
@@ -89,9 +89,9 @@ $5289:
   BPL $523F
 
 $528C:
- INC $4A7			; SEC_LO
+ INC $4A7           ; SEC_LO
  LDA $4A7
- CMP #$80+'9'+1		; #$BA 
+ CMP #$80+'9'+1     ; #$BA 
  BNE $530A
  
  ; $4A6 = SEC_HI
@@ -103,11 +103,11 @@ $530A:
 
 =======================================
 
-CHECK_VBL:	; $F822
+CHECK_VBL:  ; $F822
 
  LDA RDVBLBAR
-$F825:		; FRMCNT = $F826
- EOR #$3C	; (*SMC)
+$F825:      ; FRMCNT = $F826
+ EOR #$3C   ; (*SMC)
  BMI $F82A
  RTS
  
@@ -119,26 +119,26 @@ $F82A:
  BMI $F86A
  
  ; 1 frame elasped
- INC $30	; [$30]   = #$FF
- AND $7F9F	; [$7F9F] = #$01
+ INC $30    ; [$30]   = #$FF
+ AND $7F9F  ; [$7F9F] = #$01
  BNE $F83D
-   STA $F2	; [$F2]   = #$01
+   STA $F2  ; [$F2]   = #$01
 $F83D:
  DEC FRMCNT
  BNE $F86A
 
  ; 1 sec elasped
-$F842:		; FRMCNT2 = $F843 
- LDA #$3C	; (*SMC)
+$F842:      ; FRMCNT2 = $F843 
+ LDA #$3C   ; (*SMC)
  STA FRMCNT
  DEC FRAMECNT3
  BNE $F861
  PHP
-  CMP #60		; #$3C
-  BCS $F858		; Branch if A >= 60
+  CMP #60       ; #$3C
+  BCS $F858     ; Branch if A >= 60
    INC FRMCNT2
-   LDA #$79		; 121 = 60*2+1
-   BNE $F85D	; == BRA $F85D
+   LDA #$79     ; 121 = 60*2+1
+   BNE $F85D    ; == BRA $F85D
 $F858:
    DEC FRMCNT2
    LDA #$0A
@@ -147,9 +147,9 @@ $F85D:
  PLP
 
 $F861:
- LDA $F4	; [$F4]  = #$FF
+ LDA $F4    ; [$F4]  = #$FF
  BNE $F86B
- STA $28	; [$28]  = #$00
+ STA $28    ; [$28]  = #$00
  LDA TAPEOUT
  RTS
  
@@ -160,5 +160,5 @@ $F86B:
  DEC $F4
  RTS
 
-FRAMECNT3:	; $F86E
+FRAMECNT3:  ; $F86E
  DCB $01

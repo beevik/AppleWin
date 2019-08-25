@@ -30,8 +30,8 @@
 
 #include "6821.h"
 
-#define PIA_W_CALLBACK(st, val)	\
-	if ( st.func ) st.func( st.objTo, val )
+#define PIA_W_CALLBACK(st, val) \
+    if ( st.func ) st.func( st.objTo, val )
 
 /*-----------------------------------------------------------------------*/
 /* MC6821 register functions.  */
@@ -43,27 +43,27 @@ void C6821::mc6821_write_pra(BYTE byte, unsigned int dnr)
 
     mc6821[dnr].pra = byte;
 
-	if (mc6821[dnr].ddra)			// AppleWin:TC
-		PIA_W_CALLBACK( m_stOutA, mc6821[dnr].pra & mc6821[dnr].ddra );
+    if (mc6821[dnr].ddra)           // AppleWin:TC
+        PIA_W_CALLBACK( m_stOutA, mc6821[dnr].pra & mc6821[dnr].ddra );
 }
 
 void C6821::mc6821_write_ddra(BYTE byte, unsigned int dnr)
 {
     //parallel_cable_drive_write((BYTE)((~byte) | mc6821[dnr].pra), PARALLEL_WRITE, dnr);
 
-	if (mc6821[dnr].ddra == byte)	// AppleWin:TC
-		return;
+    if (mc6821[dnr].ddra == byte)   // AppleWin:TC
+        return;
 
     mc6821[dnr].ddra = byte;
 
-	if (mc6821[dnr].ddra)			// AppleWin:TC
-		PIA_W_CALLBACK( m_stOutA, mc6821[dnr].pra & mc6821[dnr].ddra );
+    if (mc6821[dnr].ddra)           // AppleWin:TC
+        PIA_W_CALLBACK( m_stOutA, mc6821[dnr].pra & mc6821[dnr].ddra );
 }
 
 BYTE C6821::mc6821_read_pra(unsigned int dnr)
 {
-	BYTE byte = m_byIA;	// AppleWin:TC
-	//BYTE byte = 0xff;
+    BYTE byte = m_byIA; // AppleWin:TC
+    //BYTE byte = 0xff;
     //int hs = 0;
 
     //if ((mc6821[dnr].cra & 0x28) == 0x28)
@@ -72,8 +72,8 @@ BYTE C6821::mc6821_read_pra(unsigned int dnr)
     //if (mc6821[dnr].drive->parallel_cable == DRIVE_PC_DD3)
     //    byte = parallel_cable_drive_read(hs);
 
-	mc6821[dnr].cra = (BYTE)(mc6821[dnr].cra & 0x7f);
-	mc6821[dnr].cra = (BYTE)(mc6821[dnr].cra & 0xbf);	// AppleWin:TC (Clear IRQ2)
+    mc6821[dnr].cra = (BYTE)(mc6821[dnr].cra & 0x7f);
+    mc6821[dnr].cra = (BYTE)(mc6821[dnr].cra & 0xbf);   // AppleWin:TC (Clear IRQ2)
 
     return (mc6821[dnr].pra & mc6821[dnr].ddra)
         | (byte & ~(mc6821[dnr].ddra));
@@ -83,27 +83,27 @@ void C6821::mc6821_write_prb(BYTE byte, unsigned int dnr)
 {
     mc6821[dnr].prb = byte;
 
-	if (mc6821[dnr].ddrb)			// AppleWin:TC
-		PIA_W_CALLBACK( m_stOutB, mc6821[dnr].prb & mc6821[dnr].ddrb );
+    if (mc6821[dnr].ddrb)           // AppleWin:TC
+        PIA_W_CALLBACK( m_stOutB, mc6821[dnr].prb & mc6821[dnr].ddrb );
 }
 
 void C6821::mc6821_write_ddrb(BYTE byte, unsigned int dnr)
 {
-	if (mc6821[dnr].ddrb == byte)	// AppleWin:TC
-		return;
+    if (mc6821[dnr].ddrb == byte)   // AppleWin:TC
+        return;
 
     mc6821[dnr].ddrb = byte;
 
-	if (mc6821[dnr].ddrb)			// AppleWin:TC
-		PIA_W_CALLBACK( m_stOutB, mc6821[dnr].prb & mc6821[dnr].ddrb );
+    if (mc6821[dnr].ddrb)           // AppleWin:TC
+        PIA_W_CALLBACK( m_stOutB, mc6821[dnr].prb & mc6821[dnr].ddrb );
 }
 
 BYTE C6821::mc6821_read_prb(unsigned int dnr)
 {
-	mc6821[dnr].crb = (BYTE)(mc6821[dnr].crb & 0x7f);	// AppleWin:TC (Clear IRQ1)
-	mc6821[dnr].crb = (BYTE)(mc6821[dnr].crb & 0xbf);	// AppleWin:TC (Clear IRQ2)
+    mc6821[dnr].crb = (BYTE)(mc6821[dnr].crb & 0x7f);   // AppleWin:TC (Clear IRQ1)
+    mc6821[dnr].crb = (BYTE)(mc6821[dnr].crb & 0xbf);   // AppleWin:TC (Clear IRQ2)
 
-	BYTE byte = m_byIB;				// AppleWin:TC
+    BYTE byte = m_byIB;             // AppleWin:TC
 
     return (mc6821[dnr].prb & mc6821[dnr].ddrb)
         | (byte & ~(mc6821[dnr].ddrb));
@@ -164,22 +164,22 @@ void C6821::mc6821_store_internal(WORD addr, BYTE byte, unsigned int dnr)
 #endif
 
     switch (addr) {
-      case 0:	// PIA_DDRA
+      case 0:   // PIA_DDRA
         if (mc6821[dnr].cra & 0x04)
             mc6821_write_pra(byte, dnr);
         else
             mc6821_write_ddra(byte, dnr);
         break;
-      case 1:	// PIA_CTLA
+      case 1:   // PIA_CTLA
         mc6821_write_cra(byte, dnr);
         break;
-      case 2:	// PIA_DDRB
+      case 2:   // PIA_DDRB
         if (mc6821[dnr].crb & 0x04)
             mc6821_write_prb(byte, dnr);
         else
             mc6821_write_ddrb(byte, dnr);
         break;
-      case 3:	// PIA_CTLB
+      case 3:   // PIA_CTLB
         mc6821_write_crb(byte, dnr);
         break;
     }
@@ -190,22 +190,22 @@ BYTE C6821::mc6821_read_internal(WORD addr, unsigned int dnr)
     BYTE tmp = 0;
 
     switch (addr) {
-      case 0:	// PIA_DDRA
+      case 0:   // PIA_DDRA
         if (mc6821[dnr].cra & 0x04)
             tmp = mc6821_read_pra(dnr);
         else
             tmp = mc6821[dnr].ddra;
         break;
-      case 1:	// PIA_CTLA
+      case 1:   // PIA_CTLA
         tmp = mc6821[dnr].cra;
         break;
-      case 2:	// PIA_DDRB
+      case 2:   // PIA_DDRB
         if (mc6821[dnr].crb & 0x04)
             tmp = mc6821_read_prb(dnr);
         else
             tmp = mc6821[dnr].ddrb;
         break;
-      case 3:	// PIA_CTLB
+      case 3:   // PIA_CTLB
         tmp = mc6821[dnr].crb;
         break;
     }
