@@ -3,6 +3,9 @@
 
 images/
 
+# Windows resource file intermediates
+*.aps
+
 # User-specific files
 *.suo
 *.user
