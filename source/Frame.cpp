@@ -75,9 +75,9 @@ static int g_nMaxViewportScale = kDEFAULT_VIEWPORT_SCALE;   // Max scale in Wind
 #define  BUTTONCY    45
 #define  BUTTONS     8
 
-    static HBITMAP g_hCapsLockBitmap[2];
-    static HBITMAP g_hHardDiskBitmap[2];
-    static HBITMAP g_hDiskWindowedLED[ NUM_DISK_STATUS ];
+static HBITMAP g_hCapsLockBitmap[2];
+static HBITMAP g_hHardDiskBitmap[2];
+static HBITMAP g_hDiskWindowedLED[ NUM_DISK_STATUS ];
 
 static int    g_nTrackDrive1  = -1;
 static int    g_nTrackDrive2  = -1;
@@ -252,7 +252,6 @@ static void GetAppleWindowTitle()
         case A2TYPE_APPLE2PLUS:     _tcscpy(g_pAppleWindowTitle, TITLE_APPLE_2_PLUS     ); break;
         case A2TYPE_APPLE2E:        _tcscpy(g_pAppleWindowTitle, TITLE_APPLE_2E         ); break;
         case A2TYPE_APPLE2EENHANCED:_tcscpy(g_pAppleWindowTitle, TITLE_APPLE_2E_ENHANCED); break;
-        case A2TYPE_TK30002E:       _tcscpy(g_pAppleWindowTitle, TITLE_TK3000_2E        ); break;
     }
 
 #if _DEBUG
@@ -362,26 +361,14 @@ static void CreateGdiObjects(void)
 {
     ZeroMemory(buttonbitmap, BUTTONS*sizeof(HBITMAP));
 
-    buttonbitmap[BTN_HELP] = (HBITMAP)LOADBUTTONBITMAP(TEXT("HELP_BUTTON"));
-
-    switch (g_Apple2Type)
-    {
-    case A2TYPE_TK30002E:
-        buttonbitmap[BTN_RUN] = (HBITMAP)LOADBUTTONBITMAP(TEXT("RUN3000E_BUTTON"));
-        break;
-    default:
-        buttonbitmap[BTN_RUN] = (HBITMAP)LOADBUTTONBITMAP(TEXT("RUN_BUTTON"));
-        break;
-    }
-
+    buttonbitmap[BTN_HELP     ] = (HBITMAP)LOADBUTTONBITMAP(TEXT("HELP_BUTTON"));
+    buttonbitmap[BTN_RUN      ] = (HBITMAP)LOADBUTTONBITMAP(TEXT("RUN_BUTTON"));
     buttonbitmap[BTN_DRIVE1   ] = (HBITMAP)LOADBUTTONBITMAP(TEXT("DRIVE1_BUTTON"));
     buttonbitmap[BTN_DRIVE2   ] = (HBITMAP)LOADBUTTONBITMAP(TEXT("DRIVE2_BUTTON"));
     buttonbitmap[BTN_DRIVESWAP] = (HBITMAP)LOADBUTTONBITMAP(TEXT("DRIVESWAP_BUTTON"));
     buttonbitmap[BTN_FULLSCR  ] = (HBITMAP)LOADBUTTONBITMAP(TEXT("FULLSCR_BUTTON"));
     buttonbitmap[BTN_DEBUG    ] = (HBITMAP)LOADBUTTONBITMAP(TEXT("DEBUG_BUTTON"));
     buttonbitmap[BTN_SETUP    ] = (HBITMAP)LOADBUTTONBITMAP(TEXT("SETUP_BUTTON"));
-
-    //
 
     g_hCapsLockBitmap[0] = (HBITMAP)LOADBUTTONBITMAP(TEXT("LED_CAPSOFF_BITMAP"));
     g_hCapsLockBitmap[1] = (HBITMAP)LOADBUTTONBITMAP(TEXT("LED_CAPSON_BITMAP"));
@@ -405,24 +392,27 @@ static void CreateGdiObjects(void)
 //===========================================================================
 static void DeleteGdiObjects(void)
 {
-    for (int loop = 0; loop < BUTTONS; loop++)
-        _ASSERT(DeleteObject(buttonbitmap[loop]));
-
-    for (int loop = 0; loop < 2; loop++)
-    {
-        _ASSERT(DeleteObject(g_hCapsLockBitmap[loop]));
+    for (int loop = 0; loop < BUTTONS; loop++) {
+        BOOL deleted = DeleteObject(buttonbitmap[loop]);
+        _ASSERT(deleted);
     }
 
-    for (int loop = 0; loop < NUM_DISK_STATUS; loop++)
-    {
-        _ASSERT(DeleteObject(g_hDiskWindowedLED[loop]));
+    for (int loop = 0; loop < 2; loop++) {
+        BOOL deleted = DeleteObject(g_hCapsLockBitmap[loop]);
+        _ASSERT(deleted);
     }
 
-    _ASSERT(DeleteObject(btnfacebrush));
-    _ASSERT(DeleteObject(btnfacepen));
-    _ASSERT(DeleteObject(btnhighlightpen));
-    _ASSERT(DeleteObject(btnshadowpen));
-    _ASSERT(DeleteObject(smallfont));
+    for (int loop = 0; loop < NUM_DISK_STATUS; loop++) {
+        bool deleted = DeleteObject(g_hDiskWindowedLED[loop]);
+        _ASSERT(deleted);
+    }
+
+    bool deleted;
+    deleted = DeleteObject(btnfacebrush); _ASSERT(deleted);
+    deleted = DeleteObject(btnfacepen); _ASSERT(deleted);
+    deleted = DeleteObject(btnhighlightpen); _ASSERT(deleted);
+    deleted = DeleteObject(btnshadowpen); _ASSERT(deleted);
+    deleted = DeleteObject(smallfont); _ASSERT(deleted);
 }
 
 // Draws an 3D box around the main apple screen
@@ -2017,11 +2007,6 @@ static void ProcessButtonClick(int button, bool bFromButtonUI /*=false*/)
 
 void ProcessDiskPopupMenu(HWND hwnd, POINT pt, const int iDrive)
 {       
-    //This is the default installation path of CiderPress. It shall not be left blank, otherwise  an explorer window will be open.
-    TCHAR PathToCiderPress[MAX_PATH] = "C:\\Program Files\\faddenSoft\\CiderPress\\CiderPress.exe";
-    RegLoadString(TEXT("Configuration"), REGVALUE_CIDERPRESSLOC, 1, PathToCiderPress,MAX_PATH);
-    //TODO: A directory is open if an empty path to CiderPress is set. This has to be fixed.
-
     std::string filename1= "\"";
     filename1.append( sg_Disk2Card.GetFullName(iDrive) );
     filename1.append("\"");
@@ -2071,50 +2056,10 @@ void ProcessDiskPopupMenu(HWND hwnd, POINT pt, const int iDrive)
 
     if (iCommand == ID_DISKMENU_EJECT)
         sg_Disk2Card.EjectDisk( iDrive );
-    else
-    if (iCommand == ID_DISKMENU_WRITEPROTECTION_ON)
+    else if (iCommand == ID_DISKMENU_WRITEPROTECTION_ON)
         sg_Disk2Card.SetProtect( iDrive, true );
-    else
-    if (iCommand == ID_DISKMENU_WRITEPROTECTION_OFF)
+    else if (iCommand == ID_DISKMENU_WRITEPROTECTION_OFF)
         sg_Disk2Card.SetProtect( iDrive, false );
-    else
-    if (iCommand == ID_DISKMENU_SENDTO_CIDERPRESS)
-    {
-        static char szCiderpressNotFoundCaption[] = "CiderPress not found";
-        static char szCiderpressNotFoundText[] =    "CiderPress not found!\n"
-                                                    "Please install CiderPress.\n"
-                                                    "Otherwise set the path to CiderPress from Configuration->Disk.";
-
-        sg_Disk2Card.FlushCurrentTrack(iDrive);
-
-        //if(!filename1.compare("\"\"") == false) //Do not use this, for some reason it does not work!!!
-        if(!filename1.compare(sFileNameEmpty) )
-        {
-            int MB_Result = MessageBox(g_hFrameWindow, "No disk image loaded. Do you want to run CiderPress anyway?" ,"No disk image.", MB_ICONINFORMATION|MB_YESNO);
-            if (MB_Result == IDYES)
-            {
-                if (FileExists (PathToCiderPress ))
-                {
-                    HINSTANCE nResult  = ShellExecute(NULL, "open", PathToCiderPress, "" , NULL, SW_SHOWNORMAL);
-                }
-                else
-                {
-                    MessageBox(g_hFrameWindow, szCiderpressNotFoundText, szCiderpressNotFoundCaption, MB_ICONINFORMATION|MB_OK);
-                }
-            }
-        }
-        else
-        {
-            if (FileExists (PathToCiderPress ))
-            {
-                HINSTANCE nResult  = ShellExecute(NULL, "open", PathToCiderPress, filename1.c_str() , NULL, SW_SHOWNORMAL);
-            }
-            else
-            {
-                MessageBox(g_hFrameWindow, szCiderpressNotFoundText, szCiderpressNotFoundCaption, MB_ICONINFORMATION|MB_OK);
-            }
-        }
-    }
 
     // Destroy the menu.
     BOOL bRes = DestroyMenu(hmenu);

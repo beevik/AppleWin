@@ -84,7 +84,6 @@ enum AppMode_e
 #define  REGVALUE_MOUSE_CROSSHAIR    "Mouse crosshair"
 #define  REGVALUE_MOUSE_RESTRICT_TO_WINDOW "Mouse restrict to window"
 #define  REGVALUE_THE_FREEZES_F8_ROM "The Freeze's F8 Rom"
-#define  REGVALUE_CIDERPRESSLOC      "CiderPress Location"
 #define  REGVALUE_CPM_CONFIG         "CPM Config"
 #define  REGVALUE_DUMP_TO_PRINTER    "Dump to printer"
 #define  REGVALUE_CONVERT_ENCODING   "Convert printer encoding for clones"
@@ -174,7 +173,6 @@ enum eApple2Type {
 
                     // //e clones start here:
                     A2TYPE_CLONE_A2E=A2TYPE_CLONE|APPLE2E_MASK,
-                    A2TYPE_TK30002E,                                // Apple //e enhanced clone
                     // (Gap for more Apple //e clones)
                     A2TYPE_MAX
                 };
@@ -202,12 +200,12 @@ inline bool IsApple2PlusOrClone(eApple2Type type)   // Apple ][,][+ or clone ][,
 extern eApple2Type g_Apple2Type;
 inline bool IsEnhancedIIE(void)
 {
-    return ( (g_Apple2Type == A2TYPE_APPLE2EENHANCED) || (g_Apple2Type == A2TYPE_TK30002E) );
+    return g_Apple2Type == A2TYPE_APPLE2EENHANCED;
 }
 
 inline bool IsEnhancedIIEorIIC(void)
 {
-    return ( (g_Apple2Type == A2TYPE_APPLE2EENHANCED) || (g_Apple2Type == A2TYPE_TK30002E) || IS_APPLE2C() );
+    return (g_Apple2Type == A2TYPE_APPLE2EENHANCED) || IS_APPLE2C();
 }
 
 enum eBUTTON {BUTTON0=0, BUTTON1};

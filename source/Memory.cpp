@@ -1490,7 +1490,6 @@ void MemInitializeROM(void)
     case A2TYPE_APPLE2PLUS:     hResInfo = FindResource(NULL, MAKEINTRESOURCE(IDR_APPLE2_PLUS_ROM     ), "ROM"); ROM_SIZE = Apple2RomSize ; break;
     case A2TYPE_APPLE2E:        hResInfo = FindResource(NULL, MAKEINTRESOURCE(IDR_APPLE2E_ROM         ), "ROM"); ROM_SIZE = Apple2eRomSize; break;
     case A2TYPE_APPLE2EENHANCED:hResInfo = FindResource(NULL, MAKEINTRESOURCE(IDR_APPLE2E_ENHANCED_ROM), "ROM"); ROM_SIZE = Apple2eRomSize; break;
-    case A2TYPE_TK30002E:       hResInfo = FindResource(NULL, MAKEINTRESOURCE(IDR_TK3000_2E_ROM       ), "ROM"); ROM_SIZE = Apple2eRomSize; break;
     }
 
     if (hResInfo == NULL)
@@ -1502,7 +1501,6 @@ void MemInitializeROM(void)
         case A2TYPE_APPLE2PLUS:     _tcscpy(sRomFileName, TEXT("APPLE2_PLUS.ROM"     )); break;
         case A2TYPE_APPLE2E:        _tcscpy(sRomFileName, TEXT("APPLE2E.ROM"         )); break;
         case A2TYPE_APPLE2EENHANCED:_tcscpy(sRomFileName, TEXT("APPLE2E_ENHANCED.ROM")); break;
-        case A2TYPE_TK30002E:       _tcscpy(sRomFileName, TEXT("TK3000e.ROM"         )); break;
         default:
             {
                 _tcscpy(sRomFileName, TEXT("Unknown type!"));

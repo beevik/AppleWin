@@ -34,13 +34,18 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 CPageConfig* CPageConfig::ms_this = 0;  // reinit'd in ctor
 
-enum APPLEIICHOICE {MENUITEM_IIORIGINAL, MENUITEM_IIPLUS, MENUITEM_IIE, MENUITEM_ENHANCEDIIE, MENUITEM_CLONE};
+enum APPLEIICHOICE {
+    MENUITEM_IIORIGINAL,
+    MENUITEM_IIPLUS,
+    MENUITEM_IIE,
+    MENUITEM_ENHANCEDIIE
+};
+
 const TCHAR CPageConfig::m_ComputerChoices[] =
                 TEXT("Apple ][ (Original)\0")
                 TEXT("Apple ][+\0")
                 TEXT("Apple //e\0")
-                TEXT("Enhanced Apple //e\0")
-                TEXT("Clone\0");
+                TEXT("Enhanced Apple //e\0");
 
 INT_PTR CALLBACK CPageConfig::DlgProc(HWND hWnd, UINT message, WPARAM wparam, LPARAM lparam)
 {
@@ -178,7 +183,6 @@ BOOL CPageConfig::DlgProcInternal(HWND hWnd, UINT message, WPARAM wparam, LPARAM
                 case A2TYPE_APPLE2PLUS:     nCurrentChoice = MENUITEM_IIPLUS; break;
                 case A2TYPE_APPLE2E:        nCurrentChoice = MENUITEM_IIE; break;
                 case A2TYPE_APPLE2EENHANCED:nCurrentChoice = MENUITEM_ENHANCEDIIE; break;
-                case A2TYPE_TK30002E:       nCurrentChoice = MENUITEM_CLONE; break;
                 default: _ASSERT(0); break;
                 }
 
@@ -360,7 +364,6 @@ eApple2Type CPageConfig::GetApple2Type(DWORD NewMenuItem)
         case MENUITEM_IIPLUS:       return A2TYPE_APPLE2PLUS;
         case MENUITEM_IIE:          return A2TYPE_APPLE2E;
         case MENUITEM_ENHANCEDIIE:  return A2TYPE_APPLE2EENHANCED;
-        case MENUITEM_CLONE:        return A2TYPE_CLONE;
         default:                    return A2TYPE_APPLE2EENHANCED;
     }
 }

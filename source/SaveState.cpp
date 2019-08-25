@@ -145,7 +145,6 @@ static eApple2Type ParseApple2Type(std::string type)
     else if (type == SS_YAML_VALUE_APPLE2E)         return A2TYPE_APPLE2E;
     else if (type == SS_YAML_VALUE_APPLE2EENHANCED) return A2TYPE_APPLE2EENHANCED;
     else if (type == SS_YAML_VALUE_APPLE2C)         return A2TYPE_APPLE2C;
-    else if (type == SS_YAML_VALUE_TK30002E)        return A2TYPE_TK30002E;
 
     throw std::string("Load: Unknown Apple2 type");
 }
@@ -159,7 +158,6 @@ static std::string GetApple2TypeAsString(void)
         case A2TYPE_APPLE2E:        return SS_YAML_VALUE_APPLE2E;
         case A2TYPE_APPLE2EENHANCED:return SS_YAML_VALUE_APPLE2EENHANCED;
         case A2TYPE_APPLE2C:        return SS_YAML_VALUE_APPLE2C;
-        case A2TYPE_TK30002E:       return SS_YAML_VALUE_TK30002E;
         default:
             throw std::string("Save: Unknown Apple2 type");
     }
@@ -476,32 +474,30 @@ void Snapshot_SaveState(void)
         MemSaveSnapshotAux(yamlSaveHelper);
 
         // Unit: Slots
-        {
-            yamlSaveHelper.UnitHdr(GetSnapshotUnitSlotsName(), UNIT_SLOTS_VER);
-            YamlSaveHelper::Label state(yamlSaveHelper, "%s:\n", SS_YAML_KEY_STATE);
+        yamlSaveHelper.UnitHdr(GetSnapshotUnitSlotsName(), UNIT_SLOTS_VER);
+        YamlSaveHelper::Label state(yamlSaveHelper, "%s:\n", SS_YAML_KEY_STATE);
 
-            if (g_Slot0 != CT_Empty && IsApple2PlusOrClone(GetApple2Type()))
-                GetLanguageCard()->SaveSnapshot(yamlSaveHelper);    // Language Card or Saturn 128K
+        if (g_Slot0 != CT_Empty && IsApple2PlusOrClone(GetApple2Type()))
+            GetLanguageCard()->SaveSnapshot(yamlSaveHelper);    // Language Card or Saturn 128K
 
-            Printer_SaveSnapshot(yamlSaveHelper);
+        Printer_SaveSnapshot(yamlSaveHelper);
 
-            sg_SSC.SaveSnapshot(yamlSaveHelper);
+        sg_SSC.SaveSnapshot(yamlSaveHelper);
 
-            sg_Mouse.SaveSnapshot(yamlSaveHelper);
+        sg_Mouse.SaveSnapshot(yamlSaveHelper);
 
-            if (g_Slot4 == CT_MockingboardC)
-                MB_SaveSnapshot(yamlSaveHelper, 4);
+        if (g_Slot4 == CT_MockingboardC)
+            MB_SaveSnapshot(yamlSaveHelper, 4);
 
-            if (g_Slot5 == CT_MockingboardC)
-                MB_SaveSnapshot(yamlSaveHelper, 5);
+        if (g_Slot5 == CT_MockingboardC)
+            MB_SaveSnapshot(yamlSaveHelper, 5);
 
-            if (g_Slot4 == CT_Phasor)
-                Phasor_SaveSnapshot(yamlSaveHelper, 4);
+        if (g_Slot4 == CT_Phasor)
+            Phasor_SaveSnapshot(yamlSaveHelper, 4);
 
-            sg_Disk2Card.SaveSnapshot(yamlSaveHelper);
+        sg_Disk2Card.SaveSnapshot(yamlSaveHelper);
 
-            HD_SaveSnapshot(yamlSaveHelper);
-        }
+        HD_SaveSnapshot(yamlSaveHelper);
     }
     catch(std::string szMessage)
     {

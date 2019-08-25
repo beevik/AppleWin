@@ -809,11 +809,6 @@ void RegisterExtensions(void)
     res = RegSetValue(HKEY_CLASSES_ROOT, pValueName, REG_SZ,"DiskImage",0);
     if (res != NOERROR) LogFileOutput("RegSetValue(%s) failed (0x%08X)\n", pValueName, res);
 
-//  RegSetValue(HKEY_CLASSES_ROOT,".2mg",REG_SZ,"DiskImage",0); // Don't grab this, as not all .2mg images are supported (so defer to CiderPress)
-//  RegSetValue(HKEY_CLASSES_ROOT,".2img",REG_SZ,"DiskImage",0);    // Don't grab this, as not all .2mg images are supported (so defer to CiderPress)
-//  RegSetValue(HKEY_CLASSES_ROOT,".aws.yaml",REG_SZ,"DiskImage",0);    // NB. Can't grab this extension (even though it returns 0!) with embedded period (and .yaml is too generic) - GH#548
-//  RegSetValue(HKEY_CLASSES_ROOT,".hdv",REG_SZ,"DiskImage",0); // TO DO
-
     pValueName = "DiskImage";
     res = RegSetValue(HKEY_CLASSES_ROOT,
                 pValueName,
@@ -825,9 +820,6 @@ void RegisterExtensions(void)
                 pValueName,
                 REG_SZ,icon,0);
     if (res != NOERROR) LogFileOutput("RegSetValue(%s) failed (0x%08X)\n", pValueName, res);
-
-// This key can interfere....
-// HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Explorer\FileExt\.dsk
 
     pValueName = "DiskImage\\shell\\open\\command";
     res = RegSetValue(HKEY_CLASSES_ROOT,

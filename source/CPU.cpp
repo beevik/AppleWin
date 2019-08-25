@@ -160,7 +160,7 @@ void SetMainCpu(eCpuType cpu)
 
 static bool IsCpu65C02(eApple2Type apple2Type)
 {
-    return (apple2Type == A2TYPE_APPLE2EENHANCED) || (apple2Type == A2TYPE_TK30002E) || (apple2Type & A2TYPE_APPLE2C); 
+    return (apple2Type == A2TYPE_APPLE2EENHANCED) || (apple2Type & A2TYPE_APPLE2C); 
 }
 
 eCpuType ProbeMainCpuDefault(eApple2Type apple2Type)

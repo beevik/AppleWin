@@ -130,11 +130,10 @@ void CPropertySheetHelper::SetSlot5(SS_CARDTYPE NewCardType)
 // Looks like a (bad) C&P from SaveStateSelectImage()
 // - eg. see "RAPCS" tags below...
 // Used by:
-// . CPageDisk:     IDC_CIDERPRESS_BROWSE
 // . CPageAdvanced: IDC_PRINTER_DUMP_FILENAME_BROWSE
 std::string CPropertySheetHelper::BrowseToFile(HWND hWindow, TCHAR* pszTitle, TCHAR* REGVALUE, TCHAR* FILEMASKS)
 {
-    static char PathToFile[MAX_PATH] = {0}; //This is a really awkward way to prevent mixing CiderPress and SaveStated values (RAPCS), but it seem the quickest. Here is its Line 1.
+    static char PathToFile[MAX_PATH] = {0};
     strcpy(PathToFile, Snapshot_GetFilename()); //RAPCS, line 2.
     TCHAR szDirectory[MAX_PATH] = TEXT("");
     TCHAR szFilename[MAX_PATH];
@@ -338,7 +337,7 @@ void CPropertySheetHelper::PostMsgAfterClose(HWND hWnd, PAGETYPE page)
         return;
     }
 
-    _ASSERT(m_ConfigNew.m_CpuType != CPU_UNKNOWN);  // NB. Could only ever be CPU_UNKNOWN for a clone (and only if a mistake was made when adding a new clone)
+    _ASSERT(m_ConfigNew.m_CpuType != CPU_UNKNOWN);
     if (m_ConfigNew.m_CpuType == CPU_UNKNOWN)
     {
         m_ConfigNew.m_CpuType = ProbeMainCpuDefault(m_ConfigNew.m_Apple2Type);

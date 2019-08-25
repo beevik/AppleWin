@@ -1891,9 +1891,6 @@ CImageBase* CHardDiskImageHelper::Detect(LPBYTE pImage, DWORD dwSize, const TCHA
 
 CImageBase* CHardDiskImageHelper::GetImageForCreation(const TCHAR* pszExt, DWORD* pCreateImageSize)
 {
-    // NB. Not supported for HardDisks
-    // - Would need to create a default 16-block file like CiderPress
-
     for (UINT uLoop = 0; uLoop < GetNumImages(); uLoop++)
     {
         if (!GetImage(uLoop)->AllowCreate())

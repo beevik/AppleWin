@@ -29,13 +29,9 @@ protected:
 
 private:
     void InitOptions(HWND hWnd);
-    eApple2Type GetCloneType(DWORD NewMenuItem);
-    int GetCloneMenuItem(void);
     void InitFreezeDlgButton(HWND hWnd);
-    void InitCloneDropdownMenu(HWND hWnd);
 
     static CPageAdvanced* ms_this;
-    static const TCHAR m_CloneChoices[];
 
     const PAGETYPE m_Page;
     CPropertySheetHelper& m_PropertySheetHelper;

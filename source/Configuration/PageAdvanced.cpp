@@ -33,15 +33,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 CPageAdvanced* CPageAdvanced::ms_this = 0;  // reinit'd in ctor
 
-enum CLONECHOICE {
-    MENUITEM_CLONEMIN,
-    MENUITEM_TK30002E = MENUITEM_CLONEMIN,
-    MENUITEM_CLONEMAX
-};
-
-const TCHAR CPageAdvanced::m_CloneChoices[] =
-    TEXT("TK3000 //e");     // Brazilian
-
 BOOL CALLBACK CPageAdvanced::DlgProc(HWND hWnd, UINT message, WPARAM wparam, LPARAM lparam)
 {
     // Switch from static func to our instance
@@ -107,16 +98,6 @@ BOOL CPageAdvanced::DlgProcInternal(HWND hWnd, UINT message, WPARAM wparam, LPAR
             {
                 const UINT uNewState = IsDlgButtonChecked(hWnd, IDC_THE_FREEZES_F8_ROM_FW) ? 1 : 0;
                 m_PropertySheetHelper.GetConfigNew().m_bEnableTheFreezesF8Rom = uNewState;
-            }
-            break;
-
-        case IDC_CLONETYPE:
-            if(HIWORD(wparam) == CBN_SELCHANGE)
-            {
-                const DWORD NewCloneMenuItem = (DWORD) SendDlgItemMessage(hWnd, IDC_CLONETYPE, CB_GETCURSEL, 0, 0);
-                const eApple2Type NewCloneType = GetCloneType(NewCloneMenuItem);
-                m_PropertySheetHelper.GetConfigNew().m_Apple2Type = NewCloneType;
-                m_PropertySheetHelper.GetConfigNew().m_CpuType = ProbeMainCpuDefault(NewCloneType);
             }
             break;
         }
@@ -210,40 +191,6 @@ void CPageAdvanced::DlgOK(HWND hWnd)
 void CPageAdvanced::InitOptions(HWND hWnd)
 {
     InitFreezeDlgButton(hWnd);
-    InitCloneDropdownMenu(hWnd);
-}
-
-// Advanced->Clone: Menu item to eApple2Type
-eApple2Type CPageAdvanced::GetCloneType(DWORD NewMenuItem)
-{
-    return A2TYPE_TK30002E;
-}
-
-int CPageAdvanced::GetCloneMenuItem(void)
-{
-    const eApple2Type type = m_PropertySheetHelper.GetConfigNew().m_Apple2Type;
-    const bool bIsClone = IsClone(type);
-    if (!bIsClone)
-        return MENUITEM_CLONEMIN;
-
-    int nMenuItem = MENUITEM_CLONEMIN;
-    switch (type)
-    {
-        case A2TYPE_CLONE:  // Set as generic clone type from Config page
-            {
-                // Need to set a real clone type & CPU in case the user never touches the clone menu
-                nMenuItem = MENUITEM_CLONEMIN;
-                const eApple2Type NewCloneType = GetCloneType(MENUITEM_CLONEMIN);
-                m_PropertySheetHelper.GetConfigNew().m_Apple2Type = GetCloneType(NewCloneType);
-                m_PropertySheetHelper.GetConfigNew().m_CpuType = ProbeMainCpuDefault(NewCloneType);
-            }
-            break;
-        case A2TYPE_TK30002E:   nMenuItem = MENUITEM_TK30002E;  break;
-        default:    // New clone needs adding here?
-            _ASSERT(0);
-    }
-
-    return nMenuItem;
 }
 
 void CPageAdvanced::InitFreezeDlgButton(HWND hWnd)
@@ -253,14 +200,4 @@ void CPageAdvanced::InitFreezeDlgButton(HWND hWnd)
 
     const UINT CheckTheFreezesRom = m_PropertySheetHelper.GetConfigNew().m_bEnableTheFreezesF8Rom ? BST_CHECKED : BST_UNCHECKED;
     CheckDlgButton(hWnd, IDC_THE_FREEZES_F8_ROM_FW, CheckTheFreezesRom);
-}
-
-void CPageAdvanced::InitCloneDropdownMenu(HWND hWnd)
-{
-    // Set clone menu choice (ok even if it's not a clone)
-    const int nCurrentChoice = GetCloneMenuItem();
-    m_PropertySheetHelper.FillComboBox(hWnd, IDC_CLONETYPE, m_CloneChoices, nCurrentChoice);
-
-    const bool bIsClone = IsClone( m_PropertySheetHelper.GetConfigNew().m_Apple2Type );
-    EnableWindow(GetDlgItem(hWnd, IDC_CLONETYPE), bIsClone ? TRUE : FALSE);
 }
