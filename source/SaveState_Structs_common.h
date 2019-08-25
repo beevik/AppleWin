@@ -62,7 +62,6 @@ enum SS_CARDTYPE
     CT_GenericPrinter,
     CT_GenericHDD,      // Hard disk
     CT_GenericClock,
-    CT_MouseInterface,
     CT_Phasor,          // Soundcard
     CT_Echo,            // Soundcard
     CT_SAM,             // Soundcard: Software Automated Mouth

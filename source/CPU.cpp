@@ -91,7 +91,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Frame.h"
 #include "Memory.h"
 #include "Mockingboard.h"
-#include "MouseInterface.h"
 #ifdef USE_SPEECH_API
 #include "Speech.h"
 #endif
@@ -421,7 +420,6 @@ static __forceinline void CheckInterruptSources(ULONG uExecutedCycles, const boo
     }
 
     MB_UpdateCycles(uExecutedCycles);
-    sg_Mouse.SetVBlank( !VideoGetVblBar(uExecutedCycles) );
 }
 
 // GH#608: IRQ needs to occur within 17 cycles (6 opcodes) of configuring the timer interrupt

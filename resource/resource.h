@@ -31,13 +31,11 @@
 #define IDR_APPLE2E_ROM                 128
 #define IDR_APPLE2E_ENHANCED_ROM        129
 #define IDC_MB_ENABLE                   130
-#define IDD_TFE_SETTINGS_DIALOG         131
 #define IDR_PRINTDRVR_FW                132
 #define IDD_PROPPAGE_ADVANCED           132
 #define IDR_DISK2_FW                    133
 #define IDR_SSC_FW                      134
 #define IDR_MOCKINGBOARD_D_FW           135
-#define IDR_MOUSEINTERFACE_FW           136
 #define IDR_THUNDERCLOCKPLUS_FW         137
 #define IDR_FREEZES_F8_ROM              138
 #define IDR_MENU_DISK_POPUP             143
@@ -69,13 +67,6 @@
 #define IDC_PHASOR_ENABLE               1029
 #define IDC_SAM_ENABLE                  1030
 #define IDC_SOUNDCARD_DISABLE           1031
-
-#define IDC_TFE_SETTINGS_ENABLE_T       1032
-#define IDC_TFE_SETTINGS_ENABLE         1033
-#define IDC_TFE_SETTINGS_INTERFACE_T    1034
-#define IDC_TFE_SETTINGS_INTERFACE      1035
-#define IDC_TFE_SETTINGS_INTERFACE_NAME 1036
-#define IDC_TFE_SETTINGS_INTERFACE_DESC 1037
 #define IDS_TFE_CAPTION                 1038
 #define IDS_TFE_ETHERNET                1039
 #define IDS_TFE_INTERFACE               1040
@@ -98,7 +89,6 @@
 #define IDC_PRINTER_FILTER_UNPRINTABLE  1057
 #define IDC_PRINTER_APPEND              1058
 #define IDC_SPIN_PRINTER_IDLE           1059
-
 #define IDC_CHECK_HALF_SCAN_LINES       1060
 #define IDC_GPL_TEXT                    1061
 #define IDC_GPL_BORDER                  1063

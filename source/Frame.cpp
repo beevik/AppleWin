@@ -39,7 +39,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Log.h"
 #include "Memory.h"
 #include "Mockingboard.h"
-#include "MouseInterface.h"
 #include "NTSC.h"
 #include "ParallelPrinter.h"
 #include "Registry.h"
@@ -314,20 +313,6 @@ static void FrameShowCursor(BOOL bShow)
 // . AppleWin's main window is activated/deactivated
 static void RevealCursor()
 {
-    if (!sg_Mouse.IsActiveAndEnabled())
-        return;
-
-    sg_Mouse.SetEnabled(false);
-
-    FrameShowCursor(TRUE);
-
-    if (sg_PropertySheet.GetMouseShowCrosshair())   // Erase crosshairs if they are being drawn
-        DrawCrosshairs(0,0);
-
-    if (sg_PropertySheet.GetMouseRestrictToWindow())
-        SetUsingCursor(FALSE);
-
-    g_bLastCursorInAppleViewport = false;
 }
 
 // Called when:
@@ -337,9 +322,6 @@ static void RevealCursor()
 static void FullScreenRevealCursor(void)
 {
     if (!g_bIsFullScreen)
-        return;
-
-    if (sg_Mouse.IsActive())
         return;
 
     if (!g_bUsingCursor && !g_bShowingCursor)
@@ -1075,7 +1057,6 @@ LRESULT CALLBACK FrameWndProc (
       VideoDestroy();
       MB_Destroy();
       DeleteGdiObjects();
-      DIMouse::DirectInputUninit(window);   // NB. do before window is destroyed
       PostQuitMessage(0);   // Post WM_QUIT message to the thread's message queue
       LogFileOutput("WM_DESTROY (done)\n");
       break;
@@ -1089,9 +1070,6 @@ LRESULT CALLBACK FrameWndProc (
 
       DSInit();
       LogFileOutput("WM_CREATE: DSInit()\n");
-
-      DIMouse::DirectInputInit(window);
-      LogFileOutput("WM_CREATE: DIMouse::DirectInputInit()\n");
 
       MB_Initialize();
       LogFileOutput("WM_CREATE: MB_Initialize()\n");
@@ -1421,7 +1399,7 @@ LRESULT CALLBACK FrameWndProc (
           DrawButton((HDC)0,buttonactive);
           SetCapture(window);
         }
-        else if (g_bUsingCursor && !sg_Mouse.IsActive())
+        else if (g_bUsingCursor)
         {
           if (wparam & (MK_CONTROL | MK_SHIFT))
           {
@@ -1435,32 +1413,6 @@ LRESULT CALLBACK FrameWndProc (
         else if ( ((x < buttonx) && JoyUsingMouse() && ((g_nAppMode == MODE_RUNNING) || (g_nAppMode == MODE_STEPPING))) )
         {
           SetUsingCursor(TRUE);
-        }
-        else if (sg_Mouse.IsActive())
-        {
-            if (wparam & (MK_CONTROL | MK_SHIFT))
-            {
-                RevealCursor();
-            }
-            else if (g_nAppMode == MODE_RUNNING || g_nAppMode == MODE_STEPPING)
-            {
-                if (!sg_Mouse.IsEnabled())
-                {
-                    sg_Mouse.SetEnabled(true);
-
-                    POINT Point;
-                    GetCursorPos(&Point);
-                    ScreenToClient(g_hFrameWindow, &Point);
-                    const int iOutOfBoundsX=0, iOutOfBoundsY=0;
-                    UpdateMouseInAppleViewport(iOutOfBoundsX, iOutOfBoundsY, Point.x, Point.y);
-
-                    // Don't call SetButton() when 1st enabled (else get the confusing action of both enabling & an Apple mouse click)
-                }
-                else
-                {
-                    sg_Mouse.SetButton(BUTTON0, BUTTON_DOWN);
-                }
-            }
         }
 
         DebuggerMouseClick( x, y );
@@ -1481,13 +1433,9 @@ LRESULT CALLBACK FrameWndProc (
         }
         buttonactive = -1;
       }
-      else if (g_bUsingCursor && !sg_Mouse.IsActive())
+      else if (g_bUsingCursor)
       {
         JoySetButton(BUTTON0, BUTTON_UP);
-      }
-      else if (sg_Mouse.IsActive())
-      {
-        sg_Mouse.SetButton(BUTTON0, BUTTON_UP);
       }
       RelayEvent(WM_LBUTTONUP,wparam,lparam);
       break;
@@ -1515,32 +1463,10 @@ LRESULT CALLBACK FrameWndProc (
         if (buttonover != -1)
           DrawButton((HDC)0,buttonover);
       }
-      else if (g_bUsingCursor && !sg_Mouse.IsActive())
+      else if (g_bUsingCursor)
       {
         DrawCrosshairs(x,y);
         JoySetPosition(x-viewportx-2, g_nViewportCX-4, y-viewporty-2, g_nViewportCY-4);
-      }
-      else if (sg_Mouse.IsActiveAndEnabled() && (g_nAppMode == MODE_RUNNING || g_nAppMode == MODE_STEPPING))
-      {
-            if (g_bLastCursorInAppleViewport)
-                break;
-
-            // Outside Apple viewport
-
-            const int iAppleScreenMaxX = g_nViewportCX-1;
-            const int iAppleScreenMaxY = g_nViewportCY-1;
-            const int iBoundMinX = viewportx;
-            const int iBoundMaxX = iAppleScreenMaxX;
-            const int iBoundMinY = viewporty;
-            const int iBoundMaxY = iAppleScreenMaxY;
-
-            int iOutOfBoundsX=0, iOutOfBoundsY=0;
-            if (x < iBoundMinX) iOutOfBoundsX=-1;
-            if (x > iBoundMaxX) iOutOfBoundsX=1;
-            if (y < iBoundMinY) iOutOfBoundsY=-1;
-            if (y > iBoundMaxY) iOutOfBoundsY=1;
-
-            UpdateMouseInAppleViewport(iOutOfBoundsX, iOutOfBoundsY, x, y);
       }
 
       FullScreenRevealCursor();
@@ -1550,29 +1476,9 @@ LRESULT CALLBACK FrameWndProc (
     }
 
     case WM_TIMER:
-        if (wparam == IDEVENT_TIMER_MOUSE)
-        {
-            // NB. Need to check /g_bAppActive/ since WM_TIMER events still occur after AppleWin app has lost focus
-            if (g_bAppActive && sg_Mouse.IsActiveAndEnabled() && (g_nAppMode == MODE_RUNNING || g_nAppMode == MODE_STEPPING))
-            {
-                if (!g_bLastCursorInAppleViewport)
-                    break;
-
-                // Inside Apple viewport
-
-                int iOutOfBoundsX=0, iOutOfBoundsY=0;
-
-                long dX,dY;
-                if (DIMouse::ReadImmediateData(&dX, &dY) == S_OK)
-                    sg_Mouse.SetPositionRel(dX, dY, &iOutOfBoundsX, &iOutOfBoundsY);
-
-                UpdateMouseInAppleViewport(iOutOfBoundsX, iOutOfBoundsY);
-            }
-        }
-        else if (wparam == IDEVENT_TIMER_100MSEC)   // GH#504
+        if (wparam == IDEVENT_TIMER_100MSEC)   // GH#504
         {
             if (g_bIsFullScreen
-                && !sg_Mouse.IsActive()     // Don't interfere if there's a mousecard present!
                 && !g_bUsingCursor          // Using mouse for joystick emulation (or mousecard restricted to window)
                 && g_bShowingCursor
                 && g_bFrameActive)          // Frame inactive when eg. Config or 'Select Disk Image' dialogs are opened
@@ -1680,10 +1586,8 @@ LRESULT CALLBACK FrameWndProc (
             }
         }
 
-        if (g_bUsingCursor && !sg_Mouse.IsActive())
+        if (g_bUsingCursor)
             JoySetButton(BUTTON1, (message == WM_RBUTTONDOWN) ? BUTTON_DOWN : BUTTON_UP);
-        else if (sg_Mouse.IsActive())
-            sg_Mouse.SetButton(BUTTON1, (message == WM_RBUTTONDOWN) ? BUTTON_DOWN : BUTTON_UP);
 
         RelayEvent(message,wparam,lparam);
         break;
@@ -2105,7 +2009,6 @@ void ResetMachineState ()
   JoyReset();
   MB_Reset();
   SpkrReset();
-  sg_Mouse.Reset();
   SetActiveCpu( GetMainCpu() );
 #ifdef USE_SPEECH_API
     g_Speech.Reset();
@@ -2140,7 +2043,6 @@ void CtrlReset()
     KeybReset();
     sg_SSC.CommReset();
     MB_Reset();
-    sg_Mouse.Reset();       // Deassert any pending IRQs - GH#514
 #ifdef USE_SPEECH_API
     g_Speech.Reset();
 #endif
@@ -2546,34 +2448,6 @@ static bool FileExists(std::string strFilename)
 // . UpdateMouseInAppleViewport() is called and inside Apple screen
 void FrameSetCursorPosByMousePos()
 {
-    if (!g_hFrameWindow || g_bShowingCursor)
-        return;
-
-    int iX, iMinX, iMaxX;
-    int iY, iMinY, iMaxY;
-    sg_Mouse.GetXY(iX, iMinX, iMaxX, iY, iMinY, iMaxY);
-
-    float fScaleX = (float)(iX-iMinX) / ((float)(iMaxX-iMinX));
-    float fScaleY = (float)(iY-iMinY) / ((float)(iMaxY-iMinY));
-
-    int iWindowX = (int)(fScaleX * (float)g_nViewportCX);
-    int iWindowY = (int)(fScaleY * (float)g_nViewportCY);
-
-    POINT Point = {viewportx+2, viewporty+2};   // top-left
-    ClientToScreen(g_hFrameWindow, &Point);
-    SetCursorPos(Point.x+iWindowX-VIEWPORTX, Point.y+iWindowY-VIEWPORTY);
-
-#if defined(_DEBUG) && 0    // OutputDebugString() when cursor position changes since last time
-    static int OldX=0, OldY=0;
-    char szDbg[200];
-    int X=Point.x+iWindowX-VIEWPORTX;
-    int Y=Point.y+iWindowY-VIEWPORTY;
-    if (X != OldX || Y != OldY)
-    {
-        sprintf(szDbg, "[FrameSetCursorPosByMousePos] x,y=%d,%d (MaxX,Y=%d,%d)\n", X,Y, iMaxX,iMaxY); OutputDebugString(szDbg);
-        OldX=X; OldY=Y;
-    }
-#endif
 }
 
 // Called when:
@@ -2581,74 +2455,10 @@ void FrameSetCursorPosByMousePos()
 // . NB. Not called when leaving & mouse clipped to Apple screen area
 static void FrameSetCursorPosByMousePos(int x, int y, int dx, int dy, bool bLeavingAppleScreen)
 {
-//  char szDbg[200];
-    if (!g_hFrameWindow || (g_bShowingCursor && bLeavingAppleScreen) || (!g_bShowingCursor && !bLeavingAppleScreen))
-        return;
-
-    int iX, iMinX, iMaxX;
-    int iY, iMinY, iMaxY;
-    sg_Mouse.GetXY(iX, iMinX, iMaxX, iY, iMinY, iMaxY);
-
-    if (bLeavingAppleScreen)
-    {
-        // Set mouse x/y pos to edge of mouse's window
-        if (dx < 0) iX = iMinX;
-        if (dx > 0) iX = iMaxX;
-        if (dy < 0) iY = iMinY;
-        if (dy > 0) iY = iMaxY;
-
-        float fScaleX = (float)(iX-iMinX) / ((float)(iMaxX-iMinX));
-        float fScaleY = (float)(iY-iMinY) / ((float)(iMaxY-iMinY));
-
-        int iWindowX = (int)(fScaleX * (float)g_nViewportCX) + dx;
-        int iWindowY = (int)(fScaleY * (float)g_nViewportCY) + dy;
-
-        POINT Point = {viewportx+2, viewporty+2};   // top-left
-        ClientToScreen(g_hFrameWindow, &Point);
-        SetCursorPos(Point.x+iWindowX-VIEWPORTX, Point.y+iWindowY-VIEWPORTY);
-//      sprintf(szDbg, "[MOUSE_LEAVING ] x=%d, y=%d (Scale: x,y=%f,%f; iX,iY=%d,%d)\n", iWindowX, iWindowY, fScaleX, fScaleY, iX, iY); OutputDebugString(szDbg);
-    }
-    else    // Mouse entering Apple screen area
-    {
-//      sprintf(szDbg, "[MOUSE_ENTERING] x=%d, y=%d\n", x, y); OutputDebugString(szDbg);
-        if (!g_bIsFullScreen)   // GH#464
-        {
-            x -= (viewportx+2-VIEWPORTX); if (x < 0) x = 0;
-            y -= (viewporty+2-VIEWPORTY); if (y < 0) y = 0;
-        }
-
-        _ASSERT(x <= g_nViewportCX);
-        _ASSERT(y <= g_nViewportCY);
-        float fScaleX = (float)x / (float)g_nViewportCX;
-        float fScaleY = (float)y / (float)g_nViewportCY;
-
-        int iAppleX = iMinX + (int)(fScaleX * (float)(iMaxX-iMinX));
-        int iAppleY = iMinY + (int)(fScaleY * (float)(iMaxY-iMinY));
-
-        sg_Mouse.SetCursorPos(iAppleX, iAppleY);    // Set new entry position
-
-        // Dump initial deltas (otherwise can get big deltas since last read when entering Apple screen area)
-        DIMouse::ReadImmediateData();
-    }
 }
 
 static void DrawCrosshairsMouse()
 {
-    if (!sg_PropertySheet.GetMouseShowCrosshair())
-        return;
-
-    int iX, iMinX, iMaxX;
-    int iY, iMinY, iMaxY;
-    sg_Mouse.GetXY(iX, iMinX, iMaxX, iY, iMinY, iMaxY);
-    _ASSERT(iMinX == 0 && iMinY == 0);
-
-    float fScaleX = (float)(iX-iMinX) / ((float)(iMaxX-iMinX));
-    float fScaleY = (float)(iY-iMinY) / ((float)(iMaxY-iMinY));
-
-    int iWindowX = (int)(fScaleX * (float)g_nViewportCX);
-    int iWindowY = (int)(fScaleY * (float)g_nViewportCY);
-
-    DrawCrosshairs(iWindowX,iWindowY);
 }
 
 #ifdef _DEBUG

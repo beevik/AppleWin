@@ -39,7 +39,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "LanguageCard.h"
 #include "Memory.h"
 #include "Mockingboard.h"
-#include "MouseInterface.h"
 #include "ParallelPrinter.h"
 #include "SerialComms.h"
 #include "Speaker.h"
@@ -254,11 +253,6 @@ static void ParseSlots(YamlLoadHelper& yamlLoadHelper, UINT unitVersion)
             bRes = sg_SSC.LoadSnapshot(yamlLoadHelper, slot, cardVersion);
             type = CT_SSC;
         }
-        else if (card == sg_Mouse.GetSnapshotCardName())
-        {
-            bRes = sg_Mouse.LoadSnapshot(yamlLoadHelper, slot, cardVersion);
-            type = CT_MouseInterface;
-        }
         else if (card == MB_GetSnapshotCardName())
         {
             bRes = MB_LoadSnapshot(yamlLoadHelper, slot, cardVersion);
@@ -383,8 +377,6 @@ static void Snapshot_LoadState_v2(void)
 #ifdef USE_SPEECH_API
         g_Speech.Reset();
 #endif
-        sg_Mouse.Uninitialize();
-        sg_Mouse.Reset();
         HD_SetEnabled(false);
 
         std::string scalar;
@@ -483,8 +475,6 @@ void Snapshot_SaveState(void)
         Printer_SaveSnapshot(yamlSaveHelper);
 
         sg_SSC.SaveSnapshot(yamlSaveHelper);
-
-        sg_Mouse.SaveSnapshot(yamlSaveHelper);
 
         if (g_Slot4 == CT_MockingboardC)
             MB_SaveSnapshot(yamlSaveHelper, 4);

@@ -41,7 +41,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Log.h"
 #include "Memory.h"
 #include "Mockingboard.h"
-#include "MouseInterface.h"
 #include "NTSC.h"
 #include "NoSlotClock.h"
 #include "ParallelPrinter.h"
@@ -1645,11 +1644,7 @@ void MemInitializeIO(void)
 
     // Apple//e: Auxilary slot contains Extended 80 Column card or RamWorksIII card
 
-    if (g_Slot4 == CT_MouseInterface)
-    {
-        sg_Mouse.Initialize(pCxRomPeripheral, 4);   // $C400 : Mouse f/w
-    }
-    else if (g_Slot4 == CT_MockingboardC || g_Slot4 == CT_Phasor)
+    if (g_Slot4 == CT_MockingboardC || g_Slot4 == CT_Phasor)
     {
         const UINT uSlot4 = 4;
         const UINT uSlot5 = 5;

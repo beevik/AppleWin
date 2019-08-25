@@ -41,7 +41,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Log.h"
 #include "Memory.h"
 #include "Mockingboard.h"
-#include "MouseInterface.h"
 #include "ParallelPrinter.h"
 #include "Registry.h"
 #include "Riff.h"
@@ -103,7 +102,6 @@ int         g_nMemoryClearType = MIP_FF_FF_00_00; // Note: -1 = random MIP in Me
 
 IPropertySheet&     sg_PropertySheet = * new CPropertySheet;
 CSuperSerialCard    sg_SSC;
-CMouseInterface     sg_Mouse;
 Disk2InterfaceCard sg_Disk2Card;
 
 SS_CARDTYPE g_Slot0 = CT_LanguageCard;  // Just for Apple II or II+ or similar clones
@@ -1746,10 +1744,6 @@ int APIENTRY WinMain(HINSTANCE passinstance, HINSTANCE, LPSTR lpCmdLine, int)
 
         MB_Reset();
         LogFileOutput("Main: MB_Reset()\n");
-
-        sg_Mouse.Uninitialize();    // Maybe restarting due to switching slot-4 card from MouseCard to Mockingboard
-        sg_Mouse.Reset();           // Deassert any pending IRQs - GH#514
-        LogFileOutput("Main: sg_Mouse.Uninitialize()\n");
 
         DSUninit();
         LogFileOutput("Main: DSUninit()\n");
