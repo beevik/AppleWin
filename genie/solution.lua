@@ -192,7 +192,7 @@ project("AppleWin")
         path.join(rootDir, "docs/Wishlist.txt"),
     }
     removefiles {
-        path.join(srcDir, "Peripheral_Clock*"),
+        path.join(srcDir, "HookFilter/*"),
     }
 
     -- Libraries that must be linked to build the executable
@@ -417,7 +417,7 @@ project("HookFilter")
     }
 
     files {
-        path.join(rootDir, "HookFilter/**.cpp"),
+        path.join(srcDir, "HookFilter/**.cpp"),
     }
 
 
