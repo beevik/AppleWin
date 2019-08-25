@@ -46,9 +46,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "SerialComms.h"
 #include "SoundCore.h"
 #include "Speaker.h"
-#ifdef USE_SPEECH_API
-#include "Speech.h"
-#endif
 #include "Video.h"
 #include "RGBMonitor.h"
 #include "NTSC.h"
@@ -106,13 +103,6 @@ SS_CARDTYPE g_SlotAux = CT_Extended80Col;   // For Apple //e and above
 
 HANDLE      g_hCustomRomF8 = INVALID_HANDLE_VALUE;  // Cmd-line specified custom ROM at $F800..$FFFF
 static bool g_bCustomRomF8Failed = false;           // Set if custom ROM file failed
-
-static bool g_bEnableSpeech = false;
-#ifdef USE_SPEECH_API
-CSpeech     g_Speech;
-#endif
-
-//===========================================================================
 
 static DWORD dwLogKeyReadTickStart;
 static bool bLogKeyReadDone = false;
@@ -270,9 +260,6 @@ static void ContinueExecution(void)
         // Don't call Spkr_Mute() - will get speaker clicks
         MB_Mute();
         SysClk_StopTimer();
-#ifdef USE_SPEECH_API
-        g_Speech.Reset();           // TODO: Put this on a timer (in emulated cycles)... otherwise CATALOG cuts out
-#endif
 
         g_nCpuCyclesFeedback = 0;   // For the case when this is a big -ve number
 
@@ -1262,10 +1249,6 @@ int APIENTRY WinMain(HINSTANCE passinstance, HINSTANCE, LPSTR lpCmdLine, int)
         {
             g_bEnableDumpToRealPrinter = true;
         }
-        else if (strcmp(lpCmdLine, "-speech") == 0)
-        {
-            g_bEnableSpeech = true;
-        }
         else if (strcmp(lpCmdLine, "-multimon") == 0)
         {
             g_bMultiMon = true;
@@ -1378,13 +1361,6 @@ int APIENTRY WinMain(HINSTANCE passinstance, HINSTANCE, LPSTR lpCmdLine, int)
 
     const bool bSysClkOK = SysClk_InitTimer();
     LogFileOutput("Init: SysClk_InitTimer(), res=%d\n", bSysClkOK ? 1:0);
-#ifdef USE_SPEECH_API
-    if (g_bEnableSpeech)
-    {
-        const bool bSpeechOK = g_Speech.Init();
-        LogFileOutput("Init: SysClk_InitTimer(), res=%d\n", bSpeechOK ? 1:0);
-    }
-#endif
 
     // DO ONE-TIME INITIALIZATION
     g_hInstance = passinstance;

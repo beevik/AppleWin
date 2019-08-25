@@ -44,9 +44,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "SerialComms.h"
 #include "SoundCore.h"
 #include "Speaker.h"
-#ifdef USE_SPEECH_API
-#include "Speech.h"
-#endif
 #include "Video.h"
 
 #include "../resource/resource.h"
@@ -2008,9 +2005,6 @@ void ResetMachineState ()
   MB_Reset();
   SpkrReset();
   SetActiveCpu( GetMainCpu() );
-#ifdef USE_SPEECH_API
-    g_Speech.Reset();
-#endif
 
   SoundCore_SetFade(FADE_NONE);
   LogFileTimeUntilFirstKeyReadReset();
@@ -2041,9 +2035,6 @@ void CtrlReset()
     KeybReset();
     sg_SSC.CommReset();
     MB_Reset();
-#ifdef USE_SPEECH_API
-    g_Speech.Reset();
-#endif
 
     CpuReset();
     g_bFreshReset = true;

@@ -55,6 +55,4 @@ typedef UINT64 uint64_t;
 #define SM_CXPADDEDBORDER 92
 #endif
 
-#define USE_SPEECH_API
-
 #include "AppleWinX.h"

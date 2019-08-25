@@ -39,7 +39,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "ParallelPrinter.h"
 #include "SerialComms.h"
 #include "Speaker.h"
-#include "Speech.h"
 #include "Video.h"
 #include "Configuration/Config.h"
 #include "Configuration/IPropertySheet.h"
@@ -370,9 +369,6 @@ static void Snapshot_LoadState_v2(void)
         SetVideoRefreshRate(VR_60HZ);       // Default to 60Hz as older save-states won't contain refresh rate
         MB_InitializeForLoadingSnapshot();  // GH#609
         sg_SSC.CommReset();
-#ifdef USE_SPEECH_API
-        g_Speech.Reset();
-#endif
         HD_SetEnabled(false);
 
         std::string scalar;

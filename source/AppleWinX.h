@@ -57,9 +57,4 @@ extern SS_CARDTYPE g_SlotAux;
 
 extern HANDLE   g_hCustomRomF8;     // NULL if no custom rom
 
-#ifdef USE_SPEECH_API
-class CSpeech;
-extern CSpeech g_Speech;
-#endif
-
 extern __interface IPropertySheet& sg_PropertySheet;
