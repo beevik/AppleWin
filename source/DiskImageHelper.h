@@ -10,13 +10,34 @@
 #define ZIP_SUFFIX_LEN (sizeof(ZIP_SUFFIX)-1)
 
 
-enum eImageType {eImageUNKNOWN, eImageDO, eImagePO, eImageNIB1, eImageNIB2, eImageHDV, eImageIIE, eImageAPL, eImagePRG, eImageWOZ1, eImageWOZ2};
-enum eDetectResult {eMismatch, ePossibleMatch, eMatch};
+enum eImageType {
+    eImageUNKNOWN,
+    eImageDO,
+    eImagePO,
+    eImageNIB1,
+    eImageNIB2,
+    eImageHDV,
+    eImageIIE,
+    eImageAPL,
+    eImagePRG,
+    eImageWOZ1,
+    eImageWOZ2
+};
+
+enum eDetectResult {
+    eMismatch,
+    ePossibleMatch,
+    eMatch
+};
 
 class CImageBase;
 class CImageHelperBase;
 
-enum FileType_e {eFileNormal, eFileGZip, eFileZip};
+enum FileType_e {
+    eFileNormal,
+    eFileGZip,
+    eFileZip
+};
 
 struct ImageInfo
 {

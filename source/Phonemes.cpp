@@ -1,12 +1,7 @@
-#pragma once
+#include "StdAfx.h"
+#include "Phonemes.h"
 
-typedef struct
-{
-    unsigned int nOffset;
-    unsigned int nLength;
-} PHONEME_INFO, *PPHONEME_INFO;
-
-static const PHONEME_INFO g_nPhonemeInfo[62] = 
+const PHONEME_INFO g_nPhonemeInfo[] = 
 {
     {0x00000000,0x00000A60},{0x00000A60,0x00000A4C},
     {0x000014AC,0x00000A22},{0x00001ECE,0x00000A93},
@@ -41,7 +36,7 @@ static const PHONEME_INFO g_nPhonemeInfo[62] =
     {0x00024F7C,0x00000A04},{0x00025980,0x00000A16},
 };
 
-static const unsigned short g_nPhonemeData[156566] = 
+const unsigned short g_nPhonemeData[156566] = 
 {
     0xFE64,0xFE8A,0xFD76,0xFCAF,0xFCBA,0xFCF5,0xFD5F,0xFD8C,
     0xFDE2,0xFDBF,0xFDCE,0xFD1A,0xFCB4,0xFCCD,0xFD67,0xFDC8,

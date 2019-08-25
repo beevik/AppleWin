@@ -23,30 +23,30 @@ along with AppleWin; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-    enum HardDrive_e
-    {
-        HARDDISK_1 = 0,
-        HARDDISK_2,
-        NUM_HARDDISKS
-    };
+enum HardDrive_e
+{
+    HARDDISK_1 = 0,
+    HARDDISK_2,
+    NUM_HARDDISKS
+};
 
-    void HD_Destroy(void);
-    bool HD_CardIsEnabled(void);
-    void HD_SetEnabled(const bool bEnabled);
-    LPCTSTR HD_GetFullName(const int iDrive);
-    LPCTSTR HD_GetFullPathName(const int iDrive);
-    void HD_Reset(void);
-    void HD_Load_Rom(const LPBYTE pCxRomPeripheral, const UINT uSlot);
-    bool HD_Select(const int iDrive);
-    BOOL HD_Insert(const int iDrive, LPCTSTR pszImageFilename);
-    void HD_Unplug(const int iDrive);
-    bool HD_IsDriveUnplugged(const int iDrive);
-    void HD_LoadLastDiskImage(const int iDrive);
+void HD_Destroy(void);
+bool HD_CardIsEnabled(void);
+void HD_SetEnabled(const bool bEnabled);
+LPCTSTR HD_GetFullName(const int iDrive);
+LPCTSTR HD_GetFullPathName(const int iDrive);
+void HD_Reset(void);
+void HD_Load_Rom(const LPBYTE pCxRomPeripheral, const UINT uSlot);
+bool HD_Select(const int iDrive);
+BOOL HD_Insert(const int iDrive, LPCTSTR pszImageFilename);
+void HD_Unplug(const int iDrive);
+bool HD_IsDriveUnplugged(const int iDrive);
+void HD_LoadLastDiskImage(const int iDrive);
 
-    // 1.19.0.0 Hard Disk Status/Indicator Light
-    void HD_GetLightStatus (Disk_Status_e *pDisk1Status_);
-    bool HD_ImageSwap(void);
+// 1.19.0.0 Hard Disk Status/Indicator Light
+void HD_GetLightStatus (Disk_Status_e *pDisk1Status_);
+bool HD_ImageSwap(void);
 
-    std::string HD_GetSnapshotCardName(void);
-    void HD_SaveSnapshot(class YamlSaveHelper& yamlSaveHelper);
-    bool HD_LoadSnapshot(class YamlLoadHelper& yamlLoadHelper, UINT slot, UINT version, const std::string strSaveStatePath);
+std::string HD_GetSnapshotCardName(void);
+void HD_SaveSnapshot(class YamlSaveHelper& yamlSaveHelper);
+bool HD_LoadSnapshot(class YamlLoadHelper& yamlLoadHelper, UINT slot, UINT version, const std::string strSaveStatePath);
