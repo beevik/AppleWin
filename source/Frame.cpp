@@ -42,7 +42,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "MouseInterface.h"
 #include "NTSC.h"
 #include "ParallelPrinter.h"
-#include "Pravets.h"
 #include "Registry.h"
 #include "SaveState.h"
 #include "SerialComms.h"
@@ -78,12 +77,6 @@ static int g_nMaxViewportScale = kDEFAULT_VIEWPORT_SCALE;   // Max scale in Wind
 
     static HBITMAP g_hCapsLockBitmap[2];
     static HBITMAP g_hHardDiskBitmap[2];
-
-    //Pravets8 only
-    static HBITMAP g_hCapsBitmapP8[2];
-    static HBITMAP g_hCapsBitmapLat[2];
-    //static HBITMAP charsetbitmap [4]; //The idea was to add a charset indicator on the front panel, but it was given up. All charsetbitmap occurences must be REMOVED!
-    //===========================
     static HBITMAP g_hDiskWindowedLED[ NUM_DISK_STATUS ];
 
 static int    g_nTrackDrive1  = -1;
@@ -259,9 +252,6 @@ static void GetAppleWindowTitle()
         case A2TYPE_APPLE2PLUS:     _tcscpy(g_pAppleWindowTitle, TITLE_APPLE_2_PLUS     ); break;
         case A2TYPE_APPLE2E:        _tcscpy(g_pAppleWindowTitle, TITLE_APPLE_2E         ); break;
         case A2TYPE_APPLE2EENHANCED:_tcscpy(g_pAppleWindowTitle, TITLE_APPLE_2E_ENHANCED); break;
-        case A2TYPE_PRAVETS82:      _tcscpy(g_pAppleWindowTitle, TITLE_PRAVETS_82       ); break;
-        case A2TYPE_PRAVETS8M:      _tcscpy(g_pAppleWindowTitle, TITLE_PRAVETS_8M       ); break;
-        case A2TYPE_PRAVETS8A:      _tcscpy(g_pAppleWindowTitle, TITLE_PRAVETS_8A       ); break;
         case A2TYPE_TK30002E:       _tcscpy(g_pAppleWindowTitle, TITLE_TK3000_2E        ); break;
     }
 
@@ -376,11 +366,6 @@ static void CreateGdiObjects(void)
 
     switch (g_Apple2Type)
     {
-    case A2TYPE_PRAVETS82:
-    case A2TYPE_PRAVETS8M:
-    case A2TYPE_PRAVETS8A:
-        buttonbitmap[BTN_RUN] = (HBITMAP)LOADBUTTONBITMAP(TEXT("RUNP_BUTTON"));
-        break;
     case A2TYPE_TK30002E:
         buttonbitmap[BTN_RUN] = (HBITMAP)LOADBUTTONBITMAP(TEXT("RUN3000E_BUTTON"));
         break;
@@ -400,17 +385,7 @@ static void CreateGdiObjects(void)
 
     g_hCapsLockBitmap[0] = (HBITMAP)LOADBUTTONBITMAP(TEXT("LED_CAPSOFF_BITMAP"));
     g_hCapsLockBitmap[1] = (HBITMAP)LOADBUTTONBITMAP(TEXT("LED_CAPSON_BITMAP"));
-    //Pravets8 only
-    g_hCapsBitmapP8[0] = (HBITMAP)LOADBUTTONBITMAP(TEXT("LED_CAPSOFF_P8_BITMAP"));
-    g_hCapsBitmapP8[1] = (HBITMAP)LOADBUTTONBITMAP(TEXT("LED_CAPSON_P8_BITMAP"));
-    g_hCapsBitmapLat[0] = (HBITMAP)LOADBUTTONBITMAP(TEXT("LED_LATOFF_BITMAP"));
-    g_hCapsBitmapLat[1] = (HBITMAP)LOADBUTTONBITMAP(TEXT("LED_LATON_BITMAP"));
 
-    /*charsetbitmap[0] = (HBITMAP)LOADBUTTONBITMAP(TEXT("CHARSET_APPLE_BITMAP"));
-    charsetbitmap[1] = (HBITMAP)LOADBUTTONBITMAP(TEXT("CHARSET_82_BITMAP"));
-    charsetbitmap[2] = (HBITMAP)LOADBUTTONBITMAP(TEXT("CHARSET_8A_BITMAP"));
-    charsetbitmap[3] = (HBITMAP)LOADBUTTONBITMAP(TEXT("CHARSET_8M_BITMAP"));
-    */
     //===========================
     g_hDiskWindowedLED[ DISK_STATUS_OFF  ] = (HBITMAP)LOADBUTTONBITMAP(TEXT("DISKOFF_BITMAP"));
     g_hDiskWindowedLED[ DISK_STATUS_READ ] = (HBITMAP)LOADBUTTONBITMAP(TEXT("DISKREAD_BITMAP"));
@@ -436,8 +411,6 @@ static void DeleteGdiObjects(void)
     for (int loop = 0; loop < 2; loop++)
     {
         _ASSERT(DeleteObject(g_hCapsLockBitmap[loop]));
-        _ASSERT(DeleteObject(g_hCapsBitmapP8[loop]));
-        _ASSERT(DeleteObject(g_hCapsBitmapLat[loop]));
     }
 
     for (int loop = 0; loop < NUM_DISK_STATUS; loop++)
@@ -1005,9 +978,6 @@ static void DrawStatusArea (HDC passdc, int drawflags)
                     case A2TYPE_APPLE2E       :     
                     case A2TYPE_APPLE2EENHANCED:    
                     default                   : DrawBitmapRect(dc,x+31,y+17,&rCapsLed,g_hCapsLockBitmap[bCaps != 0]); break;
-                    case A2TYPE_PRAVETS82     :     
-                    case A2TYPE_PRAVETS8M     : DrawBitmapRect(dc,x+31,y+17,&rCapsLed,g_hCapsBitmapP8  [bCaps != 0]); break; // TODO: FIXME: Shouldn't one of these use g_hCapsBitmapLat ??
-                    case A2TYPE_PRAVETS8A     : DrawBitmapRect(dc,x+31,y+17,&rCapsLed,g_hCapsBitmapP8  [bCaps != 0]); break;
                 }
 
 #if HD_LED
@@ -1321,10 +1291,6 @@ LRESULT CALLBACK FrameWndProc (
             {
                 SetVideoRomRockerSwitch( !GetVideoRomRockerSwitch() );  // F10: toggle rocker switch
                 NTSC_VideoInitAppleType();
-            }
-            else if (g_Apple2Type == A2TYPE_PRAVETS8A)
-            {
-                KeybToggleP8ACapsLock ();   // F10: Toggles Pravets8A Capslock
             }
         }
         else if (wparam == VK_F11 && !KeybGetCtrlStatus())  // Save state (F11)
@@ -2186,7 +2152,6 @@ void ResetMachineState ()
   g_bFullSpeed = 0; // Might've hit reset in middle of InternalCpuExecute() - so beep may get (partially) muted
 
   MemReset();   // calls CpuInitialize()
-  PravetsReset();
   sg_Disk2Card.Boot();
   VideoResetState();
   KeybReset();
@@ -2225,7 +2190,6 @@ void CtrlReset()
         VideoResetState();  // Switch Alternate char set off
     }
 
-    PravetsReset();
     sg_Disk2Card.Reset();
     HD_Reset();
     KeybReset();

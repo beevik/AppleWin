@@ -33,12 +33,14 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 CPageAdvanced* CPageAdvanced::ms_this = 0;  // reinit'd in ctor
 
-enum CLONECHOICE {MENUITEM_CLONEMIN, MENUITEM_PRAVETS82=MENUITEM_CLONEMIN, MENUITEM_PRAVETS8M, MENUITEM_PRAVETS8A, MENUITEM_TK30002E, MENUITEM_CLONEMAX};
+enum CLONECHOICE {
+    MENUITEM_CLONEMIN,
+    MENUITEM_TK30002E = MENUITEM_CLONEMIN,
+    MENUITEM_CLONEMAX
+};
+
 const TCHAR CPageAdvanced::m_CloneChoices[] =
-                TEXT("Pravets 82\0")    // Bulgarian
-                TEXT("Pravets 8M\0")    // Bulgarian
-                TEXT("Pravets 8A\0")    // Bulgarian
-                TEXT("TK3000 //e");     // Brazilian
+    TEXT("TK3000 //e");     // Brazilian
 
 BOOL CALLBACK CPageAdvanced::DlgProc(HWND hWnd, UINT message, WPARAM wparam, LPARAM lparam)
 {
@@ -51,30 +53,27 @@ BOOL CPageAdvanced::DlgProcInternal(HWND hWnd, UINT message, WPARAM wparam, LPAR
     switch (message)
     {
     case WM_NOTIFY:
+        // Property Sheet notifications
+        switch (((LPPSHNOTIFY)lparam)->hdr.code)
         {
-            // Property Sheet notifications
-
-            switch (((LPPSHNOTIFY)lparam)->hdr.code)
-            {
-            case PSN_SETACTIVE:
-                // About to become the active page
-                m_PropertySheetHelper.SetLastPage(m_Page);
-                InitOptions(hWnd);
-                break;
-            case PSN_KILLACTIVE:
-                SetWindowLong(hWnd, DWLP_MSGRESULT, FALSE);         // Changes are valid
-                break;
-            case PSN_APPLY:
-                DlgOK(hWnd);
-                SetWindowLong(hWnd, DWLP_MSGRESULT, PSNRET_NOERROR);    // Changes are valid
-                break;
-            case PSN_QUERYCANCEL:
-                // Can use this to ask user to confirm cancel
-                break;
-            case PSN_RESET:
-                DlgCANCEL(hWnd);
-                break;
-            }
+        case PSN_SETACTIVE:
+            // About to become the active page
+            m_PropertySheetHelper.SetLastPage(m_Page);
+            InitOptions(hWnd);
+            break;
+        case PSN_KILLACTIVE:
+            SetWindowLong(hWnd, DWLP_MSGRESULT, FALSE);
+            break;
+        case PSN_APPLY:
+            DlgOK(hWnd);
+            SetWindowLong(hWnd, DWLP_MSGRESULT, PSNRET_NOERROR);
+            break;
+        case PSN_QUERYCANCEL:
+            // Can use this to ask user to confirm cancel
+            break;
+        case PSN_RESET:
+            DlgCANCEL(hWnd);
+            break;
         }
         break;
 
@@ -217,14 +216,7 @@ void CPageAdvanced::InitOptions(HWND hWnd)
 // Advanced->Clone: Menu item to eApple2Type
 eApple2Type CPageAdvanced::GetCloneType(DWORD NewMenuItem)
 {
-    switch (NewMenuItem)
-    {
-        case MENUITEM_PRAVETS82:    return A2TYPE_PRAVETS82;
-        case MENUITEM_PRAVETS8M:    return A2TYPE_PRAVETS8M;
-        case MENUITEM_PRAVETS8A:    return A2TYPE_PRAVETS8A;
-        case MENUITEM_TK30002E:     return A2TYPE_TK30002E;
-        default:                    return A2TYPE_PRAVETS82;
-    }
+    return A2TYPE_TK30002E;
 }
 
 int CPageAdvanced::GetCloneMenuItem(void)
@@ -246,9 +238,6 @@ int CPageAdvanced::GetCloneMenuItem(void)
                 m_PropertySheetHelper.GetConfigNew().m_CpuType = ProbeMainCpuDefault(NewCloneType);
             }
             break;
-        case A2TYPE_PRAVETS82:  nMenuItem = MENUITEM_PRAVETS82; break;
-        case A2TYPE_PRAVETS8M:  nMenuItem = MENUITEM_PRAVETS8M; break;
-        case A2TYPE_PRAVETS8A:  nMenuItem = MENUITEM_PRAVETS8A; break;
         case A2TYPE_TK30002E:   nMenuItem = MENUITEM_TK30002E;  break;
         default:    // New clone needs adding here?
             _ASSERT(0);

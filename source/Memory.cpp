@@ -388,7 +388,7 @@ static BYTE __stdcall IOWrite_C00x(WORD pc, WORD addr, BYTE bWrite, BYTE d, ULON
 
 static BYTE __stdcall IORead_C01x(WORD pc, WORD addr, BYTE bWrite, BYTE d, ULONG nExecutedCycles)
 {
-    if (IS_APPLE2)  // Include Pravets machines too?
+    if (IS_APPLE2)
         return KeybReadFlag();
 
     bool res = false;
@@ -516,10 +516,6 @@ static BYTE __stdcall IORead_C06x(WORD pc, WORD addr, BYTE bWrite, BYTE d, ULONG
 {   
     switch (addr & 0x7) // address bit 4 is ignored (UTAIIe:7-5)
     {
-    //In Pravets8A/C if SETMODE (8bit character encoding) is enabled, bit6 in $C060 is 0; Else it is 1
-    //If (CAPS lOCK of Pravets8A/C is on or Shift is pressed) and (MODE is enabled), bit7 in $C000 is 1; Else it is 0
-    //Writing into $C060 sets MODE on and off. If bit 0 is 0 the the MODE is set 0, if bit 0 is 1 then MODE is set to 1 (8-bit)
-
     case 0x0:   return TapeRead(pc, addr, bWrite, d, nExecutedCycles);          // $C060 TAPEIN
     case 0x1:   return JoyReadButton(pc, addr, bWrite, d, nExecutedCycles);     //$C061 Digital input 0 (If bit 7=1 then JoyButton 0 or OpenApple is pressed)
     case 0x2:   return JoyReadButton(pc, addr, bWrite, d, nExecutedCycles);     //$C062 Digital input 1 (If bit 7=1 then JoyButton 1 or ClosedApple is pressed)
@@ -538,10 +534,7 @@ static BYTE __stdcall IOWrite_C06x(WORD pc, WORD addr, BYTE bWrite, BYTE d, ULON
     switch (addr & 0xf)
     {
     case 0x0:   
-        if (g_Apple2Type == A2TYPE_PRAVETS8A)
-            return TapeWrite (pc, addr, bWrite, d, nExecutedCycles);
-        else
-            return IO_Null(pc, addr, bWrite, d, nExecutedCycles); //Apple2 value
+        return IO_Null(pc, addr, bWrite, d, nExecutedCycles); //Apple2 value
     }
     return IO_Null(pc, addr, bWrite, d, nExecutedCycles); //Apple2 value
 }
@@ -1415,8 +1408,6 @@ bool MemIsAddrCodeMemory(const USHORT addr)
 const UINT CxRomSize = 4*1024;
 const UINT Apple2RomSize = 12*1024;
 const UINT Apple2eRomSize = Apple2RomSize+CxRomSize;
-//const UINT Pravets82RomSize = 12*1024;
-//const UINT Pravets8ARomSize = Pravets82RomSize+CxRomSize;
 
 void MemInitialize()
 {
@@ -1499,9 +1490,6 @@ void MemInitializeROM(void)
     case A2TYPE_APPLE2PLUS:     hResInfo = FindResource(NULL, MAKEINTRESOURCE(IDR_APPLE2_PLUS_ROM     ), "ROM"); ROM_SIZE = Apple2RomSize ; break;
     case A2TYPE_APPLE2E:        hResInfo = FindResource(NULL, MAKEINTRESOURCE(IDR_APPLE2E_ROM         ), "ROM"); ROM_SIZE = Apple2eRomSize; break;
     case A2TYPE_APPLE2EENHANCED:hResInfo = FindResource(NULL, MAKEINTRESOURCE(IDR_APPLE2E_ENHANCED_ROM), "ROM"); ROM_SIZE = Apple2eRomSize; break;
-    case A2TYPE_PRAVETS82:      hResInfo = FindResource(NULL, MAKEINTRESOURCE(IDR_PRAVETS_82_ROM      ), "ROM"); ROM_SIZE = Apple2RomSize ; break;
-    case A2TYPE_PRAVETS8M:      hResInfo = FindResource(NULL, MAKEINTRESOURCE(IDR_PRAVETS_8M_ROM      ), "ROM"); ROM_SIZE = Apple2RomSize ; break;
-    case A2TYPE_PRAVETS8A:      hResInfo = FindResource(NULL, MAKEINTRESOURCE(IDR_PRAVETS_8C_ROM      ), "ROM"); ROM_SIZE = Apple2eRomSize; break;
     case A2TYPE_TK30002E:       hResInfo = FindResource(NULL, MAKEINTRESOURCE(IDR_TK3000_2E_ROM       ), "ROM"); ROM_SIZE = Apple2eRomSize; break;
     }
 
@@ -1514,9 +1502,6 @@ void MemInitializeROM(void)
         case A2TYPE_APPLE2PLUS:     _tcscpy(sRomFileName, TEXT("APPLE2_PLUS.ROM"     )); break;
         case A2TYPE_APPLE2E:        _tcscpy(sRomFileName, TEXT("APPLE2E.ROM"         )); break;
         case A2TYPE_APPLE2EENHANCED:_tcscpy(sRomFileName, TEXT("APPLE2E_ENHANCED.ROM")); break;
-        case A2TYPE_PRAVETS82:      _tcscpy(sRomFileName, TEXT("PRAVETS82.ROM"       )); break;
-        case A2TYPE_PRAVETS8M:      _tcscpy(sRomFileName, TEXT("PRAVETS8M.ROM"       )); break;
-        case A2TYPE_PRAVETS8A:      _tcscpy(sRomFileName, TEXT("PRAVETS8C.ROM"       )); break;
         case A2TYPE_TK30002E:       _tcscpy(sRomFileName, TEXT("TK3000e.ROM"         )); break;
         default:
             {
@@ -1863,7 +1848,6 @@ void MemReset()
     // INITIALIZE & RESET THE CPU
     // . Do this after ROM has been copied back to mem[], so that PC is correctly init'ed from 6502's reset vector
     CpuInitialize();
-    //Sets Caps Lock = false (Pravets 8A/C only)
 }
 
 //===========================================================================

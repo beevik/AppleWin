@@ -41,7 +41,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Mockingboard.h"
 #include "MouseInterface.h"
 #include "ParallelPrinter.h"
-#include "Pravets.h"
 #include "SerialComms.h"
 #include "Speaker.h"
 #include "Speech.h"
@@ -137,9 +136,6 @@ static std::string GetSnapshotUnitSlotsName(void)
 #define SS_YAML_VALUE_APPLE2E           "Apple//e"
 #define SS_YAML_VALUE_APPLE2EENHANCED   "Enhanced Apple//e"
 #define SS_YAML_VALUE_APPLE2C           "Apple2c"
-#define SS_YAML_VALUE_PRAVETS82         "Pravets82"
-#define SS_YAML_VALUE_PRAVETS8M         "Pravets8M"
-#define SS_YAML_VALUE_PRAVETS8A         "Pravets8A"
 #define SS_YAML_VALUE_TK30002E          "TK3000//e"
 
 static eApple2Type ParseApple2Type(std::string type)
@@ -149,9 +145,6 @@ static eApple2Type ParseApple2Type(std::string type)
     else if (type == SS_YAML_VALUE_APPLE2E)         return A2TYPE_APPLE2E;
     else if (type == SS_YAML_VALUE_APPLE2EENHANCED) return A2TYPE_APPLE2EENHANCED;
     else if (type == SS_YAML_VALUE_APPLE2C)         return A2TYPE_APPLE2C;
-    else if (type == SS_YAML_VALUE_PRAVETS82)       return A2TYPE_PRAVETS82;
-    else if (type == SS_YAML_VALUE_PRAVETS8M)       return A2TYPE_PRAVETS8M;
-    else if (type == SS_YAML_VALUE_PRAVETS8A)       return A2TYPE_PRAVETS8A;
     else if (type == SS_YAML_VALUE_TK30002E)        return A2TYPE_TK30002E;
 
     throw std::string("Load: Unknown Apple2 type");
@@ -166,9 +159,6 @@ static std::string GetApple2TypeAsString(void)
         case A2TYPE_APPLE2E:        return SS_YAML_VALUE_APPLE2E;
         case A2TYPE_APPLE2EENHANCED:return SS_YAML_VALUE_APPLE2EENHANCED;
         case A2TYPE_APPLE2C:        return SS_YAML_VALUE_APPLE2C;
-        case A2TYPE_PRAVETS82:      return SS_YAML_VALUE_PRAVETS82;
-        case A2TYPE_PRAVETS8M:      return SS_YAML_VALUE_PRAVETS8M;
-        case A2TYPE_PRAVETS8A:      return SS_YAML_VALUE_PRAVETS8A;
         case A2TYPE_TK30002E:       return SS_YAML_VALUE_TK30002E;
         default:
             throw std::string("Save: Unknown Apple2 type");
@@ -385,7 +375,6 @@ static void Snapshot_LoadState_v2(void)
         //m_ConfigNew.m_bEnableTheFreezesF8Rom = ?; // todo: when support saving config
 
         MemReset();
-        PravetsReset();
         sg_Disk2Card.Reset();
         HD_Reset();
         KeybReset();

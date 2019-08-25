@@ -29,9 +29,6 @@ unsigned char csbits_enhanced2e[2][256][8]; // Enhanced //e (2732 4K video ROM)
 static unsigned char csbits_2e_pal[2][256][8];  // PAL Original or Enhanced //e (2764 8K video ROM - low 4K) via rocker switch under keyboard
 unsigned char csbits_2e[2][256][8];         // Original //e (no mousetext)
 unsigned char csbits_a2[1][256][8];         // ][ and ][+
-unsigned char csbits_pravets82[1][256][8];  // Pravets 82
-unsigned char csbits_pravets8M[1][256][8];  // Pravets 8M
-unsigned char csbits_pravets8C[2][256][8];  // Pravets 8A & 8C
 
 //
 
@@ -219,10 +216,6 @@ void make_csbits(void)
     get_csbits(&csbits_enhanced2e[0], TEXT("CHARSET40"), 0);    // Enhanced //e: Alt char set off
     get_csbits(&csbits_enhanced2e[1], TEXT("CHARSET40"), 16);   // Enhanced //e: Alt char set on (mousetext)
     get_csbits(&csbits_a2[0],         TEXT("CHARSET40"), 32);   // Apple ][, ][+
-    get_csbits(&csbits_pravets82[0],  TEXT("CHARSET82"), 0);    // Pravets 82
-    get_csbits(&csbits_pravets8M[0],  TEXT("CHARSET8M"), 0);    // Pravets 8M
-    get_csbits(&csbits_pravets8C[0],  TEXT("CHARSET8C"), 0);    // Pravets 8A / 8C: Alt char set off
-    get_csbits(&csbits_pravets8C[1],  TEXT("CHARSET8C"), 16);   // Pravets 8A / 8C: Alt char set on
 
     // Original //e is just Enhanced //e with the 32 mousetext chars [0x40..0x5F] replaced by the non-alt charset chars [0x40..0x5F]
     memcpy(csbits_2e, csbits_enhanced2e, sizeof(csbits_enhanced2e));

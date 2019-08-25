@@ -133,8 +133,6 @@ BOOL CPageConfig::DlgProcInternal(HWND hWnd, UINT message, WPARAM wparam, LPARAM
                 }
                 else // A2TYPE_CLONE
                 {
-                    // NB. A2TYPE_CLONE could be either 6502(Pravets) or 65C02(TK3000 //e)
-                    // - Set correctly in PageAdvanced.cpp for IDC_CLONETYPE
                     m_PropertySheetHelper.GetConfigNew().m_CpuType = CPU_UNKNOWN;
                 }
             }
@@ -180,9 +178,6 @@ BOOL CPageConfig::DlgProcInternal(HWND hWnd, UINT message, WPARAM wparam, LPARAM
                 case A2TYPE_APPLE2PLUS:     nCurrentChoice = MENUITEM_IIPLUS; break;
                 case A2TYPE_APPLE2E:        nCurrentChoice = MENUITEM_IIE; break;
                 case A2TYPE_APPLE2EENHANCED:nCurrentChoice = MENUITEM_ENHANCEDIIE; break;
-                case A2TYPE_PRAVETS82:      nCurrentChoice = MENUITEM_CLONE; break;
-                case A2TYPE_PRAVETS8M:      nCurrentChoice = MENUITEM_CLONE; break;
-                case A2TYPE_PRAVETS8A:      nCurrentChoice = MENUITEM_CLONE; break;
                 case A2TYPE_TK30002E:       nCurrentChoice = MENUITEM_CLONE; break;
                 default: _ASSERT(0); break;
                 }

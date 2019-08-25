@@ -52,9 +52,6 @@ enum AppMode_e
 #define TITLE_APPLE_2E_ENHANCED TEXT("Enhanced Apple //e Emulator")
 #define TITLE_APPLE_2C          TEXT("Apple //e Emulator")
 #define TITLE_APPLE_2D          TEXT("Apple )(d Virtual Debug Hardware") 
-#define TITLE_PRAVETS_82        TEXT("Pravets 82 Emulator")
-#define TITLE_PRAVETS_8M        TEXT("Pravets 8M Emulator")
-#define TITLE_PRAVETS_8A        TEXT("Pravets 8A Emulator")
 #define TITLE_TK3000_2E         TEXT("TK3000 //e Emulator")
 
 #define TITLE_PAUSED       TEXT("* PAUSED *")
@@ -172,16 +169,11 @@ enum eApple2Type {
 
                     // ][ clones start here:
                     A2TYPE_CLONE=APPLECLONE_MASK,
-                    A2TYPE_PRAVETS8M,                               // Apple ][ clone
-                    A2TYPE_PRAVETS82,                               // Apple ][ clone
                     // (Gap for more Apple ][ clones)
                     A2TYPE_CLONE_A2_MAX,
 
                     // //e clones start here:
                     A2TYPE_CLONE_A2E=A2TYPE_CLONE|APPLE2E_MASK,
-                    A2TYPE_BAD_PRAVETS82=A2TYPE_CLONE|APPLE2E_MASK, // Wrongly tagged as Apple //e clone (< AppleWin 1.26)
-                    A2TYPE_BAD_PRAVETS8M,                           // Wrongly tagged as Apple //e clone (< AppleWin 1.26)
-                    A2TYPE_PRAVETS8A,                               // Apple //e clone
                     A2TYPE_TK30002E,                                // Apple //e enhanced clone
                     // (Gap for more Apple //e clones)
                     A2TYPE_MAX

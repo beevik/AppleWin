@@ -40,9 +40,6 @@
 #define IDR_MOUSEINTERFACE_FW           136
 #define IDR_THUNDERCLOCKPLUS_FW         137
 #define IDR_FREEZES_F8_ROM              138
-#define IDR_PRAVETS_82_ROM              139
-#define IDR_PRAVETS_8M_ROM              140
-#define IDR_PRAVETS_8C_ROM              142
 #define IDR_MENU_DISK_POPUP             143
 #define IDD_ABOUT                       145
 #define IDC_CHECK_CONFIRM_REBOOT        146

@@ -482,9 +482,6 @@ static void set_csbits()
     case A2TYPE_APPLE2PLUS:     csbits = &csbits_a2[0];         g_nVideoCharSet = 0; break;
     case A2TYPE_APPLE2E:        csbits = Get2e_csbits();        break;
     case A2TYPE_APPLE2EENHANCED:csbits = Get2e_csbits();        break;
-    case A2TYPE_PRAVETS82:      csbits = &csbits_pravets82[0];  g_nVideoCharSet = 0; break; // Apple ][ clone
-    case A2TYPE_PRAVETS8M:      csbits = &csbits_pravets8M[0];  g_nVideoCharSet = 0; break; // Apple ][ clone
-    case A2TYPE_PRAVETS8A:      csbits = &csbits_pravets8C[0];  break;  // Apple //e clone
     case A2TYPE_TK30002E:       csbits = &csbits_enhanced2e[0]; break;  // Enhanced Apple //e clone
     default:                    csbits = &csbits_enhanced2e[0]; break;
     }
@@ -2187,7 +2184,7 @@ void NTSC_VideoInitAppleType ()
 {
     int model = GetApple2Type();
 
-    // anything other than low bit set means not II/II+ (TC: include Pravets machines too?)
+    // anything other than low bit set means not II/II+
     if (model & 0xFFFE)
         g_pHorzClockOffset = APPLE_IIE_HORZ_CLOCK_OFFSET;
     else

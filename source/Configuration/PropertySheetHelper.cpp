@@ -101,9 +101,6 @@ void CPropertySheetHelper::FillComboBox(HWND window, int controlid, LPCTSTR choi
 
 void CPropertySheetHelper::SaveComputerType(eApple2Type NewApple2Type)
 {
-    if (NewApple2Type == A2TYPE_CLONE)  // Clone picked from Config tab, but no specific one picked from Advanced tab
-        NewApple2Type = A2TYPE_PRAVETS82;
-
     ConfigSaveApple2Type(NewApple2Type);
 }
 

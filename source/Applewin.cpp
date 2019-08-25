@@ -533,13 +533,6 @@ void LoadConfiguration(void)
              (dwComputerType >= A2TYPE_CLONE_A2_MAX && dwComputerType < A2TYPE_CLONE_A2E) )
             dwComputerType = A2TYPE_APPLE2EENHANCED;
 
-        // Remap the bad Pravets models (before AppleWin v1.26)
-        if (dwComputerType == A2TYPE_BAD_PRAVETS82) dwComputerType = A2TYPE_PRAVETS82;
-        if (dwComputerType == A2TYPE_BAD_PRAVETS8M) dwComputerType = A2TYPE_PRAVETS8M;
-
-        // Remap the bad Pravets models (at AppleWin v1.26) - GH#415
-        if (dwComputerType == A2TYPE_CLONE) dwComputerType = A2TYPE_PRAVETS82;
-
         if (dwLoadedComputerType != dwComputerType)
         {
             char sText[ 100 ];
