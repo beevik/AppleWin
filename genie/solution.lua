@@ -223,10 +223,6 @@ project("AppleWin")
     configuration { "vs*" }
         pchheader("StdAfx.h")
         pchsource(path.join(srcDir, "StdAfx.cpp"))
-        nopch {
-            path.join(srcDir, "Tfe/*.cpp"),
-            path.join(srcDir, "Z80VICE/*.cpp"),
-        }
     configuration {} -- reset
 
     -- Run the CPU unit test before building
@@ -258,9 +254,6 @@ project("AppleWin")
         ["Source Files/_Headers"] = {
             path.join(srcDir, "Common.h"),
             path.join(rsrcDir, "resource.h"),
-        },
-        ["Source Files/CommonVICE"] = {
-            path.join(srcDir, "CommonVICE/*"),
         },
         ["Source Files/Configuration"] = {
             path.join(srcDir, "Configuration/*"),
@@ -304,17 +297,11 @@ project("AppleWin")
         ["Source Files/Model"] = {
             path.join(srcDir, "Pravets*"),
         },
-        ["Source Files/Uthernet"] = {
-            path.join(srcDir, "Tfe/*"),
-        },
         ["Source Files/Video"] = {
             path.join(srcDir, "Frame*"),
             path.join(srcDir, "NTSC*"),
             path.join(srcDir, "RGB*"),
             path.join(srcDir, "Video*"),
-        },
-        ["Source Files/Z80VICE"] = {
-            path.join(srcDir, "Z80VICE/*"),
         },
     }
 

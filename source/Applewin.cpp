@@ -58,7 +58,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include "Configuration/About.h"
 #include "Configuration/PropertySheet.h"
-#include "Tfe/Tfe.h"
 
 static UINT16 g_AppleWinVersion[4] = {0};
 char VERSIONSTRING[16] = "xx.yy.zz.ww";
@@ -639,8 +638,6 @@ void LoadConfiguration(void)
 	REGLOAD(TEXT(REGVALUE_ENHANCE_DISK_SPEED), &dwEnhanceDisk);
 	sg_Disk2Card.SetEnhanceDisk(dwEnhanceDisk ? true : false);
 
-	REGLOAD(TEXT("Uthernet Active")   ,(DWORD *)&tfe_enabled);
-
 	//
 
 	DWORD dwTmp;
@@ -741,7 +738,6 @@ void LoadConfiguration(void)
 
 	char szUthernetInt[MAX_PATH] = {0};
 	RegLoadString(TEXT(REG_CONFIG),TEXT("Uthernet Interface"),1,szUthernetInt,MAX_PATH);  
-	update_tfe_interface(szUthernetInt,NULL);
 
 	if (REGLOAD(TEXT(REGVALUE_WINDOW_SCALE), &dwTmp))
 		SetViewportScale(dwTmp);
@@ -1680,7 +1676,6 @@ int APIENTRY WinMain(HINSTANCE passinstance, HINSTANCE, LPSTR lpCmdLine, int)
 			bShutdown = true;
 		}
 
-		tfe_init();
 		LogFileOutput("Main: tfe_init()\n");
 
 		if (szSnapshotName)
@@ -1791,9 +1786,6 @@ int APIENTRY WinMain(HINSTANCE passinstance, HINSTANCE, LPSTR lpCmdLine, int)
 
 	CoUninitialize();
 	LogFileOutput("Exit: CoUninitialize()\n");
-
-	tfe_shutdown();
-	LogFileOutput("Exit: tfe_shutdown()\n");
 
 	LogDone();
 

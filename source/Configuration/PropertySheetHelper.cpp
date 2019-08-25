@@ -584,8 +584,6 @@ std::string CPropertySheetHelper::GetCardName(const SS_CARDTYPE CardType)
 		return "Clock";
 	case CT_MouseInterface:
 		return "Mouse";
-	case CT_Z80:
-		return "CP/M";
 	case CT_Phasor:			// Soundcard
 		return "Phasor";
 	case CT_Echo:			// Soundcard

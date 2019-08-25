@@ -46,7 +46,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Speaker.h"
 #include "Speech.h"
 #include "Video.h"
-#include "z80emu.h"
 
 #include "Configuration/Config.h"
 #include "Configuration/IPropertySheet.h"
@@ -271,11 +270,6 @@ static void ParseSlots(YamlLoadHelper& yamlLoadHelper, UINT unitVersion)
 		{
 			bRes = sg_Mouse.LoadSnapshot(yamlLoadHelper, slot, cardVersion);
 			type = CT_MouseInterface;
-		}
-		else if (card == Z80_GetSnapshotCardName())
-		{
-			bRes = Z80_LoadSnapshot(yamlLoadHelper, slot, cardVersion);
-			type = CT_Z80;
 		}
 		else if (card == MB_GetSnapshotCardName())
 		{
@@ -505,12 +499,6 @@ void Snapshot_SaveState(void)
 			sg_SSC.SaveSnapshot(yamlSaveHelper);
 
 			sg_Mouse.SaveSnapshot(yamlSaveHelper);
-
-			if (g_Slot4 == CT_Z80)
-				Z80_SaveSnapshot(yamlSaveHelper, 4);
-
-			if (g_Slot5 == CT_Z80)
-				Z80_SaveSnapshot(yamlSaveHelper, 5);
 
 			if (g_Slot4 == CT_MockingboardC)
 				MB_SaveSnapshot(yamlSaveHelper, 4);

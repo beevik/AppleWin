@@ -53,8 +53,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Video.h"
 #include "RGBMonitor.h"
 
-#include "z80emu.h"
-#include "Z80VICE/z80.h"
 #include "../resource/resource.h"
 #include "Configuration/IPropertySheet.h"
 #include "Debugger/DebugDefs.h"
@@ -1674,19 +1672,6 @@ void MemInitializeIO(void)
 		const UINT uSlot5 = 5;
 		MB_InitializeIO(pCxRomPeripheral, uSlot4, uSlot5);
 	}
-	else if (g_Slot4 == CT_Z80)
-	{
-		ConfigureSoftcard(pCxRomPeripheral, 4);		// $C400 : Z80 card
-	}
-//	else if (g_Slot4 == CT_GenericClock)
-//	{
-//		LoadRom_Clock_Generic(pCxRomPeripheral, 4);
-//	}
-
-	if (g_Slot5 == CT_Z80)
-	{
-		ConfigureSoftcard(pCxRomPeripheral, 5);		// $C500 : Z80 card
-	}
 	else if (g_Slot5 == CT_SAM)
 	{
 		ConfigureSAM(pCxRomPeripheral, 5);			// $C500 : Z80 card
@@ -1879,8 +1864,6 @@ void MemReset()
 	// . Do this after ROM has been copied back to mem[], so that PC is correctly init'ed from 6502's reset vector
 	CpuInitialize();
 	//Sets Caps Lock = false (Pravets 8A/C only)
-
-	z80_reset();	// NB. Also called above in CpuInitialize()
 }
 
 //===========================================================================

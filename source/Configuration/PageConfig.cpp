@@ -109,10 +109,6 @@ BOOL CPageConfig::DlgProcInternal(HWND hWnd, UINT message, WPARAM wparam, LPARAM
 			PropSheet_PressButton(GetParent(hWnd), PSBTN_OK);
 			break;
 
-		case IDC_ETHERNET:
-			ui_tfe_settings_dialog(hWnd);
-			break;
-
 		case IDC_MONOCOLOR:
 			VideoChooseMonochromeColor();
 			break;
@@ -383,11 +379,6 @@ void CPageConfig::EnableTrackbar(HWND hWnd, BOOL enable)
 	EnableWindow(GetDlgItem(hWnd,IDC_MAX_MHz),enable);
 }
 
-
-void CPageConfig::ui_tfe_settings_dialog(HWND hwnd)
-{
-	DialogBox(g_hInstance, (LPCTSTR)IDD_TFE_SETTINGS_DIALOG, hwnd, CPageConfigTfe::DlgProc);
-}
 
 bool CPageConfig::IsOkToBenchmark(HWND hWnd, const bool bConfigChanged)
 {

@@ -98,10 +98,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Video.h"
 #include "NTSC.h"
 
-#include "z80emu.h"
-#include "Z80VICE/z80.h"
-#include "Z80VICE/z80mem.h"
-
 #include "YamlHelper.h"
 
 // 6502 Accumulator Bit Flags
@@ -549,9 +545,6 @@ void CpuInitialize ()
 	g_bCritSectionValid = true;
 	CpuIrqReset();
 	CpuNmiReset();
-
-	z80mem_initialize();
-	z80_reset();
 }
 
 //===========================================================================
@@ -655,7 +648,6 @@ void CpuReset()
 	regs.bJammed = 0;
 
 	SetActiveCpu( GetMainCpu() );
-	z80_reset();
 }
 
 //===========================================================================

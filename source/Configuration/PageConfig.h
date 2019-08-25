@@ -2,7 +2,6 @@
 
 #include "IPropertySheetPage.h"
 #include "PropertySheetDefs.h"
-#include "PageConfigTfe.h"
 class CPropertySheetHelper;
 
 class CPageConfig : private IPropertySheetPage
@@ -36,5 +35,4 @@ private:
 
 	const PAGETYPE m_Page;
 	CPropertySheetHelper& m_PropertySheetHelper;
-	CPageConfigTfe m_PageConfigTfe;
 };

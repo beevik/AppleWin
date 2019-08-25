@@ -123,12 +123,6 @@ static DWORD Cpu65D02(DWORD uTotalCycles, const bool bVideoUpdate)
 		ULONG uPreviousCycles = uExecutedCycles;
 // NTSC_END
 
-		if (GetActiveCpu() == CPU_Z80)
-		{
-			const UINT uZ80Cycles = z80_mainloop(uTotalCycles, uExecutedCycles); CYC(uZ80Cycles)
-		}
-		else
-
         HEATMAP_X( regs.pc );
 
 		Fetch(iOpcode, uExecutedCycles);

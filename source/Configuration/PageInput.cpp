@@ -163,20 +163,6 @@ BOOL CPageInput::DlgProcInternal(HWND hWnd, UINT message, WPARAM wparam, LPARAM 
 				if (NewCPMChoice == m_CPMChoice)
 					break;
 
-				// Whatever has changed, the old slot will now be empty
-				const SS_CARDTYPE Slot4 = m_PropertySheetHelper.GetConfigNew().m_Slot[4];
-				const SS_CARDTYPE Slot5 = m_PropertySheetHelper.GetConfigNew().m_Slot[5];
-				if (Slot4 == CT_Z80)
-					m_PropertySheetHelper.GetConfigNew().m_Slot[4] = CT_Empty;
-				else if (Slot5 == CT_Z80)
-					m_PropertySheetHelper.GetConfigNew().m_Slot[5] = CT_Empty;
-
-				// Insert CP/M card into new slot (or leave slot empty)
-				if (NewCPMChoice == CPM_SLOT4)
-					m_PropertySheetHelper.GetConfigNew().m_Slot[4] = CT_Z80;
-				else if (NewCPMChoice == CPM_SLOT5)
-					m_PropertySheetHelper.GetConfigNew().m_Slot[5] = CT_Z80;
-
 				InitOptions(hWnd);	// re-init
 			}
 			break;
@@ -369,9 +355,7 @@ void CPageInput::InitCPMChoices(HWND hWnd)
 	const SS_CARDTYPE Slot4 = m_PropertySheetHelper.GetConfigNew().m_Slot[4];
 	const SS_CARDTYPE Slot5 = m_PropertySheetHelper.GetConfigNew().m_Slot[5];
 
-	if (Slot4 == CT_Z80)		m_CPMChoice = CPM_SLOT4;
-	else if (Slot5 == CT_Z80)	m_CPMChoice = CPM_SLOT5;
-	else						m_CPMChoice = CPM_UNPLUGGED;
+	m_CPMChoice = CPM_UNPLUGGED;
 
 	for (UINT i=0; i<_CPM_MAX_CHOICES; i++)
 		m_CPMComboItemToChoice[i] = CPM_UNAVAILABLE;
@@ -380,9 +364,9 @@ void CPageInput::InitCPMChoices(HWND hWnd)
 	UINT uComboItemIdx = 0;
 
 	const bool bIsSlot4Empty = Slot4 == CT_Empty;
-	const bool bIsSlot4CPM   = Slot4 == CT_Z80;
+	const bool bIsSlot4CPM   = false;
 	const bool bIsSlot5Empty = Slot5 == CT_Empty;
-	const bool bIsSlot5CPM   = Slot5 == CT_Z80;
+	const bool bIsSlot5CPM   = false;
 
 	if (bIsSlot4Empty || bIsSlot4CPM)
 	{
