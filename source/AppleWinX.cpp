@@ -41,7 +41,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "devices/Memory.h"
 #include "devices/Printer.h"
 #include "state/Registry.h"
-#include "state/Riff.h"
 #include "state/SaveState.h"
 #include "devices/Serial.h"
 #include "sound/Mockingboard.h"
@@ -1198,15 +1197,6 @@ int APIENTRY WinMain(HINSTANCE passinstance, HINSTANCE, LPSTR lpCmdLine, int) {
 
     LogFileOutput("CmdLine: %s\n", strCmdLine.c_str());
 
-#if 0
-#ifdef RIFF_SPKR
-    RiffInitWriteFile("Spkr.wav", SPKR_SAMPLE_RATE, 1);
-#endif
-#ifdef RIFF_MB
-    RiffInitWriteFile("Mockingboard.wav", 44100, 2);
-#endif
-#endif
-
     //-----
 
     char szPath[_MAX_PATH];
@@ -1467,8 +1457,6 @@ int APIENTRY WinMain(HINSTANCE passinstance, HINSTANCE, LPSTR lpCmdLine, int) {
     LogFileOutput("Exit: CoUninitialize()\n");
 
     LogDone();
-
-    RiffFinishWriteFile();
 
     if (g_hCustomRomF8 != INVALID_HANDLE_VALUE)
         CloseHandle(g_hCustomRomF8);

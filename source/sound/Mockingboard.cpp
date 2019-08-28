@@ -681,10 +681,6 @@ static void MB_Update() {
         (void *)pDSLockedBuffer1, dwDSLockedBufferSize1);
 
     dwByteOffset = (dwByteOffset + (DWORD)nNumSamples * sizeof(short) * g_nMB_NumChannels) % g_dwDSBufferSize;
-
-#ifdef RIFF_MB
-    RiffPutSamples(&g_nMixBuffer[0], nNumSamples);
-#endif
 }
 
 //-----------------------------------------------------------------------------
