@@ -56,7 +56,6 @@ enum SS_CARDTYPE {
     CT_GenericClock,
     CT_Phasor,          // Soundcard
     CT_Echo,            // Soundcard
-    CT_SAM,             // Soundcard: Software Automated Mouth
     CT_80Col,           // 80 column card (1K)
     CT_Extended80Col,   // Extended 80-col card (64K)
     CT_RamWorksIII,     // RamWorksIII (up to 8MB)

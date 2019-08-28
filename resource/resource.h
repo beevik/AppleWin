@@ -1,6 +1,6 @@
 //{{NO_DEPENDENCIES}}
 // Microsoft Visual C++ generated include file.
-// Used by Applewin.rc
+// Used by AppleWinX.rc
 //
 #define IDC_COMPUTER                    101
 #define IDC_JOYSTICK0                   102

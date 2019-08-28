@@ -529,8 +529,6 @@ std::string PropertySheetHelper::GetCardName(const SS_CARDTYPE CardType) {
         return "Phasor";
     case CT_Echo:           // Soundcard
         return "Echo";
-    case CT_SAM:            // Soundcard: Software Automated Mouth
-        return "SAM";
     default:
         return "Unknown";
     }

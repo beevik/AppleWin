@@ -43,7 +43,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "devices/NoSlotClock.h"
 #include "devices/ParallelPrinter.h"
 #include "state/Registry.h"
-#include "sound/SAM.h"
 #include "devices/SerialComms.h"
 #include "sound/Speaker.h"
 #include "devices/Tape.h"
@@ -1516,9 +1515,6 @@ void MemInitializeIO(void) {
         const UINT uSlot4 = 4;
         const UINT uSlot5 = 5;
         MB_InitializeIO(pCxRomPeripheral, uSlot4, uSlot5);
-    }
-    else if (g_Slot5 == CT_SAM) {
-        ConfigureSAM(pCxRomPeripheral, 5);          // $C500 : Z80 card
     }
 
     sg_Disk2Card.Initialize(pCxRomPeripheral, 6);   // $C600 : Disk][ card
