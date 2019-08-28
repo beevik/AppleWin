@@ -38,7 +38,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "video/Frame.h"
 #include "util/Log.h"
 #include "devices/Memory.h"
-#include "devices/SerialComms.h"
+#include "devices/Serial.h"
 #include "state/YamlHelper.h"
 
 #define TCP_SERIAL_PORT 1977

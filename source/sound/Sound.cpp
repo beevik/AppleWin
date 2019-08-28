@@ -29,7 +29,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "StdAfx.h"
 #include "video/Frame.h"
 #include "util/Log.h"
-#include "sound/SoundCore.h"
+#include "sound/Sound.h"
 #include "sound/Speaker.h"
 
 #define MAX_SOUND_DEVICES 10

@@ -81,7 +81,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "util/Log.h"
 #include "devices/Memory.h"
 #include "sound/Mockingboard.h"
-#include "sound/SoundCore.h"
+#include "sound/Sound.h"
 #include "state/YamlHelper.h"
 #include "sound/AY8910.h"
 

@@ -11,11 +11,11 @@
 #include <dsound.h>
 #include <dshow.h>
 
-#include <math.h>
-#include <stdio.h>
-#include <stdint.h>
-#include <stdlib.h>
-#include <time.h>
+#include <cmath>
+#include <cstdio>
+#include <cstdint>
+#include <cstdlib>
+#include <ctime>
 
 #include <windows.h>
 #include <winuser.h>

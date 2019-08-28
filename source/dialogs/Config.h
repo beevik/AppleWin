@@ -1,10 +1,9 @@
 #pragma once
 
-#include "AppleWinX.h"
 #include "cpu/CPU.h"
-#include "disk/DiskImage.h"   // Disk_Status_e
-#include "disk/Harddisk.h"    // HD_CardIsEnabled()
-#include "video/Video.h"       // VideoRefreshRate_e, GetVideoRefreshRate()
+#include "disk/DiskImage.h"
+#include "disk/Harddisk.h"
+#include "video/Video.h"
 
 class ConfigNeedingRestart {
 public:

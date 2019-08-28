@@ -31,7 +31,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "video/Frame.h"
 #include "util/Log.h"
 #include "devices/Memory.h"
-#include "sound/SoundCore.h"
+#include "sound/Sound.h"
 #include "sound/Speaker.h"
 #include "video/Video.h"  // VideoRedrawScreen()
 #include "state/YamlHelper.h"

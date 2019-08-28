@@ -37,7 +37,8 @@ const UINT LanguageCardUnit::kMemModeInitialState = MF_BANK2 | MF_WRITERAM; // !
 
 LanguageCardUnit::LanguageCardUnit(void) :
     m_uLastRamWrite(0),
-    m_type(CT_LanguageCardIIe) {
+    m_type(CT_LanguageCardIIe)
+{
     SetMemMainLanguageCard(NULL, true);
 }
 

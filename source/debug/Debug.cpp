@@ -38,7 +38,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "devices/Keyboard.h"
 #include "devices/Memory.h"
 #include "video/NTSC.h"
-#include "sound/SoundCore.h"   // SoundCore_SetFade()
+#include "sound/Sound.h"   // SoundCore_SetFade()
 #include "video/Video.h"
 
 //  #define DEBUG_COMMAND_HELP  1

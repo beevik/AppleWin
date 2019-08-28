@@ -23,7 +23,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include "StdAfx.h"
 #include "Common.h"
-#include "devices/ParallelPrinter.h"
+#include "devices/Printer.h"
 #include "state/Registry.h"
 #include "state/SaveState.h"
 #include "PageAdvanced.h"

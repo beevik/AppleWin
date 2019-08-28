@@ -24,7 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "StdAfx.h"
 #include "video/Frame.h"
 #include "state/Registry.h"
-#include "devices/SerialComms.h"
+#include "devices/Serial.h"
 #include "video/Video.h"
 #include "PageConfig.h"
 #include "PropertySheetHelper.h"
