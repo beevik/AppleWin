@@ -30,11 +30,11 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Debug.h"
 #include "Debugger_Display.h"
 #include "CPU.h"
-#include "Frame.h"
+#include "video/Frame.h"
 #include "LanguageCard.h"
 #include "Memory.h"
-#include "Mockingboard.h"
-#include "Video.h"
+#include "sound/Mockingboard.h"
+#include "video/Video.h"
 
 // NEW UI debugging - force display ALL meta-info (regs, stack, bp, watches, zp) for debugging purposes
 #define DEBUG_FORCE_DISPLAY 0

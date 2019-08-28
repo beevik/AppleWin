@@ -1,10 +1,10 @@
 // Sync'd with 1.25.0.4 source
 
 #include "StdAfx.h"
-#include "Frame.h"
+#include "video/Frame.h"
 #include "Memory.h" // MemGetMainPtr() MemGetAuxPtr()
-#include "Video.h"
-#include "RGBMonitor.h"
+#include "video/Video.h"
+#include "video/RGBMonitor.h"
 #include "YamlHelper.h"
 
 const int HIRES_COLUMN_SUBUNIT_SIZE = 16;

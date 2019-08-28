@@ -80,10 +80,10 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "CPU.h"
 #include "Log.h"
 #include "Memory.h"
-#include "Mockingboard.h"
-#include "SoundCore.h"
+#include "sound/Mockingboard.h"
+#include "sound/SoundCore.h"
 #include "YamlHelper.h"
-#include "AY8910.h"
+#include "sound/AY8910.h"
 
 #define SY6522_DEVICE_A 0
 #define SY6522_DEVICE_B 1

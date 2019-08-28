@@ -27,11 +27,11 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
 #include "StdAfx.h"
-#include "Frame.h"
+#include "video/Frame.h"
 #include "Keyboard.h"
 #include "Tape.h"
 #include "YamlHelper.h"
-#include "Video.h" // Needed by TK3000 //e, to refresh the frame at each |Mode| change
+#include "video/Video.h" // Needed by TK3000 //e, to refresh the frame at each |Mode| change
 #include "Log.h"
 
 static BYTE asciicode[2][10] = {

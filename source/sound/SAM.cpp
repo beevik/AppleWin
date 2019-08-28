@@ -32,8 +32,8 @@
 */
 #include "StdAfx.h"
 #include "Memory.h"
-#include "SAM.h"
-#include "Speaker.h"
+#include "sound/SAM.h"
+#include "sound/Speaker.h"
 
 //
 // Write 8 bit data to speaker. Emulates a "SAM" speech card DAC

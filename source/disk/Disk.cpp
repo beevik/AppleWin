@@ -31,13 +31,13 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "StdAfx.h"
 #include "SaveState_Structs_v1.h"
 #include "CPU.h"
-#include "Disk.h"
-#include "DiskImage.h"
-#include "Frame.h"
+#include "disk/Disk.h"
+#include "disk/DiskImage.h"
+#include "video/Frame.h"
 #include "Log.h"
 #include "Memory.h"
 #include "Registry.h"
-#include "Video.h"
+#include "video/Video.h"
 #include "YamlHelper.h"
 
 // About m_enhanceDisk:

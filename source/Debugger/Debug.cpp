@@ -33,13 +33,13 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Debug.h"
 #include "DebugDefs.h"
 #include "CPU.h"
-#include "Disk.h"
-#include "Frame.h"
+#include "disk/Disk.h"
+#include "video/Frame.h"
 #include "Keyboard.h"
 #include "Memory.h"
-#include "NTSC.h"
-#include "SoundCore.h"   // SoundCore_SetFade()
-#include "Video.h"
+#include "video/NTSC.h"
+#include "sound/SoundCore.h"   // SoundCore_SetFade()
+#include "video/Video.h"
 
 //  #define DEBUG_COMMAND_HELP  1
 //  #define DEBUG_ASM_HASH 1

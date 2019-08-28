@@ -22,8 +22,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
 #include "StdAfx.h"
-#include "Disk.h"
-#include "Frame.h"
+#include "disk/Disk.h"
+#include "video/Frame.h"
 #include "Log.h"
 #include "Registry.h"
 #include "SaveState.h"

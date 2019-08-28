@@ -22,12 +22,12 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 // Includes
 #include "StdAfx.h"
 #include "CPU.h"    // CpuGetCyclesThisVideoFrame()
-#include "Frame.h"
+#include "video/Frame.h"
 #include "Memory.h" // MemGetMainPtr() MemGetAuxPtr()
-#include "Video.h"  // g_pFramebufferbits
-#include "RGBMonitor.h"
-#include "NTSC.h"
-#include "NTSC_CharSet.h"
+#include "video/Video.h"  // g_pFramebufferbits
+#include "video/RGBMonitor.h"
+#include "video/NTSC.h"
+#include "video/NTSC_CharSet.h"
 
 
 // GH#555: Extend the 14M video modes by 1 pixel

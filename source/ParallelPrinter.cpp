@@ -27,7 +27,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
 #include "StdAfx.h"
-#include "Frame.h"  // g_hFrameWindow
+#include "video/Frame.h"  // g_hFrameWindow
 #include "Memory.h"
 #include "ParallelPrinter.h"
 #include "Registry.h"

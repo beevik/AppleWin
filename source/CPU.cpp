@@ -86,11 +86,11 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include "StdAfx.h"
 #include "CPU.h"
-#include "Frame.h"
+#include "video/Frame.h"
 #include "Memory.h"
-#include "Mockingboard.h"
-#include "Video.h"
-#include "NTSC.h"
+#include "sound/Mockingboard.h"
+#include "video/Video.h"
+#include "video/NTSC.h"
 
 #include "YamlHelper.h"
 

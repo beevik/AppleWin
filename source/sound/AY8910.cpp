@@ -29,7 +29,7 @@
 #include <windows.h>
 #include <stdio.h>
 #include <crtdbg.h>
-#include "AY8910.h"
+#include "sound/AY8910.h"
 
 #include "YamlHelper.h"
 

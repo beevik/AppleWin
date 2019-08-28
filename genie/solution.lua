@@ -1,5 +1,5 @@
 ------------------------------------------------------------------------------
--- GENie configuration script for AppleWin
+-- GENie configuration script for AppleWinX
 --
 -- GENie is project generator tool. It generates compiler solution and project
 -- files from Lua scripts and supports many different compiler versions.
@@ -11,7 +11,7 @@
 --
 --   genie vs2019
 --
--- This will create a Visual Studio solution file called AppleWin.sln in the
+-- This will create a Visual Studio solution file called AppleWinX.sln in the
 -- same directory.
 --
 -- See https://github.com/bkaradzic/GENie for more information.
@@ -59,13 +59,13 @@ end
 
 
 ------------------------------------------------------------------------------
--- AppleWin solution
+-- AppleWinX solution
 --
 -- Generate the Visual Studio solution file.
 ------------------------------------------------------------------------------
-solution("AppleWin")
+solution("AppleWinX")
     location(solutionDir)
-    startproject("AppleWin")
+    startproject("AppleWinX")
 
     language "C++"
 
@@ -128,14 +128,14 @@ function set_output_dirs(name)
 end
 
 ------------------------------------------------------------------------------
--- AppleWin project
+-- AppleWinX project
 --
--- Generate the AppleWin executable project
+-- Generate the AppleWinX executable project
 ------------------------------------------------------------------------------
-project("AppleWin")
+project("AppleWinX")
     kind "WindowedApp"
-    uuid(os.uuid("app-AppleWin"))
-    set_output_dirs("AppleWin")
+    uuid(os.uuid("app-AppleWinX"))
+    set_output_dirs("AppleWinX")
 
     flags {
         "StaticRuntime",
@@ -259,25 +259,19 @@ project("AppleWin")
             path.join(srcDir, "Harddisk*"),
         },
         ["Source/Emulator"] = {
-            path.join(srcDir, "AY8910*"),
             path.join(srcDir, "Joystick*"),
             path.join(srcDir, "Keyboard*"),
             path.join(srcDir, "LanguageCard*"),
             path.join(srcDir, "Log*"),
             path.join(srcDir, "Memory*"),
-            path.join(srcDir, "Mockingboard*"),
             path.join(srcDir, "NoSlotClock*"),
             path.join(srcDir, "ParallelPrinter*"),
             path.join(srcDir, "Registry*"),
             path.join(srcDir, "Riff*"),
-            path.join(srcDir, "SAM*"),
             path.join(srcDir, "SaveState*"),
             path.join(srcDir, "SerialComms*"),
-            path.join(srcDir, "SoundCore*"),
-            path.join(srcDir, "Speaker*"),
             path.join(srcDir, "Tape*"),
             path.join(srcDir, "YamlHelper*"),
-            path.join(srcDir, "z80emu*"),
         },
         ["Source/Video"] = {
             path.join(srcDir, "Frame*"),

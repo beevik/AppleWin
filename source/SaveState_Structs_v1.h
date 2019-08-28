@@ -1,6 +1,6 @@
 #pragma once
 
-#include "DiskDefs.h"
+#include "disk/DiskDefs.h"
 #include "SaveState_Structs_common.h"
 
 // Structs used by save-state file v1

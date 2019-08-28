@@ -2,9 +2,9 @@
 
 #include "AppleWinX.h"
 #include "CPU.h"
-#include "DiskImage.h"   // Disk_Status_e
-#include "Harddisk.h"    // HD_CardIsEnabled()
-#include "Video.h"       // VideoRefreshRate_e, GetVideoRefreshRate()
+#include "disk/DiskImage.h"   // Disk_Status_e
+#include "disk/Harddisk.h"    // HD_CardIsEnabled()
+#include "video/Video.h"       // VideoRefreshRate_e, GetVideoRefreshRate()
 
 class ConfigNeedingRestart {
 public:

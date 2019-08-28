@@ -23,9 +23,9 @@ along with AppleWin; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-#include "DiskLog.h"
-#include "DiskFormatTrack.h"
-#include "DiskImage.h"
+#include "disk/DiskLog.h"
+#include "disk/DiskFormatTrack.h"
+#include "disk/DiskImage.h"
 
 extern class Disk2InterfaceCard sg_Disk2Card;
 
