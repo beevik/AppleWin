@@ -31,7 +31,7 @@
   Riccardo Macri  Mar 2015
 */
 #include "StdAfx.h"
-#include "Memory.h"
+#include "devices/Memory.h"
 #include "sound/SAM.h"
 #include "sound/Speaker.h"
 

@@ -31,10 +31,10 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "Common.h"
 #include "zlib.h"
 #include "unzip.h"
-#include "CPU.h"
+#include "cpu/CPU.h"
 #include "disk/DiskImage.h"
 #include "disk/DiskImageHelper.h"
-#include "Memory.h"
+#include "devices/Memory.h"
 
 
 /* DO logical order  0 1 2 3 4 5 6 7 8 9 A B C D E F */

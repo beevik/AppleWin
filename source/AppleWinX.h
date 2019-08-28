@@ -1,6 +1,6 @@
 #pragma once
 
-#include "SaveState_Structs_common.h"
+#include "state/SaveState_Structs_common.h"
 #include "Common.h"
 
 void LogFileTimeUntilFirstKeyReadReset(void);

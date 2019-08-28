@@ -1,8 +1,8 @@
 #include "stdafx.h"
 
-#include "../../source/AppleWinX.h"
-#include "../../source/CPU.h"
-#include "../../source/Memory.h"
+#include "AppleWinX.h"
+#include "cpu/CPU.h"
+#include "devices/Memory.h"
 
 // From Applewin.cpp
 bool g_bFullSpeed = false;
@@ -79,10 +79,10 @@ void NTSC_VideoUpdateCycles( long cycles6502 )
 
 //-------------------------------------
 
-#include "../../source/CPU/CpuGeneral.inl"
-#include "../../source/CPU/CpuInstructions.inl"
-#include "../../source/CPU/Cpu6502.h"  // MOS 6502
-#include "../../source/CPU/Cpu65C02.h"  // WDC 65C02
+#include "cpu/CpuGeneral.inl"
+#include "cpu/CpuInstructions.inl"
+#include "cpu/Cpu6502.h"  // MOS 6502
+#include "cpu/Cpu65C02.h"  // WDC 65C02
 
 void init(void)
 {

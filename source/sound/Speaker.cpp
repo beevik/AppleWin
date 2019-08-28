@@ -27,16 +27,15 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
 #include "StdAfx.h"
-#include "CPU.h"
+#include "cpu/CPU.h"
 #include "video/Frame.h"
-#include "Log.h"
-#include "Memory.h"
+#include "util/Log.h"
+#include "devices/Memory.h"
 #include "sound/SoundCore.h"
 #include "sound/Speaker.h"
 #include "video/Video.h"  // VideoRedrawScreen()
-#include "YamlHelper.h"
-
-#include "Debugger/Debug.h" // For DWORD extbench
+#include "state/YamlHelper.h"
+#include "debug/Debug.h"
 
 // Notes:
 //

@@ -21,9 +21,9 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 // Includes
 #include "StdAfx.h"
-#include "CPU.h"    // CpuGetCyclesThisVideoFrame()
+#include "cpu/CPU.h"    // CpuGetCyclesThisVideoFrame()
 #include "video/Frame.h"
-#include "Memory.h" // MemGetMainPtr() MemGetAuxPtr()
+#include "devices/Memory.h" // MemGetMainPtr() MemGetAuxPtr()
 #include "video/Video.h"  // g_pFramebufferbits
 #include "video/RGBMonitor.h"
 #include "video/NTSC.h"

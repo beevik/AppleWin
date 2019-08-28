@@ -31,9 +31,9 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "disk/DiskImageHelper.h"
 #include "video/Frame.h"
 #include "disk/Harddisk.h"
-#include "Memory.h"
-#include "Registry.h"
-#include "YamlHelper.h"
+#include "devices/Memory.h"
+#include "state/Registry.h"
+#include "state/YamlHelper.h"
 
 /*
 Memory map:

@@ -27,17 +27,17 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
 #include "StdAfx.h"
-#include "CPU.h"
+#include "cpu/CPU.h"
 #include "disk/Disk.h"
 #include "video/Frame.h"
-#include "Keyboard.h"
-#include "Memory.h"
-#include "Registry.h"
+#include "devices/Keyboard.h"
+#include "devices/Memory.h"
+#include "state/Registry.h"
 #include "video/Video.h"
 #include "video/NTSC.h"
 #include "video/RGBMonitor.h"
-#include "Configuration/PropertySheet.h"
-#include "YamlHelper.h"
+#include "dialogs/PropertySheet.h"
+#include "state/YamlHelper.h"
 
 #define  SW_80COL         (g_uVideoMode & VF_80COL)
 #define  SW_DHIRES        (g_uVideoMode & VF_DHIRES)

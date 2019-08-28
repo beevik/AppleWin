@@ -76,13 +76,13 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  //
 
 #include "StdAfx.h"
-#include "SaveState_Structs_v1.h"
-#include "CPU.h"
-#include "Log.h"
-#include "Memory.h"
+#include "state/SaveState_Structs_v1.h"
+#include "cpu/CPU.h"
+#include "util/Log.h"
+#include "devices/Memory.h"
 #include "sound/Mockingboard.h"
 #include "sound/SoundCore.h"
-#include "YamlHelper.h"
+#include "state/YamlHelper.h"
 #include "sound/AY8910.h"
 
 #define SY6522_DEVICE_A 0

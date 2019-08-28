@@ -29,16 +29,16 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
 #include "StdAfx.h"
-#include "SaveState_Structs_v1.h"
-#include "CPU.h"
+#include "state/SaveState_Structs_v1.h"
+#include "cpu/CPU.h"
 #include "disk/Disk.h"
 #include "disk/DiskImage.h"
 #include "video/Frame.h"
-#include "Log.h"
-#include "Memory.h"
-#include "Registry.h"
+#include "util/Log.h"
+#include "devices/Memory.h"
+#include "state/Registry.h"
 #include "video/Video.h"
-#include "YamlHelper.h"
+#include "state/YamlHelper.h"
 
 // About m_enhanceDisk:
 // . In general m_enhanceDisk==false is used for authentic disk access speed, whereas m_enhanceDisk==true is for enhanced speed.

@@ -44,8 +44,8 @@ Writes the following: (in 1 continuous write operation)
 
 #include "StdAfx.h"
 #include "disk/Disk.h"
-#include "Log.h"
-#include "YamlHelper.h"
+#include "util/Log.h"
+#include "state/YamlHelper.h"
 
 // Occurs on these conditions:
 // . ctor

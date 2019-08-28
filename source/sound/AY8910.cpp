@@ -31,7 +31,7 @@
 #include <crtdbg.h>
 #include "sound/AY8910.h"
 
-#include "YamlHelper.h"
+#include "state/YamlHelper.h"
 
 /* The AY white noise RNG algorithm is based on info from MAME's ay8910.c -
  * MAME's licence explicitly permits free use of info (even encourages it).
@@ -1127,7 +1127,7 @@ bool CAY8910::LoadSnapshot(YamlLoadHelper & yamlLoadHelper, std::string & suffix
 
 // AY8910 interface
 
-#include "CPU.h"    // For g_nCumulativeCycles
+#include "cpu/CPU.h"    // For g_nCumulativeCycles
 
 static CAY8910 g_AY8910[MAX_8910];
 static unsigned __int64 g_uLastCumulativeCycles = 0;

@@ -157,9 +157,6 @@ project("AppleWinX")
     -- List include paths
     includedirs {
         path.join(srcDir),
-        path.join(srcDir, "cpu"),
-        path.join(srcDir, "emulator"),
-        path.join(srcDir, "debugger"),
         path.join(rsrcDir),
         path.join(externDir, "zlib"),
         path.join(externDir, "zip_lib"),
@@ -171,7 +168,7 @@ project("AppleWinX")
         path.join(srcDir, "**.h"),
         path.join(srcDir, "**.cpp"),
         path.join(srcDir, "**.inl"),
-        path.join(rsrcDir, "*.rc"),
+        path.join(rsrcDir, "*"),
         path.join(rsrcDir, "firmware/*"),
         path.join(rsrcDir, "rom/*"),
         path.join(rootDir, "bin/History.txt"),
@@ -229,6 +226,7 @@ project("AppleWinX")
         },
         ["Resources"] = {
             path.join(rsrcDir, "*.rc"),
+            path.join(rsrcDir, "*.h"),
         },
         ["Resources/System ROMs"] = {
             path.join(rsrcDir, "rom/*"),
@@ -239,45 +237,6 @@ project("AppleWinX")
         ["Source"] = {
             path.join(srcDir, "AppleWinX.*"),
             path.join(srcDir, "StdAfx.*"),
-        },
-        ["Source/_Headers"] = {
-            path.join(srcDir, "Common.h"),
-            path.join(rsrcDir, "resource.h"),
-        },
-        ["Source/Configuration"] = {
-            path.join(srcDir, "Configuration/*"),
-        },
-        ["Source/CPU"] = {
-            path.join(srcDir, "CPU*"),
-            path.join(srcDir, "cpu/*"),
-        },
-        ["Source/Debugger"] = {
-            path.join(srcDir, "Debugger/*"),
-        },
-        ["Source/Disk"] = {
-            path.join(srcDir, "Disk*"),
-            path.join(srcDir, "Harddisk*"),
-        },
-        ["Source/Emulator"] = {
-            path.join(srcDir, "Joystick*"),
-            path.join(srcDir, "Keyboard*"),
-            path.join(srcDir, "LanguageCard*"),
-            path.join(srcDir, "Log*"),
-            path.join(srcDir, "Memory*"),
-            path.join(srcDir, "NoSlotClock*"),
-            path.join(srcDir, "ParallelPrinter*"),
-            path.join(srcDir, "Registry*"),
-            path.join(srcDir, "Riff*"),
-            path.join(srcDir, "SaveState*"),
-            path.join(srcDir, "SerialComms*"),
-            path.join(srcDir, "Tape*"),
-            path.join(srcDir, "YamlHelper*"),
-        },
-        ["Source/Video"] = {
-            path.join(srcDir, "Frame*"),
-            path.join(srcDir, "NTSC*"),
-            path.join(srcDir, "RGB*"),
-            path.join(srcDir, "Video*"),
         },
     }
 
@@ -381,6 +340,10 @@ project("TestCPU6502")
     kind "ConsoleApp"
     uuid(os.uuid("app-TestCPU6502"))
     set_output_dirs("TestCPU6502")
+
+    includedirs {
+        path.join(srcDir),
+    }
 
     defines {
         "_CONSOLE",

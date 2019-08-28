@@ -2,10 +2,10 @@
 
 #include "StdAfx.h"
 #include "video/Frame.h"
-#include "Memory.h" // MemGetMainPtr() MemGetAuxPtr()
+#include "devices/Memory.h" // MemGetMainPtr() MemGetAuxPtr()
 #include "video/Video.h"
 #include "video/RGBMonitor.h"
-#include "YamlHelper.h"
+#include "state/YamlHelper.h"
 
 const int HIRES_COLUMN_SUBUNIT_SIZE = 16;
 const int HIRES_COLUMN_UNIT_SIZE = (HIRES_COLUMN_SUBUNIT_SIZE) * 2;
