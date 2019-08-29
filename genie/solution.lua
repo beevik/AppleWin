@@ -107,6 +107,36 @@ solution("AppleWinX")
             "WIN32",
         }
 
+    configuration { "x32" }
+        includedirs {
+            path.join(externDir, "win32/include"),
+        }
+
+    configuration { "x64" }
+        includedirs {
+            path.join(externDir, "win64/include"),
+        }
+
+    configuration { "x32", "Debug" }
+        libdirs {
+            path.join(externDir, "win32/lib/debug"),
+        }
+
+    configuration { "x32", "Release" }
+        libdirs {
+            path.join(externDir, "win32/lib/release"),
+        }
+
+    configuration { "x64", "Debug" }
+        libdirs {
+            path.join(externDir, "win64/lib/debug"),
+        }
+
+    configuration { "x64", "Release" }
+        libdirs {
+            path.join(externDir, "win64/lib/release"),
+        }
+
     configuration {} -- reset
 
 
@@ -158,9 +188,6 @@ project("AppleWinX")
     includedirs {
         path.join(srcDir),
         path.join(rsrcDir),
-        path.join(externDir, "zlib"),
-        path.join(externDir, "zip_lib"),
-        path.join(externDir, "yaml/include"),
     }
 
     -- List all files that should appear in the project
@@ -198,8 +225,8 @@ project("AppleWinX")
         "winmm",
         "wsock32",
         "yaml",
+        "minizip",
         "zlib",
-        "zip_lib",
         "TestCPU6502",
     }
 
@@ -238,96 +265,6 @@ project("AppleWinX")
             path.join(srcDir, "AppleWinX.*"),
             path.join(srcDir, "StdAfx.*"),
         },
-    }
-
-
-------------------------------------------------------------------------------
--- yaml project
---
--- Generate the yaml static library.
-------------------------------------------------------------------------------
-project("yaml")
-    kind "StaticLib"
-    uuid(os.uuid("lib-yaml"))
-    set_output_dirs("yaml")
-
-    flags {
-        "StaticRuntime",
-    }
-
-    includedirs {
-        path.join(externDir, "yaml/win32"),
-        path.join(externDir, "yaml/include"),
-    }
-
-    defines {
-        "_LIB",
-        "HAVE_CONFIG_H",
-        "YAML_DECLARE_STATIC",
-        "_CRT_SECURE_NO_WARNINGS",
-    }
-
-    files {
-        path.join(externDir, "yaml/**.h"),
-        path.join(externDir, "yaml/**.c"),
-    }
-
-    vpaths {
-        ["Source"] = { path.join(externDir, "yaml/*") },
-    }
-
-
-------------------------------------------------------------------------------
--- zlib project
---
--- Generate the zlib static library.
-------------------------------------------------------------------------------
-project("zlib")
-    kind "StaticLib"
-    uuid(os.uuid("lib-zlib"))
-    set_output_dirs("zlib")
-
-    flags {
-        "StaticRuntime",
-    }
-
-    defines {
-        "_LIB",
-        "_CRT_SECURE_NO_WARNINGS",
-    }
-
-    files {
-        path.join(externDir, "zlib/**.h"),
-        path.join(externDir, "zlib/**.c"),
-    }
-
-
-------------------------------------------------------------------------------
--- zip_lib project
---
--- Generate the zip_lib static library.
-------------------------------------------------------------------------------
-project("zip_lib")
-    kind "StaticLib"
-    uuid(os.uuid("lib-zip_lib"))
-    set_output_dirs("zip_lib")
-
-    flags {
-        "StaticRuntime",
-    }
-
-    includedirs {
-        path.join(externDir, "zlib"),
-    }
-
-    defines {
-        "_LIB",
-        "_CRT_SECURE_NO_WARNINGS",
-    }
-
-    files {
-        path.join(externDir, "zip_lib/**.h"),
-        path.join(externDir, "zip_lib/**.c"),
     }
 
 
